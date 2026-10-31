@@ -2,5 +2,5 @@ title_template: '{title} · {site_name}'
 default_description: 'Mahfuz (mah3uz) — software engineer since 2009, building Nibble, Quarry, Sysman, Darwan and Insensical:
   products, developer tools and Linux desktop software.'
 organization_name: mah3uz
-default_share_image: brand/social-card-mascot.png
-organization_logo: brand/mascot.svg
+default_share_image: brand/social-card.png
+organization_logo: brand/favicon.svg

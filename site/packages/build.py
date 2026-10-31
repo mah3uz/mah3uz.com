@@ -92,23 +92,22 @@ write('globals/site/en.yml', {
         {'label': 'Nibble', 'url': 'https://nibble.ink'},
         {'label': 'Darwan', 'url': 'https://darwan.dev'},
     ],
-    'favicon': 'brand/mascot.svg',
+    'favicon': 'brand/favicon.svg',
 })
 write('globals/seo/en.yml', {
     'title_template': '{title} · {site_name}',
     'default_description': 'Mahfuz (mah3uz) — software engineer since 2009, building Nibble, Quarry, Sysman, Darwan and '
                            'Insensical: products, developer tools and Linux desktop software.',
     'organization_name': 'mah3uz',
-    'default_share_image': 'brand/social-card-mascot.png',
-    'organization_logo': 'brand/mascot.svg',
+    'default_share_image': 'brand/social-card.png',
+    'organization_logo': 'brand/favicon.svg',
 })
 
 # The files themselves sit in assets/brand/ beside this list; the import uploads them once.
 write('assets.yml', [
-    {'path': 'brand/mascot.svg', 'title': 'mah3uz mascot',
-     'alt': 'The mah3uz mascot: a cheerful teal keyboard keycap with headphones, smiling with a sideways 3'},
-    {'path': 'brand/social-card-mascot.png', 'title': 'Social card',
-     'alt': 'The mah3uz mascot beside the line: products, dev tools and Linux desktop software. Since 2009.'},
+    {'path': 'brand/favicon.svg', 'title': 'mah3uz mark', 'alt': 'The mah3uz mark: a teal tile with a peeled corner'},
+    {'path': 'brand/social-card.png', 'title': 'Social card',
+     'alt': 'mah3uz — products, dev tools and Linux desktop software. Software engineer since 2009.'},
 ])
 
 # --------------------------------------------------------------------------- navigation

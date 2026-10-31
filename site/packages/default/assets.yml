@@ -1,6 +1,6 @@
-- path: brand/mascot.svg
-  title: mah3uz mascot
-  alt: 'The mah3uz mascot: a cheerful teal keyboard keycap with headphones, smiling with a sideways 3'
-- path: brand/social-card-mascot.png
+- path: brand/favicon.svg
+  title: mah3uz mark
+  alt: 'The mah3uz mark: a teal tile with a peeled corner'
+- path: brand/social-card.png
   title: Social card
-  alt: 'The mah3uz mascot beside the line: products, dev tools and Linux desktop software. Since 2009.'
+  alt: mah3uz — products, dev tools and Linux desktop software. Software engineer since 2009.

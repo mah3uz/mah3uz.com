@@ -3,7 +3,7 @@ import { Link } from '@inertiajs/vue3'
 import { useGlobals } from '@nibble'
 import { computed } from 'vue'
 import type { PagesPage, SiteGlobals, ViewProps } from '@site/types'
-import Mascot from '../components/Mascot.vue'
+import BrandMark from '../components/BrandMark.vue'
 import ContactForm from '../components/ContactForm.vue'
 import Corners from '../components/Corners.vue'
 import CoverPhoto from '../components/CoverPhoto.vue'
@@ -62,7 +62,7 @@ const timeline = computed(() => {
             aria-hidden="true"
           />
           <div class="relative">
-            <Mascot size="size-24" alive label="The mah3uz mascot, a cheerful keycap" />
+            <BrandMark size="size-20" />
             <p class="font-display mt-8 text-3xl font-extrabold tracking-tight">{{ site?.name ?? 'mah3uz' }}</p>
             <p class="text-mist mt-1">Software engineer · since {{ STARTED }}</p>
             <dl class="mt-8 grid grid-cols-3 gap-4 border-t border-white/10 pt-6">

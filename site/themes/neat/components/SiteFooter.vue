@@ -5,7 +5,7 @@ import { computed } from 'vue'
 import type { SiteGlobals } from '@site/types'
 import { socialLinks } from '../lib/links'
 import { vReveal } from '../lib/motion'
-import Mascot from './Mascot.vue'
+import BrandMark from './BrandMark.vue'
 import Corners from './Corners.vue'
 import MenuLink from './MenuLink.vue'
 
@@ -90,7 +90,7 @@ const year = new Date().getUTCFullYear()
     <div class="mx-auto mt-16 grid max-w-6xl gap-10 sm:grid-cols-[1.5fr_1fr_1fr]">
       <div>
         <Link href="/" class="inline-flex items-center gap-3">
-          <Mascot size="size-10" />
+          <BrandMark size="size-10" />
           <span class="font-display text-xl font-extrabold tracking-tight">{{ site?.name ?? 'mah3uz' }}</span>
         </Link>
         <p class="mt-4 max-w-[36ch] leading-7 text-muted">

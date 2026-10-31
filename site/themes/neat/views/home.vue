@@ -4,7 +4,6 @@ import { computed } from 'vue'
 import type { PagesPage, ViewProps } from '@site/types'
 import Corners from '../components/Corners.vue'
 import HeroTerminal from '../components/HeroTerminal.vue'
-import Mascot from '../components/Mascot.vue'
 import PostCard from '../components/PostCard.vue'
 import ProjectCard from '../components/ProjectCard.vue'
 import ProjectTile from '../components/ProjectTile.vue'
@@ -114,9 +113,6 @@ const headline = computed(() => {
             size="size-14"
             text="text-xl"
           />
-        </div>
-        <div class="absolute -top-14 -left-3 z-20 sm:-top-16 sm:-left-8">
-          <Mascot size="size-24 sm:size-28" alive label="The mah3uz mascot, a cheerful keycap with headphones" />
         </div>
         <HeroTerminal :projects="featured.length ? featured : all" />
       </div>
