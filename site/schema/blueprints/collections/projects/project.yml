@@ -1,0 +1,65 @@
+schema: 1
+title: Project
+tabs:
+  main:
+    display: Content
+    sections:
+      - fields:
+          - handle: title
+            field: { type: text, required: true, listable: true }
+          - handle: tagline
+            field: { type: text, instructions: "One line, shown on cards and under the title." }
+          - handle: description
+            field: { type: textarea, instructions: "A short paragraph for listings, search and social cards." }
+          - handle: body
+            field: { type: markdown }
+  details:
+    display: Details
+    sections:
+      - fields:
+          - handle: category
+            field:
+              type: button_group
+              listable: true
+              default: product
+              options:
+                product: My product
+                client: Client work
+          - handle: client
+            field: { type: text, instructions: "For client work: the client's name, as you are allowed to show it." }
+          - handle: role
+            field: { type: text, instructions: "What you did, e.g. Lead engineer, Full-stack development." }
+          - handle: stage
+            field:
+              type: select
+              listable: true
+              options:
+                building: Building
+                shipped: Shipped
+                experiment: Experiment
+                archived: Archived
+          - handle: kind
+            field: { type: text, instructions: "What it is, in two or three words: CMS, Terminal app, Desktop app…" }
+          - handle: year
+            field: { type: text, width: 50 }
+          - handle: monogram
+            field: { type: text, width: 50, instructions: "One or two characters drawn on the project's tile." }
+          - handle: accent
+            field: { type: color, instructions: "The tile's main colour." }
+          - handle: featured
+            field: { type: toggle, instructions: "Shown large on the home page." }
+          - handle: stack
+            field: { type: list }
+          - handle: highlights
+            field: { type: list, instructions: "Three or four short facts shown beside the write-up." }
+          - handle: cover
+            field: { type: text, instructions: "The cover art's address, such as /art/quarry.svg." }
+          - handle: website
+            field: { type: text, input_type: url }
+          - handle: repository
+            field: { type: text, input_type: url }
+  seo:
+    display: SEO
+    sections:
+      - fields:
+          - import: nibble::seo

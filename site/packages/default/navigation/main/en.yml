@@ -1,0 +1,11 @@
+tree:
+- url: /projects
+  title: Work
+- entry: pages/now
+  title: Now
+- entry: pages/blog
+  title: Writing
+- entry: pages/uses
+  title: Uses
+- entry: pages/about
+  title: About

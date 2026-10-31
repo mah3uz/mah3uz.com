@@ -1,0 +1,66 @@
+title: The tools I use every day
+template: uses
+eyebrow: Uses
+intro: The software behind my work. Several of these I built because I wanted them to exist.
+content: '## Desktop
+
+
+  - **Arch Linux** — a rolling base I understand completely.
+
+  - **Hyprland** — a tiling Wayland compositor that stays out of the way.
+
+  - **Darwan** — my own themes for the login and lock screens.
+
+  - **Walker** — a fast, keyboard-driven application launcher.
+
+
+  ## Terminal and editor
+
+
+  - **Neovim** — my editor for almost everything.
+
+  - **Insensical** — my own multiplexer, built for long agent sessions.
+
+  - **Ghostty** — a fast, native terminal emulator.
+
+  - **Quarry** — my SQL client for PostgreSQL, MySQL and SQLite.
+
+
+  ## Languages
+
+
+  - **Rust** — for tools and desktop apps that must be fast and dependable.
+
+  - **Ruby** — for products, and the joy of Rails.
+
+  - **TypeScript** — for the browser, typed end to end.
+
+  - **QML** — for Qt interfaces on the Linux desktop.
+
+
+  ## Frameworks
+
+
+  - **Ruby on Rails 8** — the backbone of Nibble.
+
+  - **Vue 3 and Inertia** — server-rendered pages that behave like an app.
+
+  - **Tailwind CSS** — design tokens in code, as this site shows.
+
+  - **GPUI** — GPU-accelerated native UI in Rust, used by Sysman.
+
+
+  ## Data and shipping
+
+
+  - **SQLite** — for far more than people expect; this site runs on it.
+
+  - **PostgreSQL** — when many writers need one database.
+
+  - **Kamal** — zero-downtime deploys to a plain server.
+
+  - **Homebrew** — how Quarry and Insensical reach people.'
+photo: https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1800&q=80
+photo_credit: 'Photo: Unsplash'
+seo:
+  title: Uses

@@ -1,0 +1,25 @@
+projects:
+  from: entries:projects
+  fields:
+    [
+      category,
+      client,
+      role,
+      tagline,
+      description,
+      stage,
+      kind,
+      year,
+      monogram,
+      accent,
+      featured,
+      stack,
+      cover,
+      website,
+      repository,
+    ]
+posts:
+  from: entries:posts
+  sort: published_at:desc
+  limit: 3
+  fields: [excerpt, published_at, photo, photo_credit, art, featured_image, topics]

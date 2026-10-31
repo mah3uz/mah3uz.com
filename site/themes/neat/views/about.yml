@@ -1,0 +1,5 @@
+projects:
+  from: entries:projects
+  fields: [category, client, role, tagline, kind, year, monogram, accent, stage]
+contact:
+  from: form:contact

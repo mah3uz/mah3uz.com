@@ -1,0 +1,41 @@
+title: What I'm focused on now
+template: now
+eyebrow: Now
+intro: A snapshot of where my attention is this season — what I am building, shipping and learning.
+content: '## Building
+
+
+  Most of my days go into **Nibble**. The aim is a CMS that feels like your own application, because it is: schema in YAML,
+  themes in Vue, content in SQLite, deployed with Kamal to a server you control. Alongside it, the **Nibble CLI** makes starting
+  a site and editing a live site''s content as natural as using git.
+
+
+  ## Shipping
+
+
+  **Darwan** keeps growing its collection of hand-crafted themes for SDDM and Quickshell, and **Quarry** keeps getting faster
+  at the everyday work of reading and querying databases. **Insensical** is heading towards a multiplexer that treats long-running
+  agent sessions as first-class.
+
+
+  ## Learning
+
+
+  **Sysman** is my excuse to go deep on GPUI and native rendering in Rust, and **rrussat** is a hands-on course in peer-to-peer
+  networking and applied cryptography.
+
+
+  ## Not doing
+
+
+  Saying yes to new long-term commitments. I keep a little room for short, focused collaborations — [get in touch](/about#contact)
+  if you have one in mind.'
+cards:
+- title: Primary focus
+  text: Nibble and its CLI — making a self-hosted CMS feel effortless.
+- title: On the side
+  text: Darwan themes, Quarry polish and Insensical sessions.
+- title: Exploring
+  text: GPUI for native Linux apps, and P2P encryption in Rust.
+seo:
+  title: Now

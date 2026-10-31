@@ -1,0 +1,3 @@
+projects:
+  from: entries:projects
+  fields: [category, client, role, tagline, description, stage, kind, year, monogram, accent, featured, stack, cover]

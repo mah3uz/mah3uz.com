@@ -1,0 +1,128 @@
+title: Why this site runs on a CMS I built
+published_at: '2026-10-28T09:00:00Z'
+topics:
+- topics/product
+- topics/engineering
+excerpt: Every developer eventually builds a CMS. Here is why I did it on purpose, and what Nibble does differently.
+photo: https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1800&q=80
+photo_credit: 'Photo: Unsplash'
+art: /art/nibble.svg
+body:
+- type: paragraph
+  content:
+  - type: text
+    text: 'Every developer eventually writes their own CMS. Most of us do it by accident: a blog engine that grows an admin,
+      then a media library, then a plugin system. I did it on purpose, because I kept wanting the same thing and couldn''t
+      find it.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: What I wanted
+- type: paragraph
+  content:
+  - type: text
+    text: 'I wanted a CMS that was '
+  - type: text
+    text: an application I own
+    marks:
+    - type: bold
+  - type: text
+    text: ', not a service I rent. Something I could read, change and deploy like any other codebase, with a database I can
+      copy with one command, and an upgrade path that never touches my code.'
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: 'Content described in '
+      - type: text
+        text: files I can review
+        marks:
+        - type: bold
+      - type: text
+        text: ' — schema as YAML, in the repository.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Server-rendered pages
+        marks:
+        - type: bold
+      - type: text
+        text: ' that behave like an app once loaded.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: 'One database, '
+      - type: text
+        text: SQLite
+        marks:
+        - type: bold
+      - type: text
+        text: ', for content, cache and jobs.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: 'A theme that is just '
+      - type: text
+        text: Vue components
+        marks:
+        - type: bold
+      - type: text
+        text: ', not a templating language of its own.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: How Nibble draws the line
+- type: paragraph
+  content:
+  - type: text
+    text: 'Nibble installs into '
+  - type: text
+    text: vendor/nibble
+    marks:
+    - type: code
+  - type: text
+    text: ', and everything else is the site''s: the schema, the content, the theme, the deploy configuration. An upgrade
+      replaces that one folder and nothing else. That single rule is what makes it feel like your app rather than someone
+      else''s product.'
+- type: blockquote
+  content:
+  - type: paragraph
+    content:
+    - type: text
+      text: A theme never ships content. A site never edits the CMS. Everything else follows from those two lines.
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: What you're looking at
+- type: paragraph
+  content:
+  - type: text
+    text: 'This site is a Nibble site. The projects are a folder of Markdown files reviewed like code, while this post was
+      written in the Control Plane. The theme, '
+  - type: text
+    text: Neat
+    marks:
+    - type: italic
+  - type: text
+    text: ', takes its colours from a pair of banners, and every page is rendered on the server and cached against exactly
+      the records it read.'
+- type: paragraph
+  content:
+  - type: text
+    text: Building your own CMS is usually a warning sign. Building one you would happily hand to someone else is a different
+      project entirely, and that's the one I'm working on.

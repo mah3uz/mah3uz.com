@@ -1,0 +1,5 @@
+name: Neat
+handle: neat
+version: 0.1.0
+nibble: '^1'
+description: A sleek, teal-on-midnight portfolio theme for showcasing projects in progress and shipped.

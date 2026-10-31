@@ -1,0 +1,100 @@
+title: SQLite is enough (for most of us)
+published_at: '2026-10-12T09:00:00Z'
+topics:
+- topics/engineering
+excerpt: One file, no server, and more than enough for most products. Why my projects start on SQLite — and when they shouldn’t.
+photo: https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1800&q=80
+photo_credit: 'Photo: Unsplash'
+art: /art/quarry.svg
+body:
+- type: paragraph
+  content:
+  - type: text
+    text: 'For years the default answer to "which database?" was a server: PostgreSQL or MySQL, running somewhere, with its
+      own backups, users and upgrades. For most of what I build now, the answer is a file.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Why SQLite
+- type: paragraph
+  content:
+  - type: text
+    text: 'SQLite runs in the same process as your application. There is no network between your code and your data, which
+      means queries that would be "fast" over a socket are effectively instant. With '
+  - type: text
+    text: WAL mode
+    marks:
+    - type: bold
+  - type: text
+    text: ', readers don''t block the writer, and a single server comfortably handles far more traffic than most products
+      will ever see.'
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Operations disappear.
+        marks:
+        - type: bold
+      - type: text
+        text: ' No database server to patch, tune or keep alive.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Backups are a copy.
+        marks:
+        - type: bold
+      - type: text
+        text: ' '
+      - type: text
+        text: VACUUM INTO
+        marks:
+        - type: code
+      - type: text
+        text: ' writes a consistent snapshot while the site keeps running.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Development matches production.
+        marks:
+        - type: bold
+      - type: text
+        text: ' The same engine, the same file format, everywhere.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Where it stops
+- type: paragraph
+  content:
+  - type: text
+    text: 'SQLite allows one writer at a time. If many processes on many machines must write to the same data constantly,
+      use PostgreSQL — that is exactly what it is for. That''s why '
+  - type: text
+    text: Quarry
+    marks:
+    - type: link
+      attrs:
+        href: /projects/quarry
+  - type: text
+    text: ' speaks both: I use the right one for the job, and I want one tool for both.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: The rule I use
+- type: paragraph
+  content:
+  - type: text
+    text: Start on SQLite. Keep your SQL portable. Move when the numbers tell you to, not when a diagram does. Most products
+      never need to move at all.

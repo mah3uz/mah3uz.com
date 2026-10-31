@@ -1,0 +1,31 @@
+schema: 1
+title: Post
+tabs:
+  main:
+    display: Content
+    sections:
+      - fields:
+          - import: nibble::post_fields
+  sidebar:
+    display: Sidebar
+    sections:
+      - fields:
+          - handle: topics
+            field: { type: terms, taxonomies: [topics], listable: true }
+          - import: nibble::featured_image
+          - handle: photo
+            field:
+              type: text
+              input_type: url
+              instructions: Used when there is no featured image — an image address, such as an Unsplash photo.
+          - handle: photo_credit
+            field: { type: text }
+          - handle: art
+            field:
+              type: text
+              instructions: 'Generated art drawn behind the photo, such as /art/nibble.svg.'
+  seo:
+    display: SEO
+    sections:
+      - fields:
+          - import: nibble::seo

@@ -1,0 +1,4 @@
+schema: 1
+indexes:
+  site:
+    fields: [title, intro, content, excerpt, tagline, description, body, blocks]

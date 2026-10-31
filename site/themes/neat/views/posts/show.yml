@@ -1,0 +1,7 @@
+related:
+  from: entries:posts
+  not:
+    id: $entry.id
+  sort: published_at:desc
+  limit: 3
+  fields: [excerpt, published_at, photo, photo_credit, art, featured_image, topics]

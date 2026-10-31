@@ -1,0 +1,47 @@
+title: Engineer, product builder, and still a tinkerer.
+template: about
+eyebrow: About
+intro: I've been building software professionally since 2009. These days I make products of my own, with the same care I used
+  to give other people’s roadmaps.
+content: 'I''m **Mahfuz**, known online as **mah3uz**. My career has run alongside the web itself: from server-rendered pages
+  and jQuery to single-page apps, from shared hosting to containers, and back again to simple, fast, server-rendered software.
+  Along the way I''ve learned to tell what lasts from what''s fashionable.
+
+
+  Today my time goes into my own products. [Nibble](/projects/nibble) is a content management system you run as your own Rails
+  application. [Quarry](/projects/quarry) and [Sysman](/projects/sysman) are Rust tools for people who live in a terminal
+  or on a Linux desktop. [Darwan](/projects/darwan) themes the two screens every Linux user sees each day, and [Insensical](/projects/insensical)
+  rethinks the terminal multiplexer for the age of coding agents.
+
+
+  ## What I do
+
+
+  - **Product engineering** — taking an idea from a sketch to something people pay for and rely on.
+
+  - **Platforms and content systems** — schemas, editorial workflows, caching, search and deployment.
+
+  - **Developer tools** — CLIs and TUIs that start instantly and stay out of the way.
+
+  - **Linux desktop software** — native apps and themes in Rust, QML and Qt.
+
+
+  ## Working together
+
+
+  I take on a small amount of work alongside my products: architecture reviews, a hand on a hard part of a product, or building
+  something end to end. If that sounds useful, [write to me](#contact).'
+cards:
+- title: Boring technology, beautiful results
+  text: Proven foundations — Rails, SQLite, PostgreSQL, plain HTML — leave room to spend the novelty budget where users can
+    feel it.
+- title: Small, sharp tools
+  text: One thing, done well and fast. I would rather ship three focused tools than one that tries to do everything.
+- title: Data that stays yours
+  text: Self-hostable, exportable, readable. Software should never hold the things you made hostage.
+- title: Craft is in the details
+  text: Keyboard paths, empty states, error messages and dark mode are not polish. They are the product.
+photo: https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1800&q=80
+photo_credit: 'Photo: Unsplash'
+seo:
+  title: About

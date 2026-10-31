@@ -1,0 +1,17 @@
+title: I build calm, fast software for the web and the Linux desktop.
+template: home
+eyebrow: Software engineer · since 2009
+intro: 'I''m Mahfuz. I''ve been designing, building and shipping software professionally since 2009. Today I build my own
+  products: Nibble, a CMS you run as your own app; fast Rust tools for the terminal; and apps and themes for the Linux desktop.'
+cards:
+- title: Own the stack
+  text: Software you can run, read and move. I favour tools that leave you in charge of your data and your server.
+- title: Fast is a feature
+  text: Instant start-up, no spinners, no surprises. Speed is how software shows respect for the people using it.
+- title: Keyboard first
+  text: Everything I build can be driven without a mouse, including this site. Press / and see.
+- title: Ship, then sharpen
+  text: Put real work in front of real people early, then keep polishing the parts they actually touch.
+seo:
+  title: mah3uz — software engineer building products, dev tools and Linux apps
+  exact_title: true

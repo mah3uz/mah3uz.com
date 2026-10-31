@@ -26,7 +26,13 @@ export interface RecordBase {
 export interface PagesPage extends RecordBase {
   collection: 'pages'
   title: string | null
+  eyebrow: string | null
+  intro: string | null
+  content: string | null
   blocks: Array<{ id: string; type: string } & Record<string, unknown>>
+  cards: Array<Record<string, unknown> & { id: string }>
+  photo: string | null
+  photo_credit: string | null
   seo: { title: string | null; exact_title: boolean; description: string | null; canonical: string | null; og_image: AssetValue | null; noindex: boolean; nositemap: boolean; schema_type: string | null; json_ld_overrides: Record<string, unknown> | null }
 }
 
@@ -37,11 +43,48 @@ export interface PostsPost extends RecordBase {
   title: string | null
   excerpt: string | null
   body: string | null
+  topics: TermSummary[]
   featured_image: AssetValue | null
+  photo: string | null
+  photo_credit: string | null
+  art: string | null
   seo: { title: string | null; exact_title: boolean; description: string | null; canonical: string | null; og_image: AssetValue | null; noindex: boolean; nositemap: boolean; schema_type: string | null; json_ld_overrides: Record<string, unknown> | null }
 }
 
 export type PostsEntry = PostsPost
+
+export interface ProjectsProject extends RecordBase {
+  collection: 'projects'
+  title: string | null
+  tagline: string | null
+  description: string | null
+  body: string | null
+  category: { value: string | null; label: string | null }
+  client: string | null
+  role: string | null
+  stage: { value: string | null; label: string | null }
+  kind: string | null
+  year: string | null
+  monogram: string | null
+  accent: string | null
+  featured: boolean
+  stack: string[]
+  highlights: string[]
+  cover: string | null
+  website: string | null
+  repository: string | null
+  seo: { title: string | null; exact_title: boolean; description: string | null; canonical: string | null; og_image: AssetValue | null; noindex: boolean; nositemap: boolean; schema_type: string | null; json_ld_overrides: Record<string, unknown> | null }
+}
+
+export type ProjectsEntry = ProjectsProject
+
+export interface TopicsTopic extends RecordBase {
+  taxonomy: 'topics'
+  title: string | null
+  description: string | null
+}
+
+export type TopicsTerm = TopicsTopic
 
 export interface SeoGlobals {
   title_template: string | null
@@ -76,14 +119,56 @@ declare module '@nibble/types' {
   }
 }
 
-export interface FormValues {
+export type ContactFormValues = { name: string; email: string; topic: 'project' | 'product' | 'speaking' | 'hello' | ''; message: string }
 
+export interface FormValues {
+  'contact': ContactFormValues
 }
 
 export interface ViewProps {
-
+  'about': {
+    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'kind' | 'year' | 'monogram' | 'accent' | 'stage' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+    contact: NibbleForm<ContactFormValues>
+  }
+  'errors/404': {
+    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'monogram' | 'accent' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+  }
+  'home': {
+    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'description' | 'stage' | 'kind' | 'year' | 'monogram' | 'accent' | 'featured' | 'stack' | 'cover' | 'website' | 'repository' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+    posts: Pick<(PostsPost), 'excerpt' | 'published_at' | 'photo' | 'photo_credit' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+  }
+  'now': {
+    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'kind' | 'monogram' | 'accent' | 'stage' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+  }
+  'posts/index': {
+    posts: Paginated<Pick<(PostsPost), 'excerpt' | 'published_at' | 'photo' | 'photo_credit' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>>
+    topics: ((TopicsTopic) & { entries_count: number })[]
+  }
+  'posts/show': {
+    related: Pick<(PostsPost), 'excerpt' | 'published_at' | 'photo' | 'photo_credit' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+  }
+  'projects/index': {
+    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'description' | 'stage' | 'kind' | 'year' | 'monogram' | 'accent' | 'featured' | 'stack' | 'cover' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+  }
+  'projects/show': {
+    siblings: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'monogram' | 'accent' | 'stage' | 'kind' | 'cover' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+  }
+  'search': {
+    results: Paginated<(PagesPage | PostsPost | ProjectsProject)>
+  }
+  'sets/latest_posts': {
+    posts: Pick<(PostsPost), 'excerpt' | 'published_at' | 'photo' | 'photo_credit' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+  }
+  'topics/index': {
+    topics: ((TopicsTopic) & { entries_count: number })[]
+  }
+  'topics/show': {
+    posts: Paginated<Pick<(PostsPost), 'excerpt' | 'published_at' | 'photo' | 'photo_credit' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>>
+  }
 }
 
 export interface LayoutProps {
-
+  'default': {
+    palette: Pick<(ProjectsProject), 'category' | 'tagline' | 'monogram' | 'accent' | 'stage' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+  }
 }

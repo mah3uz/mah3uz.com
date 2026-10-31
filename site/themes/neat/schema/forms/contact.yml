@@ -1,0 +1,28 @@
+title: Contact
+cp_notify: true
+spam:
+  min_seconds: 3
+  max_links: 2
+success:
+  message: Thanks — your message is in. I read everything and reply within a few days.
+fields:
+  - handle: name
+    field: { type: text, display: Your name, required: true, character_limit: 100, autocomplete: name, width: 50 }
+  - handle: email
+    field: { type: text, input_type: email, display: Email, required: true, autocomplete: email, width: 50 }
+  - handle: topic
+    field:
+      type: button_group
+      display: What's it about?
+      options:
+        project: A project
+        product: One of my products
+        speaking: Talk or podcast
+        hello: Just saying hello
+  - handle: message
+    field:
+      type: textarea
+      display: Message
+      required: true
+      character_limit: 3000
+      placeholder: What are you building, and where could I help?

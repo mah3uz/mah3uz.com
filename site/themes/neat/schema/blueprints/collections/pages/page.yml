@@ -1,0 +1,60 @@
+schema: 1
+title: Page
+tabs:
+  main:
+    display: Content
+    sections:
+      - fields:
+          - handle: title
+            field: { type: text, required: true, listable: true, localizable: true, validate: [max:200] }
+          - handle: eyebrow
+            field: { type: text, instructions: 'Small line shown above the heading.', localizable: true }
+          - handle: intro
+            field: { type: textarea, character_limit: 400, localizable: true }
+          - handle: content
+            field:
+              type: markdown
+              display: Text
+              instructions: The page's main text, in Markdown. Shown before any blocks.
+              localizable: true
+          - handle: blocks
+            field: nibble::page_fields.blocks
+            config:
+              add_sets:
+                content:
+                  latest_posts:
+                    display: Latest posts
+                    icon: layout-list
+                    fields:
+                      - handle: count
+                        field: { type: integer, min: 1, max: 12, default: 3 }
+                      - handle: heading
+                        field: { type: text }
+  extras:
+    display: Extras
+    sections:
+      - display: Cards
+        instructions: Short titled points — principles on About, focus areas on Now.
+        fields:
+          - handle: cards
+            field:
+              type: grid
+              mode: stacked
+              add_row: Add card
+              localizable: true
+              fields:
+                - handle: title
+                  field: { type: text, required: true }
+                - handle: text
+                  field: { type: textarea, required: true }
+      - display: Photo
+        fields:
+          - handle: photo
+            field: { type: text, input_type: url, instructions: 'An image address, such as an Unsplash photo.' }
+          - handle: photo_credit
+            field: { type: text, instructions: 'Who took it, e.g. Photo: Jane Doe / Unsplash' }
+  seo:
+    display: SEO
+    sections:
+      - fields:
+          - import: nibble::seo

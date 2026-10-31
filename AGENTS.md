@@ -25,3 +25,20 @@ stops Claude Code editing `vendor/nibble/`.
 
 <!-- Yours to fill in. Some things worth writing down: how you name things, what you want tested, which
      decisions are settled so nobody reopens them. -->
+- **Theme:** `site/themes/neat` — colours come from the two brand banners (dark `#0A1A20 → #0D2A31` with a teal glow,
+  light `#F3FCFA → #DDF4F0` with a mint glow, ink `#043040`, accents `#62EDD4 / #21BDB0 / #1388A6`). Tokens live as
+  `--neat-*` variables in `styles/theme.css` and are exposed to Tailwind as `canvas`, `surface`, `ink`, `muted`,
+  `faint`, `line`, `accent`. Use those, never raw greys, so both registers keep working.
+- **Motifs:** three viewfinder corners (`Corners.vue`) and a peeled bottom-right corner (`Peel.vue`). Motion is CSS
+  (`animate-rise`, `animate-drift`…) plus the `v-reveal`, `v-spotlight` and `v-tilt` directives in `lib/motion.ts`;
+  all of it respects `prefers-reduced-motion`. Browser-only code goes in `onMounted` — server rendering has no window.
+- **Projects** are Markdown files in `site/content/projects/` (schema in `site/schema/`). `category: client` marks
+  client work, shown separately from my own products. `stage` is building / shipped / experiment / archived.
+  Run `bin/rails nibble:build` after editing them.
+- **Cover art** is generated SVG in `public/art/`, from `site/art/generate.py`
+  (`python3 site/art/generate.py public/art`). Add a function there for a new project rather than drawing by hand.
+- **Pages, posts, menus and site settings** were seeded from `site/packages/default`, which `site/packages/build.py`
+  writes. Edit live content in the Control Plane; re-run the script only to rebuild a fresh database.
+- **Photos** are hot-linked from images.unsplash.com and always sit over generated art (`CoverPhoto.vue`), so a page
+  never shows a broken image.
+- **Client work** stays factual and confidential: no staging URLs, no internal details the client hasn't published.

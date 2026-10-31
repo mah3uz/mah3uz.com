@@ -1,0 +1,15 @@
+schema: 1
+title: Projects
+icon: layout-grid
+route: /projects/{slug}
+structure:
+  max_depth: 2
+blueprints: [project]
+template: projects/show
+sort: position:asc
+search: site
+sitemap:
+  enabled: true
+  priority: 0.8
+  changefreq: monthly
+files: projects

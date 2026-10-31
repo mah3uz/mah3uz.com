@@ -1,0 +1,8 @@
+params: [page]
+posts:
+  from: entries:posts
+  paginate: { per_page: 12 }
+  fields: [excerpt, published_at, photo, photo_credit, art, featured_image, topics]
+topics:
+  from: terms:topics
+  counts: posts
