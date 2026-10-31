@@ -11,6 +11,7 @@ projects:
       kind,
       year,
       logo,
+      banner,
       monogram,
       accent,
       featured,

@@ -26,7 +26,7 @@ const LABELS: Record<string, string> = { posts: 'Writing', projects: 'Project', 
     >
       <label for="query" class="sr-only">Search the site</label>
       <div
-        class="border-line-strong bg-surface flex items-center gap-3 rounded-full border p-2 pl-6 backdrop-blur transition-colors focus-within:border-accent"
+        class="border-line-strong bg-surface flex items-center gap-3 rounded-full border p-2 pl-6 transition-colors focus-within:border-accent"
       >
         <svg
           class="size-5 shrink-0 text-accent"

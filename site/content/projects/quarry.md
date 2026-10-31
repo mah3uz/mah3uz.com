@@ -11,6 +11,7 @@ logo: /logos/quarry.svg
 monogram: "Q"
 accent: "#1388A6"
 featured: true
+banner: /banners/quarry.svg
 cover: /art/quarry.svg
 website: https://quarry.asmechanics.com
 repository: https://github.com/mah3uz/quarry

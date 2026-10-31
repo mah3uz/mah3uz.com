@@ -11,6 +11,7 @@ logo: /logos/insensical.svg
 monogram: "i"
 accent: "#17A398"
 featured: false
+banner: /banners/insensical.svg
 cover: /art/insensical.svg
 website: https://insensical.com
 repository: https://github.com/mah3uz/insensical-release

@@ -3,7 +3,7 @@ import { Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import type { PagesPage, ViewProps } from '@site/types'
 import Corners from '../components/Corners.vue'
-import HeroTerminal from '../components/HeroTerminal.vue'
+import HeroShowcase from '../components/HeroShowcase.vue'
 import PostCard from '../components/PostCard.vue'
 import ProjectCard from '../components/ProjectCard.vue'
 import ProjectTile from '../components/ProjectTile.vue'
@@ -23,6 +23,11 @@ const featured = computed(() => {
   const picked = all.value.filter((project) => project.featured)
   return (picked.length ? picked : all.value).slice(0, 4)
 })
+// The hero's deck: featured work first, then the rest of the products, as far as they have a banner to show.
+const showcase = computed(() => [
+  ...featured.value,
+  ...all.value.filter((project) => !featured.value.includes(project)),
+])
 const building = computed(() => all.value.find((project) => statusOf(project) === 'building'))
 const stack = computed(() => [...new Set(all.value.flatMap((project) => project.stack ?? []))])
 const board = computed(() =>
@@ -47,7 +52,9 @@ const headline = computed(() => {
 <template>
   <div>
     <!-- Hero -->
-    <section class="relative grid items-center gap-12 pb-20 lg:grid-cols-[1.08fr_1fr] lg:gap-10 lg:pb-28">
+    <section
+      class="relative grid items-center gap-12 pb-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-10 lg:pb-28"
+    >
       <div
         class="animate-drift pointer-events-none absolute -top-40 -left-40 -z-10 size-[42rem] rounded-full bg-[radial-gradient(circle,var(--neat-glow),transparent_65%)]"
         aria-hidden="true"
@@ -56,7 +63,7 @@ const headline = computed(() => {
         <Link
           v-if="building"
           :href="building.uri ?? '#'"
-          class="animate-rise group border-line-strong bg-surface inline-flex items-center gap-3 rounded-full border py-1.5 pr-4 pl-1.5 text-sm backdrop-blur transition-colors hover:border-accent"
+          class="animate-rise group border-line-strong bg-surface inline-flex items-center gap-3 rounded-full border py-1.5 pr-4 pl-1.5 text-sm transition-colors hover:border-accent"
         >
           <span
             class="bg-ink text-canvas flex items-center gap-2 rounded-full px-3 py-1 font-mono text-[0.7rem] uppercase"
@@ -89,32 +96,8 @@ const headline = computed(() => {
           </div>
         </dl>
       </div>
-      <div class="animate-rise relative [animation-delay:240ms]">
-        <div
-          class="animate-float absolute -top-6 right-6 z-10 hidden [--tilt:8deg] sm:block"
-          style="animation-delay: -2s"
-          aria-hidden="true"
-        >
-          <ProjectTile
-            v-if="all[1]"
-            :logo="all[1].logo"
-            :monogram="all[1].monogram"
-            :accent="all[1].accent"
-            size="size-16"
-            text="text-2xl"
-          />
-        </div>
-        <div class="animate-float absolute bottom-2 -left-4 z-10 hidden [--tilt:-10deg] sm:block" aria-hidden="true">
-          <ProjectTile
-            v-if="all[3]"
-            :logo="all[3].logo"
-            :monogram="all[3].monogram"
-            :accent="all[3].accent"
-            size="size-14"
-            text="text-xl"
-          />
-        </div>
-        <HeroTerminal :projects="featured.length ? featured : all" />
+      <div class="animate-rise relative [animation-delay:240ms] lg:pl-6">
+        <HeroShowcase :projects="showcase" :years="years" />
       </div>
     </section>
 
@@ -264,7 +247,7 @@ const headline = computed(() => {
 
     <!-- How I work -->
     <section v-if="page.cards?.length" aria-labelledby="approach-heading" class="pt-24 lg:pt-32">
-      <div class="border-line bg-surface relative overflow-hidden rounded-[2.5rem] border p-6 backdrop-blur sm:p-12">
+      <div class="border-line bg-surface relative overflow-hidden rounded-[2.5rem] border p-6 sm:p-12">
         <Corners inset="1.25rem" />
         <div class="neat-dots absolute inset-0 -z-10" aria-hidden="true" />
         <div v-reveal class="mb-10 max-w-2xl">

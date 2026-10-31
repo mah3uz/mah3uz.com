@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, useTemplateRef, watch } from 'vue'
 import type { ProjectsProject, ViewProps } from '@site/types'
 import PageHeading from '../../components/PageHeading.vue'
 import ProjectCard from '../../components/ProjectCard.vue'
@@ -45,6 +45,43 @@ const shown = computed(() =>
       (!tech.value || project.stack?.includes(tech.value)),
   ),
 )
+
+// A card on its way out is pinned exactly where it was, at its own size, while it fades. Taken out of the grid
+// without that, it would stretch to the grid's width and the cards around it would jump. Every card is measured just
+// before the list changes, so several cards leaving at once are each pinned where they really were.
+const grid = useTemplateRef<{ $el: HTMLElement }>('grid')
+const places = new Map<string, { left: number; top: number; width: number; height: number }>()
+
+watch(
+  shown,
+  () => {
+    places.clear()
+    for (const child of grid.value?.$el.children ?? []) {
+      const card = child as HTMLElement
+      places.set(card.dataset.key ?? '', {
+        left: card.offsetLeft,
+        top: card.offsetTop,
+        width: card.offsetWidth,
+        height: card.offsetHeight,
+      })
+    }
+  },
+  { flush: 'pre' },
+)
+
+function pin(el: Element) {
+  const card = el as HTMLElement
+  const place = places.get(card.dataset.key ?? '')
+  if (!place) return
+  Object.assign(card.style, {
+    position: 'absolute',
+    margin: '0',
+    left: `${place.left}px`,
+    top: `${place.top}px`,
+    width: `${place.width}px`,
+    height: `${place.height}px`,
+  })
+}
 </script>
 
 <template>
@@ -53,7 +90,7 @@ const shown = computed(() =>
 
     <div
       v-if="clientCount"
-      class="animate-rise border-line-strong bg-surface relative mb-8 inline-grid grid-cols-2 rounded-full border p-1 backdrop-blur [animation-delay:200ms]"
+      class="animate-rise border-line-strong bg-surface relative mb-8 inline-grid grid-cols-2 rounded-full border p-1 [animation-delay:200ms]"
       role="tablist"
       aria-label="Kind of work"
     >
@@ -124,16 +161,20 @@ const shown = computed(() =>
     </div>
 
     <TransitionGroup
+      ref="grid"
       tag="div"
       class="relative grid gap-5 md:grid-cols-2 lg:grid-cols-3"
       move-class="transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
-      enter-active-class="transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
-      enter-from-class="scale-95 opacity-0"
-      leave-active-class="absolute transition duration-300"
-      leave-to-class="scale-95 opacity-0"
+      enter-active-class="transition-[opacity,transform] duration-500 delay-150 ease-[cubic-bezier(0.16,1,0.3,1)]"
+      enter-from-class="translate-y-4 scale-[0.97] opacity-0"
+      leave-active-class="pointer-events-none transition-[opacity,transform] duration-300 ease-out"
+      leave-to-class="scale-[0.96] opacity-0"
+      @before-leave="pin"
     >
-      <div v-for="(project, position) in shown" :key="project.id" v-reveal="(position % 3) * 100">
-        <ProjectCard :project="project" :eager="position < 3" />
+      <div v-for="(project, position) in shown" :key="project.id" :data-key="project.id" class="will-change-transform">
+        <div v-reveal="(position % 3) * 100" class="h-full">
+          <ProjectCard :project="project" :eager="position < 3" />
+        </div>
       </div>
     </TransitionGroup>
     <p v-if="!shown.length" class="py-16 text-center text-lg text-muted">

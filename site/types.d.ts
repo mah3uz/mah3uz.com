@@ -71,6 +71,7 @@ export interface ProjectsProject extends RecordBase {
   featured: boolean
   stack: string[]
   highlights: string[]
+  banner: string | null
   cover: string | null
   website: string | null
   repository: string | null
@@ -135,7 +136,7 @@ export interface ViewProps {
     projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'logo' | 'monogram' | 'accent' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'home': {
-    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'description' | 'stage' | 'kind' | 'year' | 'logo' | 'monogram' | 'accent' | 'featured' | 'stack' | 'cover' | 'website' | 'repository' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'description' | 'stage' | 'kind' | 'year' | 'logo' | 'banner' | 'monogram' | 'accent' | 'featured' | 'stack' | 'cover' | 'website' | 'repository' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
     posts: Pick<(PostsPost), 'excerpt' | 'published_at' | 'photo' | 'photo_credit' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'now': {

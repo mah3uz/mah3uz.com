@@ -8,7 +8,7 @@ const copy = computed(() => STATUS_COPY[props.status] ?? STATUS_COPY.building)
 
 <template>
   <span
-    class="border-line-strong bg-surface inline-flex items-center gap-2 rounded-full border px-3 py-1 font-mono text-[0.7rem] tracking-wider uppercase backdrop-blur"
+    class="border-line-strong bg-surface inline-flex items-center gap-2 rounded-full border px-3 py-1 font-mono text-[0.7rem] tracking-wider uppercase"
     :title="copy.note"
   >
     <span

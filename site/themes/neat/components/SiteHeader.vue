@@ -76,7 +76,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
       class="mx-auto flex max-w-6xl items-center justify-between gap-4 rounded-full border px-3 py-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:px-4"
       :class="
         scrolled || menuOpen
-          ? 'border-line bg-surface shadow-[0_20px_50px_-30px_rgba(4,48,64,0.5)] backdrop-blur-xl'
+          ? 'border-line bg-surface-strong/95 shadow-[0_20px_50px_-30px_rgba(4,48,64,0.5)]'
           : 'border-transparent bg-transparent'
       "
     >

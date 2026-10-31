@@ -160,7 +160,7 @@ const timeline = computed(() => {
     </section>
 
     <section id="contact" aria-labelledby="contact-heading" class="mt-28 scroll-mt-28">
-      <div class="border-line bg-surface relative overflow-hidden rounded-[2.5rem] border p-6 backdrop-blur sm:p-12">
+      <div class="border-line bg-surface relative overflow-hidden rounded-[2.5rem] border p-6 sm:p-12">
         <Corners inset="1.25rem" />
         <div class="grid gap-12 lg:grid-cols-[1fr_1.4fr]">
           <div v-reveal>

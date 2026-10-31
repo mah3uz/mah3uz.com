@@ -41,7 +41,7 @@ const year = new Date().getUTCFullYear()
         aria-hidden="true"
       />
       <Corners inset="1.5rem" />
-      <div class="relative grid items-end gap-10 lg:grid-cols-[1.4fr_1fr]">
+      <div class="relative grid items-end gap-10 pb-6 sm:pb-0 lg:grid-cols-[1.4fr_1fr] lg:pr-16">
         <div>
           <p class="neat-eyebrow !text-mint">Open for the right work</p>
           <h2 id="footer-cta" class="font-display mt-5 text-4xl font-extrabold tracking-tight text-balance sm:text-6xl">
@@ -68,7 +68,7 @@ const year = new Date().getUTCFullYear()
         </div>
       </div>
       <svg
-        class="pointer-events-none absolute right-0 bottom-0 size-28 sm:size-36"
+        class="pointer-events-none absolute right-0 bottom-0 size-16 sm:size-20"
         viewBox="0 0 104 104"
         aria-hidden="true"
       >

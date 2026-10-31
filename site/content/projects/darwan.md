@@ -11,6 +11,7 @@ logo: /logos/darwan.svg
 monogram: "D"
 accent: "#2A8FB0"
 featured: true
+banner: /banners/darwan.webp
 cover: /art/darwan.svg
 website: https://darwan.dev
 repository: https://github.com/mah3uz/darwan

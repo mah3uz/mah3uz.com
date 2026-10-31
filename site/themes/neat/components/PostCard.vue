@@ -27,21 +27,21 @@ const formatDate = useFormatDate()
 <template>
   <article
     v-spotlight
-    class="group neat-card flex h-full flex-col p-2 transition-transform duration-700 hover:-translate-y-1.5"
+    class="group neat-card flex h-full flex-col p-2 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5"
   >
     <div class="aspect-16/10 overflow-hidden rounded-[1.4rem]">
       <Image
         v-if="post.featured_image"
         :image="post.featured_image"
         sizes="(min-width: 768px) 24rem, 100vw"
-        class="size-full object-cover transition-transform duration-[1.2s] group-hover:scale-105"
+        class="size-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform group-hover:scale-105"
       />
       <CoverPhoto
         v-else
         :src="post.photo"
         :art="post.art ?? '/art/nibble.svg'"
         :alt="''"
-        class="size-full !rounded-none !border-0 transition-transform duration-[1.2s] group-hover:scale-105"
+        class="size-full !rounded-none !border-0 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform group-hover:scale-105"
       />
     </div>
     <div class="flex flex-1 flex-col gap-3 p-5">

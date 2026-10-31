@@ -11,6 +11,7 @@ logo: /logos/nibble-cli.svg
 monogram: "›_"
 accent: "#1388A6"
 featured: false
+banner: /banners/nibble-cli.webp
 cover: /art/nibble-cli.svg
 website: https://nibble.ink
 repository: https://github.com/mah3uz/nibble-cli

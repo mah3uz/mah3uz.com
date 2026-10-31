@@ -11,6 +11,7 @@ logo: /logos/nibble.svg
 monogram: "n"
 accent: "#21BDB0"
 featured: true
+banner: /banners/nibble.svg
 cover: /art/nibble.svg
 website: https://nibble.ink
 repository: https://github.com/mah3uz/nibble

@@ -11,6 +11,7 @@ logo: /logos/sysman.svg
 monogram: "S"
 accent: "#0E9AA7"
 featured: true
+banner: /banners/sysman.svg
 cover: /art/sysman.svg
 website: https://sysman.asmechanics.com
 repository: https://github.com/mah3uz/sysman

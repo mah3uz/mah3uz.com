@@ -54,6 +54,8 @@ tabs:
             field: { type: list }
           - handle: highlights
             field: { type: list, instructions: "Three or four short facts shown beside the write-up." }
+          - handle: banner
+            field: { type: text, instructions: "The product's own banner, such as /banners/quarry.svg. Shown in the home showcase and at the top of its case study." }
           - handle: cover
             field: { type: text, instructions: "The cover art's address, such as /art/quarry.svg." }
           - handle: website

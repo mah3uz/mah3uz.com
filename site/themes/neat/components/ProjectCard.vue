@@ -17,7 +17,7 @@ const status = computed(() => statusOf(props.project))
 <template>
   <article
     v-spotlight
-    class="group neat-card flex h-full flex-col transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5"
+    class="group neat-card flex h-full flex-col transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5"
   >
     <div v-if="project.cover" class="relative m-2 mb-0 overflow-hidden rounded-[1.4rem]">
       <img
@@ -26,7 +26,7 @@ const status = computed(() => statusOf(props.project))
         :loading="eager ? 'eager' : 'lazy'"
         width="1600"
         height="1000"
-        class="aspect-16/10 w-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+        class="aspect-16/10 w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform group-hover:scale-[1.04]"
       />
       <div class="absolute top-4 left-4 flex gap-2">
         <StatusPill :status="status" :label="statusLabel(project)" />
@@ -72,7 +72,7 @@ const status = computed(() => statusOf(props.project))
       </ul>
     </div>
     <span
-      class="bg-canvas/80 absolute top-6 right-6 z-20 grid size-10 place-items-center rounded-full text-accent opacity-0 backdrop-blur transition-all duration-500 group-hover:-translate-y-1 group-hover:opacity-100"
+      class="bg-canvas/80 absolute top-6 right-6 z-20 grid size-10 place-items-center rounded-full text-accent opacity-0 transition-all duration-500 group-hover:-translate-y-1 group-hover:opacity-100"
       aria-hidden="true"
     >
       ↗

@@ -115,7 +115,7 @@
   --animate-fade: fade 1.2s ease both;
   --animate-drift: drift 18s ease-in-out infinite alternate;
   --animate-marquee: marquee 40s linear infinite;
-  --animate-pulse-ring: pulse-ring 2.4s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
+  --animate-pulse-ring: pulse-ring 2.4s ease-in-out infinite;
   --animate-corner: corner 1s var(--ease-out-expo) both;
   --animate-float: float 7s ease-in-out infinite;
   --animate-blink: blink 1.1s steps(1) infinite;
@@ -123,13 +123,11 @@
   @keyframes rise {
     from {
       opacity: 0;
-      transform: translateY(28px);
-      filter: blur(6px);
+      transform: translate3d(0, 24px, 0);
     }
     to {
       opacity: 1;
       transform: none;
-      filter: none;
     }
   }
   @keyframes fade {
@@ -157,11 +155,14 @@
     }
   }
   @keyframes pulse-ring {
-    0% {
-      box-shadow: 0 0 0 0 color-mix(in oklab, var(--neat-accent) 60%, transparent);
-    }
+    0%,
     100% {
-      box-shadow: 0 0 0 10px transparent;
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.45;
+      transform: scale(1.6);
     }
   }
   @keyframes corner {
@@ -248,7 +249,8 @@
   border: 1px solid var(--neat-line);
   background: var(--neat-surface);
   box-shadow: var(--neat-shadow);
-  backdrop-filter: blur(14px);
+  transform: translateZ(0);
+  backface-visibility: hidden;
   &::before {
     content: '';
     position: absolute;
@@ -308,7 +310,6 @@
   font-weight: 600;
   border: 1px solid var(--neat-line-strong);
   background: var(--neat-surface);
-  backdrop-filter: blur(10px);
   transition:
     border-color 0.3s ease,
     transform 0.4s var(--ease-out-expo);
@@ -340,18 +341,23 @@
 /* Scroll reveal, switched on by the v-reveal directive once the page is interactive. */
 .neat-reveal {
   opacity: 0;
-  transform: translateY(32px);
-  filter: blur(4px);
+  transform: translate3d(0, 28px, 0);
   transition:
     opacity 0.9s var(--ease-out-expo),
-    transform 0.9s var(--ease-out-expo),
-    filter 0.9s var(--ease-out-expo);
+    transform 0.9s var(--ease-out-expo);
   transition-delay: var(--reveal-delay, 0ms);
 }
 .neat-reveal.neat-revealed {
   opacity: 1;
   transform: none;
-  filter: none;
+}
+
+/* Things that animate for as long as the page is open get a layer of their own, so moving them never repaints the page. */
+.animate-drift,
+.animate-float,
+.animate-marquee,
+.animate-pulse-ring {
+  will-change: transform;
 }
 
 /* The theme switch paints the new register in with a widening circle, where the browser can. */
