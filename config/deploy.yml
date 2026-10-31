@@ -1,17 +1,17 @@
 ---
 service: mah3uz
-image: mahfuz322/mah3uz
+image: mahfuz332/mah3uz
 servers:
   web:
-  - 10.10.10.10
+  - 95.111.219.175
 proxy:
   ssl: true
   hosts:
   - mah3uz.com
 registry:
-  username: mahfuz322
+  username: mahfuz332
   password:
-  - KAMAL_REGISTRY_PASSWORD
+    - KAMAL_REGISTRY_PASSWORD
 builder:
   arch: amd64
 env:

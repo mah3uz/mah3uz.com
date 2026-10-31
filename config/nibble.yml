@@ -6,7 +6,7 @@ default: &default
   # Upgrading never changes this line, so an upgrade alone never changes how the site behaves.
   load_defaults: "0.25.0"
   theme: neat
-  url: http://localhost:3100
+  url: https://mah3uz.com
   locales:
     - code: en
       default: true
@@ -27,9 +27,9 @@ install:
   at: '2026-10-31'
   answers:
     name: mah3uz
-    url: http://localhost:3100
+    url: https://mah3uz.com
     theme: neat
     host: mah3uz.com
-    server: 10.10.10.10
-    registry_user: mahfuz322
+    server: 95.111.219.175
+    registry_user: mahfuz332
     ssh_user: mahfuz
