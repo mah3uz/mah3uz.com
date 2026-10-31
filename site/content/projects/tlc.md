@@ -14,7 +14,7 @@ monogram: "TL"
 accent: "#0F7C93"
 featured: false
 cover: /art/tlc.svg
-website: https://tlc.com
+website: https://tlc.com.au
 stack: [Web application engineering, Linux administration, Deployment automation, Production operations]
 highlights: 
   - Long-term partnership, covering software and infrastructure
