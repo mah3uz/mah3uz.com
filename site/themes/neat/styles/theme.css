@@ -338,6 +338,44 @@
   }
 }
 
+/*
+ * Scrollbars: thin, rounded and tinted with the accent, on a transparent track, in both registers. The standard
+ * properties cover Firefox and current Chromium; the -webkit- rules cover Safari and older Chromium, which ignore them.
+ */
+:root {
+  --neat-scroll-thumb: color-mix(in oklab, var(--neat-accent) 38%, transparent);
+  --neat-scroll-thumb-hover: color-mix(in oklab, var(--neat-accent) 70%, transparent);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--neat-scroll-thumb) transparent;
+}
+*:hover {
+  scrollbar-color: var(--neat-scroll-thumb-hover) transparent;
+}
+@supports not (scrollbar-color: auto) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: var(--neat-scroll-thumb);
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--neat-scroll-thumb-hover);
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
 /* Scroll reveal, switched on by the v-reveal directive once the page is interactive. */
 .neat-reveal {
   opacity: 0;
