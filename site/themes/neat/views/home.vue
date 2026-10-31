@@ -60,7 +60,9 @@ const headline = computed(() => {
         aria-hidden="true"
       />
       <div class="relative">
-        <p v-if="page.eyebrow" class="neat-eyebrow animate-rise text-pretty [animation-delay:60ms]">{{ page.eyebrow }}</p>
+        <p v-if="page.eyebrow" class="neat-eyebrow animate-rise text-pretty [animation-delay:60ms]">
+          {{ page.eyebrow }}
+        </p>
         <h1
           class="animate-rise font-display mt-4 text-[2.9rem] leading-[1.02] font-extrabold tracking-[-0.045em] text-balance [animation-delay:120ms] sm:text-7xl lg:text-[5.2rem]"
         >
