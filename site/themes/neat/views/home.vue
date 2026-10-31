@@ -29,7 +29,6 @@ const reel = computed(() => [
   ...all.value.filter((project) => !featured.value.includes(project)),
   ...clients.value,
 ])
-const building = computed(() => all.value.find((project) => statusOf(project) === 'building'))
 const stack = computed(() => [...new Set(all.value.flatMap((project) => project.stack ?? []))])
 const board = computed(() =>
   (['building', 'shipped', 'experiment'] as Status[])
@@ -61,20 +60,7 @@ const headline = computed(() => {
         aria-hidden="true"
       />
       <div class="relative">
-        <Link
-          v-if="building"
-          :href="building.uri ?? '#'"
-          class="animate-rise group border-line-strong bg-surface inline-flex items-center gap-3 rounded-full border py-1.5 pr-4 pl-1.5 text-sm transition-colors hover:border-accent"
-        >
-          <span
-            class="bg-ink text-canvas flex items-center gap-2 rounded-full px-3 py-1 font-mono text-[0.7rem] uppercase"
-          >
-            <span class="animate-pulse-ring bg-mint size-1.5 rounded-full" />Now building
-          </span>
-          <span class="font-medium">{{ building.title }}</span>
-          <span class="text-accent transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
-        </Link>
-        <p v-if="page.eyebrow" class="neat-eyebrow animate-rise mt-8 [animation-delay:60ms]">{{ page.eyebrow }}</p>
+        <p v-if="page.eyebrow" class="neat-eyebrow animate-rise text-pretty [animation-delay:60ms]">{{ page.eyebrow }}</p>
         <h1
           class="animate-rise font-display mt-4 text-[2.9rem] leading-[1.02] font-extrabold tracking-[-0.045em] text-balance [animation-delay:120ms] sm:text-7xl lg:text-[5.2rem]"
         >
