@@ -1,8 +1,11 @@
 name: mah3uz
-tagline: Software engineer since 2009 — building products, developer tools and software for the Linux desktop.
+tagline: Software engineer and Linux systems administrator since 2009 — building products, and running the infrastructure
+  they depend on.
 social_links:
 - label: GitHub
   url: https://github.com/mah3uz
+- label: Unsplash
+  url: https://unsplash.com/@mah3uz
 - label: Nibble
   url: https://nibble.ink
 - label: Darwan

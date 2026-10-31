@@ -1,18 +1,15 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3'
 import { useGlobals } from '@nibble'
 import { computed } from 'vue'
 import type { PagesPage, SiteGlobals, ViewProps } from '@site/types'
 import BrandMark from '../components/BrandMark.vue'
 import ContactForm from '../components/ContactForm.vue'
 import Corners from '../components/Corners.vue'
-import CoverPhoto from '../components/CoverPhoto.vue'
+import ArtBanner from '../components/ArtBanner.vue'
 import PageBody from '../components/PageBody.vue'
-import ProjectTile from '../components/ProjectTile.vue'
-import StatusPill from '../components/StatusPill.vue'
 import { vReveal, vSpotlight, vTilt } from '../lib/motion'
-import { socialLinks } from '../lib/links'
-import { isClient, onlyProjects, statusLabel, statusOf } from '../lib/projects'
+import { linkTag, socialLinks } from '../lib/links'
+import { isClient, onlyProjects } from '../lib/projects'
 
 const props = defineProps<ViewProps['about'] & { page: PagesPage }>()
 const site = useGlobals<SiteGlobals>('site')
@@ -22,13 +19,17 @@ const years = new Date().getUTCFullYear() - STARTED
 const all = computed(() => onlyProjects(props.projects))
 const socials = computed(() => socialLinks(site.value?.social_links))
 const products = computed(() => all.value.filter((project) => !isClient(project)))
-const timeline = computed(() => {
-  const groups = new Map<string, typeof all.value>()
-  ;[...all.value]
-    .sort((a, b) => (b.year ?? '').localeCompare(a.year ?? ''))
-    .forEach((project) => groups.set(project.year ?? '—', [...(groups.get(project.year ?? '—') ?? []), project]))
-  return [...groups.entries()]
-})
+// Grid rows arrive loosely typed; read each into the shape the timeline draws.
+const milestones = computed(() =>
+  (props.page.milestones ?? []).map((row, index) => ({
+    id: String(row.id ?? index),
+    year: String(row.year ?? ''),
+    tag: row.tag ? String(row.tag) : '',
+    title: String(row.title ?? ''),
+    text: String(row.text ?? ''),
+    url: row.url ? String(row.url) : '',
+  })),
+)
 </script>
 
 <template>
@@ -64,7 +65,7 @@ const timeline = computed(() => {
           <div class="relative">
             <BrandMark size="size-20" />
             <p class="font-display mt-8 text-3xl font-extrabold tracking-tight">{{ site?.name ?? 'mah3uz' }}</p>
-            <p class="text-mist mt-1">Software engineer · since {{ STARTED }}</p>
+            <p class="text-mist mt-1">Linux systems &amp; software engineer · since {{ STARTED }}</p>
             <dl class="mt-8 grid grid-cols-3 gap-4 border-t border-white/10 pt-6">
               <div>
                 <dt class="text-mist/70 font-mono text-[0.65rem] tracking-wider uppercase">Years</dt>
@@ -75,8 +76,8 @@ const timeline = computed(() => {
                 <dd class="font-display text-mint mt-1 text-2xl font-extrabold">{{ products.length }}</dd>
               </div>
               <div>
-                <dt class="text-mist/70 font-mono text-[0.65rem] tracking-wider uppercase">Shipping</dt>
-                <dd class="font-display text-mint mt-1 text-2xl font-extrabold">Still</dd>
+                <dt class="text-mist/70 font-mono text-[0.65rem] tracking-wider uppercase">On Linux</dt>
+                <dd class="font-display text-mint mt-1 text-2xl font-extrabold">Always</dd>
               </div>
             </dl>
           </div>
@@ -86,14 +87,11 @@ const timeline = computed(() => {
 
     <div class="mt-24 grid gap-14 lg:grid-cols-[1fr_22rem]">
       <PageBody :content="page.content" :blocks="page.blocks" large />
-      <CoverPhoto
-        v-if="page.photo"
+      <ArtBanner
+        v-if="page.art"
         v-reveal
-        :src="page.photo"
-        art="/art/insensical.svg"
-        alt="A focused workspace: a laptop and a desk at night"
-        :credit="page.photo_credit"
-        class="aspect-[4/5] self-start lg:sticky lg:top-28"
+        :src="page.art"
+        class="aspect-[4/5] self-start lg:sticky lg:top-28 [&_img]:object-[30%_50%]"
       />
     </div>
 
@@ -119,42 +117,47 @@ const timeline = computed(() => {
       </ol>
     </section>
 
-    <section v-if="timeline.length" aria-labelledby="timeline" class="mt-28">
-      <div v-reveal class="mb-12 max-w-2xl">
-        <p class="neat-eyebrow">Recent products</p>
+    <section v-if="milestones.length" aria-labelledby="timeline" class="mt-28">
+      <div v-reveal class="mb-14 max-w-2xl">
+        <p class="neat-eyebrow">Timeline</p>
         <h2 id="timeline" class="font-display mt-3 text-4xl font-extrabold tracking-[-0.03em] sm:text-5xl">
-          What I’ve been building lately
+          {{ years }} years, one thread
         </h2>
+        <p class="mt-4 text-lg leading-8 text-muted">
+          The milestones I can point to. Most client work is private, so the public record starts later than the career
+          does; where there is something to see, the milestone links to it.
+        </p>
       </div>
-      <ol role="list" class="border-line-strong relative grid gap-12 border-l pl-8 sm:pl-12">
-        <li v-for="[year, items] in timeline" :key="year" v-reveal class="relative">
-          <span
-            class="bg-canvas absolute top-1 -left-[2.55rem] grid size-5 place-items-center rounded-full border-2 border-accent sm:-left-[3.55rem]"
-            aria-hidden="true"
-            ><span class="size-1.5 rounded-full bg-accent"
-          /></span>
-          <p class="font-display text-3xl font-extrabold tracking-tight text-accent">{{ year }}</p>
-          <ul role="list" class="mt-5 grid gap-3 md:grid-cols-2">
-            <li v-for="project in items" :key="project.id">
-              <Link
-                :href="project.uri ?? '#'"
-                class="group neat-card flex items-center gap-4 !rounded-2xl p-4 transition-transform duration-500 hover:-translate-y-0.5"
+      <ol role="list" class="neat-timeline relative grid gap-10 lg:gap-6">
+        <li
+          v-for="(milestone, index) in milestones"
+          :key="milestone.id"
+          v-reveal="(index % 3) * 60"
+          class="neat-milestone relative grid gap-3 pl-12 lg:grid-cols-2 lg:gap-16 lg:pl-0"
+          :class="index % 2 ? 'lg:[&>article]:col-start-2' : 'lg:[&>article]:col-start-1 lg:[&>article]:text-right'"
+        >
+          <span class="neat-timeline-dot" aria-hidden="true" />
+          <article class="neat-card p-6" :class="index % 2 ? '' : 'lg:[&_.neat-milestone-meta]:justify-end'">
+            <p class="neat-milestone-meta flex flex-wrap items-center gap-3">
+              <span class="font-display text-2xl font-extrabold tracking-tight text-accent">{{ milestone.year }}</span>
+              <span
+                v-if="milestone.tag"
+                class="border-line-strong rounded-full border px-2.5 py-0.5 font-mono text-[0.65rem] tracking-wider text-muted uppercase"
+                >{{ milestone.tag }}</span
               >
-                <ProjectTile
-                  :logo="project.logo"
-                  :monogram="project.monogram"
-                  :accent="project.accent"
-                  size="size-11"
-                  text="text-base"
-                />
-                <span class="min-w-0 flex-1">
-                  <span class="font-display block font-bold">{{ project.title }}</span>
-                  <span class="block truncate text-sm text-muted">{{ project.tagline }}</span>
-                </span>
-                <StatusPill :status="statusOf(project)" :label="statusLabel(project)" class="max-sm:hidden" />
-              </Link>
-            </li>
-          </ul>
+            </p>
+            <h3 class="font-display mt-3 text-xl font-bold tracking-tight">
+              <component
+                :is="milestone.url ? linkTag(milestone.url) : 'span'"
+                :href="milestone.url || undefined"
+                :target="milestone.url && !milestone.url.startsWith('/') ? '_blank' : undefined"
+                :rel="milestone.url && !milestone.url.startsWith('/') ? 'noopener' : undefined"
+                :class="{ 'neat-link': milestone.url }"
+                >{{ milestone.title }}</component
+              >
+            </h3>
+            <p class="mt-2 leading-7 text-muted">{{ milestone.text }}</p>
+          </article>
         </li>
       </ol>
     </section>
@@ -186,3 +189,45 @@ const timeline = computed(() => {
     </section>
   </div>
 </template>
+
+<style>
+/* The timeline's rail: on the left on small screens, down the middle on large ones. */
+.neat-timeline::before {
+  content: '';
+  position: absolute;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  left: 0.75rem;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--neat-accent) 6%,
+    var(--neat-line-strong) 50%,
+    var(--neat-accent) 94%,
+    transparent
+  );
+}
+.neat-timeline-dot {
+  position: absolute;
+  top: 1.85rem;
+  left: 0.75rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: var(--neat-canvas);
+  border: 3px solid var(--neat-accent);
+  box-shadow: 0 0 0 6px color-mix(in oklab, var(--neat-accent) 14%, transparent);
+}
+@media (min-width: 64rem) {
+  .neat-timeline::before,
+  .neat-timeline-dot {
+    left: 50%;
+  }
+  .neat-timeline::before {
+    translate: -50% 0;
+  }
+}
+</style>

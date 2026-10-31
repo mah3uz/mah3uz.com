@@ -1,0 +1,292 @@
+title: A lock screen that cannot lock you out
+published_at: '2026-10-08T09:00:00Z'
+topics:
+- topics/linux
+- topics/security
+excerpt: Theming a login screen means writing to system directories as root; theming a lock screen means one bug can lock
+  someone out of their own machine. How Darwan handles both — a supervised lock, and a root helper that trusts nothing it
+  is given.
+art: /art/posts/lock-screen.svg
+body:
+- type: paragraph
+  content:
+  - type: text
+    text: 'Darwan is a theme manager for the two "gates" of a Linux desktop: the SDDM login screen and a Quickshell lock screen.
+      Its 40 themes were designed by Darkkal44 for the qylock project; my work was the application around them. On paper that
+      sounds cosmetic. In practice it involves two of the most safety-sensitive things a desktop application can do: '
+  - type: text
+    text: writing to system directories as root
+    marks:
+    - type: bold
+  - type: text
+    text: ', and '
+  - type: text
+    text: controlling the screen that stands between a user and their session.
+    marks:
+    - type: bold
+- type: paragraph
+  content:
+  - type: text
+    text: Both deserve the kind of care I would give a production server. Here is how Darwan approaches them.
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: The failure that matters
+- type: paragraph
+  content:
+  - type: text
+    text: 'A broken desktop theme is an annoyance. A broken lock screen is a person who cannot get back into their own computer
+      — possibly with unsaved work behind it, possibly with no idea how to switch to another terminal and recover. So the
+      design starts from one requirement: '
+  - type: text
+    text: under no failure should the user be left facing a black screen.
+    marks:
+    - type: bold
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: A supervisor, not a launcher
+- type: paragraph
+  content:
+  - type: text
+    text: Darwan doesn't just start the lock screen; it supervises it. The lock process and its supervisor share a small protocol
+      of exit codes — authenticated, or a screensaver that was dismissed. Anything else is a failure, and the supervisor restarts
+      the lock with exponential backoff, from 100 milliseconds up to a two-second cap. Thirty seconds of stable running reset
+      the failure count.
+- type: paragraph
+  content:
+  - type: text
+    text: 'The supervisor only gives up in one situation: when the lock '
+  - type: text
+    text: never took hold
+    marks:
+    - type: italic
+  - type: text
+    text: ' — because, as the code puts it, '
+  - type: text
+    text: '"a lock that never took hold protects nothing."'
+    marks:
+    - type: italic
+  - type: text
+    text: ' Giving up on a lock that is protecting the session would be the dangerous choice; giving up on one that never
+      started is the honest one.'
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: A way in, always
+- type: paragraph
+  content:
+  - type: text
+    text: If a theme fails to load, the user gets a plain fallback password prompt rather than a black screen. It isn't pretty,
+      and it doesn't need to be. It needs to work.
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: Check the environment before you rely on it
+- type: paragraph
+  content:
+  - type: text
+    text: 'On Hyprland, a replacement locker can only take over a session if the compositor is configured to allow it. Rather
+      than discover that at the worst moment, Darwan checks the setting and refuses to lock without it. It also configures
+      idle and sleep handling so the screen is locked '
+  - type: text
+    text: before
+    marks:
+    - type: italic
+  - type: text
+    text: ' the machine suspends, not after it wakes — the default only waits for the lock when the locker is the compositor''s
+      own.'
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: Test without risk
+- type: paragraph
+  content:
+  - type: text
+    text: 'Finally, users can preview a theme without trusting it: live in the app with a test password, full screen on every
+      monitor with their real password, in SDDM''s own test mode, or headlessly with screenshots. Before a release, every
+      theme is loaded offscreen and unlocked by typing a password — including from the screensaver mode — and any QML warning
+      fails the check.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: A root helper with no trust in its caller
+- type: paragraph
+  content:
+  - type: text
+    text: 'The login screen lives in system directories, so applying a theme requires root. The common shortcut is to run
+      the whole tool with '
+  - type: text
+    text: sudo
+    marks:
+    - type: code
+  - type: text
+    text: ', or to have a privileged helper that does whatever the application asks. Both put a large, complex graphical program
+      in charge of root''s decisions.'
+- type: paragraph
+  content:
+  - type: text
+    text: Darwan isolates the privileged work in a small helper, and the helper treats the application calling it as untrusted.
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Authorisation is narrow.
+        marks:
+        - type: bold
+      - type: text
+        text: ' The helper is started through polkit with an action pinned to its exact executable path.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Bytes, not paths.
+        marks:
+        - type: bold
+      - type: text
+        text: ' The helper reads a single JSON request, capped in size, followed by the file contents on standard input. '
+      - type: text
+        text: '"Nothing is taken from a path"'
+        marks:
+        - type: italic
+      - type: text
+        text: ' — so it can''t be tricked into reading or writing a file it shouldn''t.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Validate again.
+        marks:
+        - type: bold
+      - type: text
+        text: ' The helper re-validates every setting against the theme''s own manifest rather than trusting that the application
+          already did.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Check what files are, not what they're called.
+        marks:
+        - type: bold
+      - type: text
+        text: ' Fonts, images and videos are checked by their magic bytes — '
+      - type: text
+        text: '"a renamed file of another kind is refused"'
+        marks:
+        - type: italic
+      - type: text
+        text: ' — and capped in size.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Write atomically, and only your own files.
+        marks:
+        - type: bold
+      - type: text
+        text: ' Files are written atomically; the active-theme symlink is staged and swapped into place with a rename; and
+          the helper refuses to touch anything that '
+      - type: text
+        text: '"exists and is not darwan''s symlink."'
+        marks:
+        - type: italic
+      - type: text
+        text: ' Its configuration file is named so that it sorts last, and wins, without editing anyone else''s.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'The helper is around nine hundred lines of Rust with its own test suite, which is the point: a small, auditable
+      piece of code is the only kind that should run as root.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: A caching bug worth remembering
+- type: paragraph
+  content:
+  - type: text
+    text: 'One bug taught a lesson I''ve learned before in operations. After switching themes, the login screen sometimes
+      showed the new theme''s settings on the '
+  - type: text
+    text: old
+    marks:
+    - type: italic
+  - type: text
+    text: ' theme''s widgets. The greeter caches compiled QML by file path and modification time — and every packaged theme
+      shared the same link path and the same modification time. So the cache was technically correct and practically wrong:
+      it kept running the previous theme''s compiled code.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'The fix was a separate link per theme, with old links cleaned up. The lesson is general: '
+  - type: text
+    text: every cache is built on an assumption about what makes two things the same
+    marks:
+    - type: bold
+  - type: text
+    text: ', and a deployment that violates that assumption fails silently. When something "can''t be stale" but is, look
+      for the cache key.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: The same principles, anywhere
+- type: paragraph
+  content:
+  - type: text
+    text: 'Strip away the theming, and these are the principles I apply to any privileged or safety-critical component:'
+- type: orderedList
+  attrs:
+    start: 1
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Design around the failure that hurts most, and make it impossible rather than unlikely.
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Supervise what must stay running, with backoff and a clear rule for giving up.
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Keep the privileged part small, and let it trust nothing it is handed.
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Prefer streams of bytes to paths, atomic swaps to in-place edits, and refusing to proceed over guessing.
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Test the real failure modes — headlessly, repeatedly, before every release.

@@ -1,0 +1,7 @@
+---
+title: Search
+template: search
+eyebrow: Find anything
+seo:
+  title: Search
+---

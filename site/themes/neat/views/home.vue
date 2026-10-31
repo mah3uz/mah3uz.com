@@ -3,7 +3,7 @@ import { Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import type { PagesPage, ViewProps } from '@site/types'
 import Corners from '../components/Corners.vue'
-import HeroShowcase from '../components/HeroShowcase.vue'
+import HeroReel from '../components/HeroReel.vue'
 import PostCard from '../components/PostCard.vue'
 import ProjectCard from '../components/ProjectCard.vue'
 import ProjectTile from '../components/ProjectTile.vue'
@@ -23,10 +23,11 @@ const featured = computed(() => {
   const picked = all.value.filter((project) => project.featured)
   return (picked.length ? picked : all.value).slice(0, 4)
 })
-// The hero's deck: featured work first, then the rest of the products, as far as they have a banner to show.
-const showcase = computed(() => [
+// The hero's reel: featured work first, then the other products, then client work.
+const reel = computed(() => [
   ...featured.value,
   ...all.value.filter((project) => !featured.value.includes(project)),
+  ...clients.value,
 ])
 const building = computed(() => all.value.find((project) => statusOf(project) === 'building'))
 const stack = computed(() => [...new Set(all.value.flatMap((project) => project.stack ?? []))])
@@ -97,7 +98,7 @@ const headline = computed(() => {
         </dl>
       </div>
       <div class="animate-rise relative [animation-delay:240ms] lg:pl-6">
-        <HeroShowcase :projects="showcase" :years="years" />
+        <HeroReel :projects="reel" :years="years" />
       </div>
     </section>
 

@@ -1,41 +1,36 @@
 title: What I'm focused on now
 template: now
 eyebrow: Now
-intro: A snapshot of where my attention is this season — what I am building, shipping and learning.
-content: '## Building
-
-
-  Most of my days go into **Nibble**. The aim is a CMS that feels like your own application, because it is: schema in YAML,
-  themes in Vue, content in SQLite, deployed with Kamal to a server you control. Alongside it, the **Nibble CLI** makes starting
-  a site and editing a live site''s content as natural as using git.
-
-
-  ## Shipping
-
-
-  **Darwan** keeps growing its collection of hand-crafted themes for SDDM and Quickshell, and **Quarry** keeps getting faster
-  at the everyday work of reading and querying databases. **Insensical** is heading towards a multiplexer that treats long-running
-  agent sessions as first-class.
-
-
-  ## Learning
-
-
-  **Sysman** is my excuse to go deep on GPUI and native rendering in Rust, and **rrussat** is a hands-on course in peer-to-peer
-  networking and applied cryptography.
-
-
-  ## Not doing
-
-
-  Saying yes to new long-term commitments. I keep a little room for short, focused collaborations — [get in touch](/about#contact)
-  if you have one in mind.'
+intro: A snapshot of where my time and attention go this season — the products I'm building, the systems I'm running, and
+  what I'm learning. Updated as things change.
+art: /art/pages/now.svg
 cards:
-- title: Primary focus
-  text: Nibble and its CLI — making a self-hosted CMS feel effortless.
-- title: On the side
-  text: Darwan themes, Quarry polish and Insensical sessions.
-- title: Exploring
-  text: GPUI for native Linux apps, and P2P encryption in Rust.
+- title: Building
+  text: Nibble towards a stable 1.0 — fewer, firmer guarantees, and the first sites run by people other than me.
+- title: Operating
+  text: Client platforms in production, and the servers behind this site and my products — patched, monitored and backed up.
+- title: Shipping
+  text: Sysman's alerts, Darwan's wallpaper and saver work, Quarry and Insensical point releases.
+- title: Learning
+  text: Native Linux UI with GPUI, eBPF across kernel versions, and the sharp edges of applied cryptography.
 seo:
   title: Now
+  description: What Mahfuz Shaikh is focused on now — building Nibble, operating client platforms, shipping Linux tools, and
+    learning GPUI and eBPF.
+content: "## Building\n\nMost of my product time goes into **Nibble**. The goal for the next stretch is a 1.0 that deserves\
+  \ the name: a smaller set\nof guarantees I am prepared to keep for years, an upgrade path people can trust without reading\
+  \ every changelog, and the\nfirst sites installed and run by people other than me. Its companion, **Nibble CLI**, is where\
+  \ much of the day-to-day\nexperience lives — creating sites, running their tasks, and working on content from a terminal\
+  \ or an AI agent, always as\nthe person who signed in.\n\n## Operating\n\nAlongside my own work I run production systems:\
+  \ client platforms, and the infrastructure behind this site and my products.\nThat means the unglamorous, essential work\
+  \ — patching and upgrades, backups that are tested by restoring them, monitoring\nthat alerts on what matters, and deploys\
+  \ small enough to be boring. I'm particularly interested right now in making\nsingle-server deployments with Kamal as dependable\
+  \ as much larger setups, because for most applications one well-run\nmachine is the right answer.\n\n## Shipping\n\n- **Sysman**\
+  \ — alerts in the collector daemon are next, so a machine can tell you about a problem rather than waiting to be\n  asked.\n\
+  - **Darwan** — continuing the wallpaper manager and screensaver work, and keeping pace with the Wayland compositors it\n\
+  \  supports.\n- **Quarry** and **Insensical** — point releases driven by daily use; the best feature requests come from\
+  \ the tool getting in\n  my own way.\n\n## Learning\n\nGPUI, the GPU-accelerated UI framework from the Zed editor, for native\
+  \ Linux software that feels instant; eBPF and BTF for\nobservability that works across kernel versions; and, through rrussat,\
+  \ the practical details of applied cryptography —\nwhere the hard part is never the algorithm, but the state machine around\
+  \ it.\n\n## Not doing\n\nTaking on new long-term commitments. I keep some room for focused engagements where engineering\
+  \ and infrastructure meet —\n[get in touch](/about#contact) if you have one in mind."

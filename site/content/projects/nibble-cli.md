@@ -2,8 +2,9 @@
 id: nibble-cli
 order: 2
 title: Nibble CLI
-tagline: Create a site, run its tasks, and edit any Nibble site's content from your terminal.
-description: The command-line companion to Nibble, written in Rust. It creates new sites, runs a site's tasks, and works on the content of any Nibble site you sign in to — as you, and never as more than you.
+tagline: Start a Nibble site, run its tasks, and work on any site's content from the terminal — as you, and never as more than you.
+description: The command-line companion to Nibble, written in Rust. It installs new sites with checksum verification, runs a site's tasks, and works on the content of any Nibble site you sign in to. Its remote commands are generated from the site itself, so a new capability on the server needs no new CLI.
+category: product
 stage: building
 kind: Command-line tool
 year: "2026"
@@ -11,32 +12,82 @@ logo: /logos/nibble-cli.svg
 monogram: "›_"
 accent: "#1388A6"
 featured: false
-banner: /banners/nibble-cli.webp
 cover: /art/nibble-cli.svg
 website: https://nibble.ink
 repository: https://github.com/mah3uz/nibble-cli
-stack: [Rust, CLI, OAuth, Nibble]
+stack: [Rust, OAuth 2.0 with PKCE, MCP, cargo-dist, rustls]
 highlights:
-  - "`nibble new` sets up a complete site, ready to deploy"
-  - Signs in to any Nibble site and works on its content remotely
-  - Acts with your permissions, never more
-  - A single fast binary
+  - Remote commands are built at run time from each site's own catalogue of operations
+  - Signs in with OAuth and PKCE (S256 required), and keeps tokens in the operating system's keychain
+  - A contract test boots a real Nibble site and drives the real binary — and Nibble's release script runs it
+  - Static builds for Linux (x86-64 and ARM), macOS and Windows
 seo:
-  description: "The command-line companion to Nibble, written in Rust. It creates new sites, runs a site's tasks, and works on the content of any Nibble site you sign in…"
+  description: "Nibble CLI is a Rust command-line tool that creates Nibble sites and edits any site's content through its own generated API, as you and never more."
 ---
 
-## The idea
+## The problem
 
-A CMS lives in a browser, but the people who build sites live in a terminal. Nibble CLI is the bridge: one binary
-that starts a new site, runs the tasks a site needs, and lets you work on the content of any Nibble site you can sign
-in to — locally or in production.
+A content system lives in a browser, but the people who build and operate sites live in a terminal — and, more and more,
+so do the scripts and AI agents that work alongside them. I wanted one tool that covers the whole life of a Nibble site:
+creating it, running its maintenance tasks, and working on a live site's content from anywhere, without ever becoming a
+backdoor around the permissions the site enforces.
 
-## As you, never more than you
+The README states the contract in one line: it *"starts a site, runs a site's tasks, and works on the content of any
+Nibble site you sign in to, as you and never as more than you."*
 
-The CLI signs in the way a person does and acts with that person's permissions. It can't do anything the account
-behind it couldn't do in the Control Plane, which makes it safe to hand to scripts, CI jobs and AI agents alike.
+## A CLI with no hard-coded commands
 
-## Why Rust
+The usual way to build an API client is to write a command for every endpoint and then chase the server forever. Nibble
+CLI does the opposite. Each Nibble site publishes a catalogue of the operations it supports, described with JSON Schema,
+and `nibble remote` reads that catalogue at run time. Arguments, validation and help are all derived from it; a typo is
+answered with the list of arguments that *do* exist. When the server learns a new operation, every installed CLI can use
+it the same day — *"a new operation needs no new CLI."*
 
-It starts instantly, ships as a single file, and has no runtime to install. For a tool you reach for dozens of times a
-day, that matters.
+The only coupling between the two projects is an integer: the management API version. Every response is checked against
+it, and when they disagree the tool says which side needs upgrading. That is why version 0.2.0 could support API v1 and
+v2 at the same time, during the window when sites were on both.
+
+## Security as the default, not a flag
+
+Because a CLI is often the most privileged thing on a developer's machine, most of its design is about saying no
+politely:
+
+- **Sign-in** uses OAuth discovery and refuses a site that doesn't offer PKCE with S256. The browser flow receives its
+  redirect on a loopback listener bound to a random local port; a device-code flow covers servers without a browser.
+  Tokens go into the OS keychain, falling back to a user-only file only when asked.
+- **Folders can't hijack you.** A project can name its site in `.nibble.toml`, but an unrecognised one is refused until
+  you explicitly allow it — so cloning a repository can never point your commands at a site you didn't choose.
+- **Tab completion is inert.** Pressing Tab *"never contacts the site, reads the keychain, or runs anything in the folder
+  you're in"*; it reads only a cache that `remote` maintains.
+- **Installing a site is tamper-resistant.** `nibble new` checks Ruby, Node, SQLite, libvips and ffmpeg with install
+  hints for each platform, downloads the latest release, verifies it against published checksums, gates on the required
+  Ruby and Node versions before installing anything, and works in a private `0700` folder so the release cannot be
+  swapped between being checked and being installed.
+
+Changes made through the CLI follow the site's own rules: entry changes are drafts until someone allowed to publish does,
+and a change left waiting for approval exits with its own status code, distinct from failure, so scripts can tell the
+difference.
+
+## A contract test across two repositories
+
+Nibble and its CLI are versioned and released independently, and sites run whatever version their people installed. The
+risk with that arrangement is a server release that quietly breaks the clients already in the wild. The guard is a
+contract test that boots a real Nibble checkout with a test database, mints a token, and drives the real CLI binary
+against it. What makes it a real gate is *where* it runs: Nibble's own release script runs the CLI's contract test before
+it will tag a release, *"so a release that would break the CLI people already have is caught before it is tagged."*
+
+## Changing my mind in public
+
+Version 0.2.0 installed a site's MCP server and agent skills for the whole user account. Within a day it was clear that
+was the wrong scope — a site's tools should only be present where you work on that site — so 0.3.0 moved installation into
+the current project and told existing users exactly how to migrate. The follow-up releases hardened it further: remove
+only what the tool itself wrote, find servers by address rather than name, refuse another Nibble site's folder, and never
+overwrite an entry it didn't create. Reversing a decision quickly, with a migration path, is cheaper than defending it.
+
+## Built and shipped
+
+The CLI is around four and a half thousand lines of Rust, with unit tests named as rules
+(`a_change_waiting_for_approval_exits_apart_from_a_failure`) and a CI script that runs formatting, Clippy with warnings
+as errors, tests and the contract test. Releases are produced with cargo-dist for static Linux builds on x86-64 and ARM
+(the ARM build runs on a native runner, because a cryptography dependency compiles C), macOS and Windows, with checksums
+for every artefact. Nibble's installer installs it automatically.

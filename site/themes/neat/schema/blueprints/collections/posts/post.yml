@@ -13,17 +13,10 @@ tabs:
           - handle: topics
             field: { type: terms, taxonomies: [topics], listable: true }
           - import: nibble::featured_image
-          - handle: photo
-            field:
-              type: text
-              input_type: url
-              instructions: Used when there is no featured image — an image address, such as an Unsplash photo.
-          - handle: photo_credit
-            field: { type: text }
           - handle: art
             field:
               type: text
-              instructions: 'Generated art drawn behind the photo, such as /art/nibble.svg.'
+              instructions: 'The post banner artwork, such as /art/posts/sqlite-is-enough.svg.'
   seo:
     display: SEO
     sections:

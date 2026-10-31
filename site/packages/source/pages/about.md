@@ -1,0 +1,154 @@
+---
+title: Software engineer. Systems administrator. Both, for seventeen years.
+template: about
+eyebrow: About
+intro: I build software and I run the infrastructure it lives on. Since 2009 I've done both professionally — and Linux has been my operating system for as long as I've been using computers at all.
+art: /art/pages/about.svg
+cards:
+  - title: Build like you'll be paged for it
+    text: Most of what goes wrong in production was decided at a desk months earlier. I design software with the operator in mind — clear failure modes, honest logs, safe defaults — because the operator is often me.
+  - title: Boring foundations, careful details
+    text: Proven technology — Linux, PostgreSQL, SQLite, Rails, plain HTML — leaves room to spend effort where it shows. The craft is in the details people touch every day.
+  - title: Automate the second time
+    text: Do it by hand once to understand it. Write it down the second time. Automate it the third. Deploys, backups and server builds should be repeatable by anyone, including future me at 3am.
+  - title: Refuse rather than corrupt
+    text: A release script that checks everything before it does anything public. A daemon that stops on a configuration typo instead of silently disabling something. Loud and safe beats quiet and wrong.
+  - title: Security is a default, not a feature
+    text: Least privilege, private sockets, signed releases, secrets kept out of logs and history. The secure path should be the path of least resistance.
+  - title: Write it down
+    text: Changelogs for the people running the system, runbooks for the people fixing it, documentation for the people using it. Software nobody can operate isn't finished.
+milestones:
+  - year: "Day one"
+    tag: Linux
+    title: Linux from the start
+    text: Linux has been my operating system since I first sat down at a computer. It shaped everything that followed — a habit of reading the source, living in a terminal, and wanting to understand the whole system rather than one layer of it.
+  - year: "2009"
+    tag: Career
+    title: Working professionally, on both sides
+    text: I began working professionally across software development and Linux systems administration — building applications, and installing, configuring and maintaining the servers they ran on. The combination has defined my career ever since.
+  - year: "2013"
+    tag: Open source
+    title: A public footprint on GitHub
+    text: My first public repository. Most professional work — for clients and employers — is private, so the public record from here on is a partial one.
+    url: https://github.com/mah3uz
+  - year: "2014"
+    tag: Consultancy
+    title: mah3uz IT Consultancy
+    text: Until 2016 I ran a small IT consultancy offering web development and systems work, serving as its systems administrator and web developer — owning client projects from server to front end.
+    url: https://github.com/mah3uz/mah3uz.github.io
+  - year: "2015"
+    tag: Automation
+    title: Agents that act on your behalf
+    text: Working with Huginn, a self-hosted Ruby system for building agents that watch the web and act on events — an early taste of automation as infrastructure.
+  - year: "2018"
+    tag: Engineering
+    title: Python, Django and test-driven development
+    text: Building Django applications test-first, and integrating rich-text editing into Django with Basecamp's Trix editor.
+    url: https://github.com/mah3uz/todo-lists
+  - year: "2019"
+    tag: Engineering
+    title: REST APIs with Django
+    text: Designing and building a REST API in Python with Django — resources, serialisation and the conventions that make an API predictable for its clients.
+    url: https://github.com/mah3uz/recipe-app-api
+  - year: "2020"
+    tag: Infrastructure
+    title: Self-hosted private networking
+    text: Working with WireGuard and Subspace, a web interface for managing VPN peers — private networking without a third-party service in the middle.
+  - year: "2022"
+    tag: Front end
+    title: Modern front ends with Next.js and React
+    text: Building with Next.js and React, and adopting server-rendered, component-driven front ends alongside server-side work.
+    url: https://github.com/mah3uz/nextjs-blog
+  - year: "2023"
+    tag: Front end
+    title: React in depth, analytics without tracking
+    text: A deep study of React — components, state and accessible UI patterns — and running Umami, a privacy-respecting, self-hosted alternative to Google Analytics.
+    url: https://github.com/mah3uz/toast-component
+  - year: "2024"
+    tag: Tools
+    title: Neovim, configured for a polyglot day
+    text: My editor configuration, built on AstroNvim, with language support for Ansible, Bash, Docker, Go, PHP and Laravel, Python, Ruby, Rust, SQL, TypeScript, Vue and YAML — a fair map of a working week.
+    url: https://github.com/mah3uz/nvim-astro
+  - year: "2025"
+    tag: Infrastructure
+    title: Bare metal, home servers and Matrix
+    text: Proxmox VE on Hetzner dedicated servers, self-hosted Matrix with its sticker tooling, and a community app store for umbrelOS home servers.
+    url: /projects/umbrel-apps
+  - year: "2025"
+    tag: Open source
+    title: Documentation for Walker
+    text: Writing and maintaining community documentation for Walker, a fast application launcher for the Linux desktop.
+    url: /projects/walker-docs
+  - year: "2026"
+    tag: Product
+    title: rrussat
+    text: A peer-to-peer, end-to-end encrypted messenger in Rust, with a terminal client and a Flutter app on one shared core — an exercise in applied cryptography and honest engineering.
+    url: /projects/rrussat
+  - year: "2026"
+    tag: Product
+    title: Nibble and Nibble CLI
+    text: A schema-driven CMS you install as your own Rails application, and the Rust command-line tool that goes with it — 25 public releases in its first weeks.
+    url: /projects/nibble
+  - year: "2026"
+    tag: Product
+    title: Darwan
+    text: A Rust and Qt theme manager for the Linux login and lock screens, built around safety — a lock that can't lock you out, a root helper that trusts nothing.
+    url: /projects/darwan
+  - year: "2026"
+    tag: Product
+    title: Quarry, Insensical and Sysman
+    text: A SQL client for the terminal, a multiplexer for running many coding agents, and a crash-proof system monitor for Linux — tools I wanted for my own work, built to production standards.
+    url: /projects/sysman
+  - year: "Now"
+    tag: Today
+    title: This site
+    text: Built on Nibble with a theme of my own — the projects are files in a repository, deployed with Kamal to a server I run.
+    url: /now
+seo:
+  title: About
+  description: About Mahfuz Shaikh — software engineer and Linux systems administrator since 2009, building products and running production infrastructure.
+---
+
+I'm **Mahfuz Shaikh**, known online as **mah3uz**. For more than seventeen years I have worked on both sides of the line
+that many organisations draw between *building* software and *running* it. I write applications, and I administer the
+Linux servers and infrastructure they depend on — provisioning machines, managing configuration, automating deployments,
+securing and patching systems, and keeping production healthy long after launch day.
+
+Linux has been my operating system since I first started using computers. That shaped how I work: I would rather
+understand the whole system than one layer of it, and I am most at home in a terminal, reading logs and source code until
+the behaviour makes sense.
+
+## What that combination is good for
+
+The most expensive problems I have solved lived in the gap between application and infrastructure: the slow page that was
+really a database configuration, the failed deploy that was really a full disk, the intermittent error that was really a
+DNS cache, the "random" restart that was really a memory limit. When the same person understands the code *and* the
+machine, those gaps close quickly — and, more importantly, the next system gets designed so they don't open at all.
+
+It also changes how I write software. I build things that are pleasant to operate: they fail loudly and safely, log what an
+on-call engineer needs, start and stop cleanly, back themselves up, and upgrade without drama. You can see that in the
+products I build today — a CMS whose upgrades refuse to run over modified files, a system monitor whose first rule is that
+the last reading before a crash is already on disk, a lock-screen manager designed so it can never lock you out.
+
+## What I do
+
+- **Software engineering** — web applications and APIs, back ends and front ends, command-line tools and desktop software;
+  from architecture and data modelling to the last detail of the interface. Ruby and Rails, Rust, Python, TypeScript and
+  Vue, and whatever a problem actually needs.
+- **Linux systems administration** — building and maintaining servers, users and permissions, services and their
+  configuration, storage, networking and VPNs, monitoring and logging, security hardening, patching, backups and recovery.
+- **DevOps and delivery** — containerised applications, repeatable deployments, CI and release automation, staging
+  environments that tell the truth, and production operations.
+- **Self-hosting and infrastructure** — virtualisation on bare metal, private networking, and running the services a team
+  depends on without handing them to someone else.
+
+## How I work
+
+I like small, frequent releases, written changelogs and runbooks, and automation that anyone on the team can run. I would
+rather spend an afternoon making a failure mode safe than a week hoping it doesn't happen. I keep things simple on
+purpose, and I take security seriously by default rather than as a phase at the end.
+
+## Working together
+
+I take on a limited amount of client work alongside my own products — engineering, infrastructure, or the place where the
+two meet. If you have a platform that needs to be built carefully *and* run reliably, [tell me about it](#contact).

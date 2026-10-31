@@ -382,6 +382,14 @@ def tlc():
 ARTS['tourhub'] = tourhub
 ARTS['tlc'] = tlc
 
+# Pages, posts and the newer projects live in their own module, and add to ARTS.
+sys.path.insert(0, str(Path(__file__).parent))
+import more  # noqa: E402
+
+ARTS.update(more.arts(frame, window, bars))
+
 for name, fn in ARTS.items():
-    (OUT / f'{name}.svg').write_text(fn())
+    target = OUT / f'{name}.svg'
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(fn())
     print('wrote', OUT / f'{name}.svg')

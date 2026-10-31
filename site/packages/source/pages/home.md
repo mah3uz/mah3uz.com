@@ -1,0 +1,19 @@
+---
+title: I engineer software, and run the systems it depends on.
+template: home
+eyebrow: Software engineer & Linux systems administrator · since 2009
+intro: I'm Mahfuz Shaikh. For more than seventeen years I've built software professionally and administered the Linux servers and infrastructure it runs on — designing applications, automating deployments, keeping production healthy. Today I also build products of my own, from a content management system to terminal tools and software for the Linux desktop.
+cards:
+  - title: Own the whole path
+    text: From the first line of code to the server it runs on, the backups behind it and the alert at 3am. I build like someone who will have to operate it — because I usually do.
+  - title: Fewer moving parts
+    text: Every component is something to patch, monitor and pay for. I choose proven, understood technology and spend complexity only where people can feel the difference.
+  - title: Fail safe, not silent
+    text: Systems should refuse loudly rather than continue wrongly — a deploy that stops before it breaks production, a value shown as unknown rather than a misleading zero.
+  - title: Ship small, ship often
+    text: Small releases are easy to verify and easy to undo. A changelog written for the person running the system, not the person reading the diff.
+seo:
+  title: Mahfuz Shaikh — software engineer & Linux systems administrator
+  exact_title: true
+  description: Mahfuz Shaikh (mah3uz) — software engineer and Linux systems administrator since 2009. Building Nibble, Quarry, Sysman, Darwan and Insensical, and running production infrastructure.
+---

@@ -44,8 +44,9 @@
 | **Work** `/projects` | My products and client work, side by side, filterable by stage and by the tools they're built with |
 | **Case studies** `/projects/<slug>` | Each project's story, highlights, stack and links, with previous and next |
 | **Now** `/now` | What has my attention this season |
-| **Uses** `/uses` | The tools behind the work |
-| **About** `/about` | Who I am, principles, recent products and a contact form |
+| **Uses** `/uses` | The tools behind the work, laid out as a keyboard |
+| **About** `/about` | Who I am, principles, a career timeline and a contact form |
+| **Photography** `/photography` | My own photographs, also published on Unsplash |
 | **Writing** `/blog` | Posts, topics (`/topics`) and an Atom feed (`/feed-posts.xml`) |
 | **Search** `/search` | Every page, post and project |
 
@@ -229,9 +230,26 @@ python3 site/art/generate.py public/art
 
 ### Pages, posts and settings
 
-Write and publish in the Control Plane. The starting content (Home, About, Now, Uses, Writing, Search, the posts,
-topics, the main menu, site settings, the favicon and the social card) is the content package in
-`site/packages/default`, which `site/packages/build.py` writes:
+Write and publish in the Control Plane. The site's full content — Home, About (with its timeline), Now, Uses (with its
+tools), Writing, Search, every post, the topics, the main menu, site settings, the favicon and the social card — is the
+content package in `site/packages/default`. It is written by `site/packages/build.py` from readable Markdown sources:
+
+- `site/packages/source/pages/<slug>.md` — a page's fields as YAML frontmatter (cards, tools, milestones, SEO), and its
+  text as Markdown after it.
+- `site/packages/source/posts/<slug>.md` — a post's title, date, topics, excerpt and artwork as frontmatter, and its body
+  as Markdown.
+
+To **replace everything that's live** with the package (a deploy first, so its content migrations have run):
+
+```bash
+bin/kamal app exec 'bin/rails nibble:content:import site/packages/default --mode=update'
+```
+
+```bash
+bin/kamal app exec 'bin/rails nibble:reindex'
+```
+
+To rebuild and check the package locally:
 
 ```bash
 python3 site/packages/build.py
@@ -445,7 +463,7 @@ changelog entry.
 | "Hydration completed but contains mismatches" | something in a template differs between server and browser: move it into `onMounted` |
 | Production won't start, log mentions `SITE_URL` | it must be `https://mah3uz.com`, not localhost |
 | A deploy didn't go live | `bin/kamal logs`: `nibble:prepare` says which check refused |
-| A photo is missing | photos are hot-linked from Unsplash over generated art, so the art shows if the photo can't load |
+| A page has no artwork | set its `art` field to a file in `public/art/`, or add one to `site/art/more.py` and regenerate |
 
 ### Regenerating the banner
 

@@ -1,0 +1,15 @@
+schema: 1
+title: Photography
+icon: folder-photos
+route: /photography/{slug}
+structure:
+  max_depth: 2
+blueprints: [photo]
+template: photography/show
+sort: position:asc
+search: site
+sitemap:
+  enabled: true
+  priority: 0.5
+  changefreq: monthly
+files: photography

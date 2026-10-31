@@ -1,0 +1,3 @@
+photos:
+  from: entries:photography
+  fields: [title, description, body, location, taken, camera, unsplash, tags]

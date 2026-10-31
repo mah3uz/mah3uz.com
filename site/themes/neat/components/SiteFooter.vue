@@ -48,8 +48,8 @@ const year = new Date().getUTCFullYear()
             Have something <span class="neat-gradient-text">worth building</span>? Let’s talk.
           </h2>
           <p class="text-mist mt-6 max-w-[46ch] text-lg leading-8">
-            Products, platforms and the tools behind them, from the first sketch to production. I’ve been doing this
-            since 2009, and I still enjoy it.
+            Software built carefully, and the infrastructure to run it — from the first design to production and every
+            day after. I’ve been doing both since 2009.
           </p>
         </div>
         <div class="flex flex-wrap gap-3 lg:justify-end">
@@ -94,7 +94,7 @@ const year = new Date().getUTCFullYear()
           <span class="font-display text-xl font-extrabold tracking-tight">{{ site?.name ?? 'mah3uz' }}</span>
         </Link>
         <p class="mt-4 max-w-[36ch] leading-7 text-muted">
-          {{ site?.tagline ?? 'Software engineer building products, developer tools and Linux desktop software.' }}
+          {{ site?.tagline ?? 'Software engineer and Linux systems administrator since 2009.' }}
         </p>
       </div>
       <nav aria-label="Footer">

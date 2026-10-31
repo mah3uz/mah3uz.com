@@ -42,8 +42,15 @@ stops Claude Code editing `vendor/nibble/`.
   (client work) falls back to the bracketed tile with its monogram (`components/ProjectTile.vue`).
 - **Cover art** is generated SVG in `public/art/`, from `site/art/generate.py`
   (`python3 site/art/generate.py public/art`). Add a function there for a new project rather than drawing by hand.
-- **Pages, posts, menus and site settings** were seeded from `site/packages/default`, which `site/packages/build.py`
-  writes. Edit live content in the Control Plane; re-run the script only to rebuild a fresh database.
-- **Photos** are hot-linked from images.unsplash.com and always sit over generated art (`CoverPhoto.vue`), so a page
-  never shows a broken image.
+- **Pages, posts, menus and site settings** come from the content package `site/packages/default`, which
+  `site/packages/build.py` writes from the Markdown sources in `site/packages/source/pages/` and `source/posts/`.
+  Import with `--mode=update` to replace live content with the package.
+- **Removing a field** that holds data needs a content migration in `site/schema/migrations/` (deploys refuse otherwise).
+- **Artwork, not stock photos.** Every page, post and project has generated artwork (`ArtBanner.vue`, the `art` field).
+  Project covers are drawn in `site/art/generate.py`; pages, posts and newer projects in `site/art/more.py`. There are no
+  Unsplash or stock images anywhere.
+- **Photography** is my own: `site/content/photography/` — one Markdown file per photo with the image file beside it
+  (`![What it shows](photo.jpg)` as the body), plus `unsplash:` linking to it on unsplash.com/@mah3uz.
+- **Positioning:** I am both a software engineer and a Linux systems administrator, professionally since 2009, and on
+  Linux since I first used computers. Copy should reflect both sides — never only "developer".
 - **Client work** stays factual and confidential: no staging URLs, no internal details the client hasn't published.

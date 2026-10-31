@@ -11,7 +11,6 @@ projects:
       kind,
       year,
       logo,
-      banner,
       monogram,
       accent,
       featured,
@@ -24,4 +23,4 @@ posts:
   from: entries:posts
   sort: published_at:desc
   limit: 3
-  fields: [excerpt, published_at, photo, photo_credit, art, featured_image, topics]
+  fields: [excerpt, published_at, art, featured_image, topics]

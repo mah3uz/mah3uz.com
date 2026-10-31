@@ -31,12 +31,28 @@ export interface PagesPage extends RecordBase {
   content: string | null
   blocks: Array<{ id: string; type: string } & Record<string, unknown>>
   cards: Array<Record<string, unknown> & { id: string }>
-  photo: string | null
-  photo_credit: string | null
+  art: string | null
+  tools: Array<Record<string, unknown> & { id: string }>
+  milestones: Array<Record<string, unknown> & { id: string }>
   seo: { title: string | null; exact_title: boolean; description: string | null; canonical: string | null; og_image: AssetValue | null; noindex: boolean; nositemap: boolean; schema_type: string | null; json_ld_overrides: Record<string, unknown> | null }
 }
 
 export type PagesEntry = PagesPage
+
+export interface PhotographyPhoto extends RecordBase {
+  collection: 'photography'
+  title: string | null
+  description: string | null
+  body: string | null
+  location: string | null
+  taken: string | null
+  camera: string | null
+  unsplash: string | null
+  tags: string[]
+  seo: { title: string | null; exact_title: boolean; description: string | null; canonical: string | null; og_image: AssetValue | null; noindex: boolean; nositemap: boolean; schema_type: string | null; json_ld_overrides: Record<string, unknown> | null }
+}
+
+export type PhotographyEntry = PhotographyPhoto
 
 export interface PostsPost extends RecordBase {
   collection: 'posts'
@@ -45,8 +61,6 @@ export interface PostsPost extends RecordBase {
   body: string | null
   topics: TermSummary[]
   featured_image: AssetValue | null
-  photo: string | null
-  photo_credit: string | null
   art: string | null
   seo: { title: string | null; exact_title: boolean; description: string | null; canonical: string | null; og_image: AssetValue | null; noindex: boolean; nositemap: boolean; schema_type: string | null; json_ld_overrides: Record<string, unknown> | null }
 }
@@ -71,7 +85,6 @@ export interface ProjectsProject extends RecordBase {
   featured: boolean
   stack: string[]
   highlights: string[]
-  banner: string | null
   cover: string | null
   website: string | null
   repository: string | null
@@ -136,18 +149,21 @@ export interface ViewProps {
     projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'logo' | 'monogram' | 'accent' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'home': {
-    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'description' | 'stage' | 'kind' | 'year' | 'logo' | 'banner' | 'monogram' | 'accent' | 'featured' | 'stack' | 'cover' | 'website' | 'repository' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
-    posts: Pick<(PostsPost), 'excerpt' | 'published_at' | 'photo' | 'photo_credit' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'description' | 'stage' | 'kind' | 'year' | 'logo' | 'monogram' | 'accent' | 'featured' | 'stack' | 'cover' | 'website' | 'repository' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+    posts: Pick<(PostsPost), 'excerpt' | 'published_at' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'now': {
     projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'kind' | 'logo' | 'monogram' | 'accent' | 'stage' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
+  'photography/index': {
+    photos: Pick<(PhotographyPhoto), 'title' | 'description' | 'body' | 'location' | 'taken' | 'camera' | 'unsplash' | 'tags' | 'id' | 'type' | 'uri' | 'url'>[]
+  }
   'posts/index': {
-    posts: Paginated<Pick<(PostsPost), 'excerpt' | 'published_at' | 'photo' | 'photo_credit' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>>
+    posts: Paginated<Pick<(PostsPost), 'excerpt' | 'published_at' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>>
     topics: ((TopicsTopic) & { entries_count: number })[]
   }
   'posts/show': {
-    related: Pick<(PostsPost), 'excerpt' | 'published_at' | 'photo' | 'photo_credit' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+    related: Pick<(PostsPost), 'excerpt' | 'published_at' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'projects/index': {
     projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'description' | 'stage' | 'kind' | 'year' | 'logo' | 'monogram' | 'accent' | 'featured' | 'stack' | 'cover' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
@@ -156,16 +172,16 @@ export interface ViewProps {
     siblings: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'logo' | 'monogram' | 'accent' | 'stage' | 'kind' | 'cover' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'search': {
-    results: Paginated<(PagesPage | PostsPost | ProjectsProject)>
+    results: Paginated<(PagesPage | PhotographyPhoto | PostsPost | ProjectsProject)>
   }
   'sets/latest_posts': {
-    posts: Pick<(PostsPost), 'excerpt' | 'published_at' | 'photo' | 'photo_credit' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+    posts: Pick<(PostsPost), 'excerpt' | 'published_at' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'topics/index': {
     topics: ((TopicsTopic) & { entries_count: number })[]
   }
   'topics/show': {
-    posts: Paginated<Pick<(PostsPost), 'excerpt' | 'published_at' | 'photo' | 'photo_credit' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>>
+    posts: Paginated<Pick<(PostsPost), 'excerpt' | 'published_at' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>>
   }
 }
 

@@ -1,0 +1,7 @@
+# Pages and posts no longer carry Unsplash photos: every page and post now has its own artwork, in the `art` field.
+# This removes the old photo addresses and credits, so nothing is left stranded under fields the schema dropped.
+operations:
+  - remove_field: { collection: pages, field: photo }
+  - remove_field: { collection: pages, field: photo_credit }
+  - remove_field: { collection: posts, field: photo }
+  - remove_field: { collection: posts, field: photo_credit }

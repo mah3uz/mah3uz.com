@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img">
+<defs>
+<linearGradient id="sq-bg" x1="0" y1="0" x2="1600" y2="1000" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0A1A20"/><stop offset="1" stop-color="#0D2A31"/></linearGradient>
+<radialGradient id="sq-glow" cx="470" cy="500" r="760" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#21BDB0" stop-opacity="0.34"/><stop offset="1" stop-color="#21BDB0" stop-opacity="0"/></radialGradient>
+<linearGradient id="sq-tile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#62EDD4"/><stop offset="0.55" stop-color="#21BDB0"/><stop offset="1" stop-color="#1388A6"/></linearGradient>
+<linearGradient id="sq-back" x1="0" y1="740" x2="0" y2="1000" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#62EDD4"/><stop offset="1" stop-color="#21BDB0"/></linearGradient>
+<linearGradient id="sq-flap" x1="1574" y1="974" x2="1392" y2="792" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#A6D3D6"/><stop offset="0.5" stop-color="#E9F7F7"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+<linearGradient id="sq-line" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#62EDD4" stop-opacity="0"/><stop offset="0.5" stop-color="#62EDD4"/><stop offset="1" stop-color="#62EDD4" stop-opacity="0"/></linearGradient>
+<pattern id="sq-dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#62EDD4" fill-opacity="0.12"/></pattern>
+<filter id="sq-blur" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="10"/></filter>
+<filter id="sq-soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="24"/></filter>
+<clipPath id="sq-cut"><path d="M0 0H1600V740Q1454.4 854.4 1340 1000H0Z"/></clipPath>
+</defs>
+<rect width="1600" height="1000" fill="url(#sq-back)"/>
+<g clip-path="url(#sq-cut)">
+<rect width="1600" height="1000" fill="url(#sq-bg)"/>
+<rect width="1600" height="1000" fill="url(#sq-dots)"/>
+<rect width="1600" height="1000" fill="url(#sq-glow)"/>
+<g transform="translate(260 230)"><path d="M0 0H300L420 120V540H0Z" fill="#0E2B33" stroke="#62EDD4" stroke-opacity="0.4" stroke-width="3"/><path d="M300 0V120H420" fill="#123640" stroke="#62EDD4" stroke-opacity="0.4" stroke-width="3"/><path d="M100 230V294A110 34 0 0 0 320 294V230" fill="url(#sq-tile)" fill-opacity="1.0"/><path d="M100 294A110 34 0 0 0 320 294" fill="none" stroke="#0A1A20" stroke-opacity="0.35" stroke-width="3"/><path d="M100 294V358A110 34 0 0 0 320 358V294" fill="url(#sq-tile)" fill-opacity="0.85"/><path d="M100 358A110 34 0 0 0 320 358" fill="none" stroke="#0A1A20" stroke-opacity="0.35" stroke-width="3"/><path d="M100 358V422A110 34 0 0 0 320 422V358" fill="url(#sq-tile)" fill-opacity="0.7"/><path d="M100 422A110 34 0 0 0 320 422" fill="none" stroke="#0A1A20" stroke-opacity="0.35" stroke-width="3"/><ellipse cx="210" cy="230" rx="110" ry="34" fill="#E9F7F7" fill-opacity="0.92"/><rect x="80" y="470" width="260" height="18" rx="9" fill="#E9F7F7" fill-opacity="0.85"/></g><rect x="760" y="330" width="150" height="190" rx="18" fill="#123640" stroke="#62EDD4" stroke-opacity="0.2" stroke-width="2"/><rect x="800" y="364" width="150" height="190" rx="18" fill="#123640" stroke="#62EDD4" stroke-opacity="0.35" stroke-width="2"/><rect x="840" y="398" width="150" height="190" rx="18" fill="#123640" stroke="#62EDD4" stroke-opacity="0.5" stroke-width="2"/><rect x="880" y="432" width="150" height="190" rx="18" fill="#123640" stroke="#62EDD4" stroke-opacity="0.6499999999999999" stroke-width="2"/><text x="880" y="520" font-family="ui-monospace,Menlo,monospace" font-size="34" font-weight="700" fill="#62EDD4">-wal</text><path d="M700 640C900 760 1060 760 1200 640" fill="none" stroke="url(#sq-line)" stroke-width="6" stroke-dasharray="2 14" stroke-linecap="round"/><g transform="translate(1210 470)"><path d="M0 100a80 80 0 0 1 60-150a100 100 0 0 1 190 30a70 70 0 0 1 0 120Z" fill="url(#sq-tile)"/><path d="M125 40V110M95 80l30 30 30-30" fill="none" stroke="#043040" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></g>
+<path d="M1600 740C1511.6 732.2 1423.2 755.6 1392 792C1355.6 823.2 1332.2 911.6 1340 1000Q1454.4 854.4 1600 740Z" transform="translate(-12 15)" fill="#043040" fill-opacity="0.4" filter="url(#sq-blur)"/>
+</g>
+<path d="M1600 740C1511.6 732.2 1423.2 755.6 1392 792C1355.6 823.2 1332.2 911.6 1340 1000Q1454.4 854.4 1600 740Z" fill="url(#sq-flap)"/>
+<path d="M60 150V96Q60 60 96 60H150M1540 150V96Q1540 60 1504 60H1450M60 850V904Q60 940 96 940H150" fill="none" stroke="#21BDB0" stroke-opacity="0.6" stroke-width="8" stroke-linecap="round"/>
+</svg>

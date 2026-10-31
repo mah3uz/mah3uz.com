@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import type { PagesPage, ViewProps } from '@site/types'
+import ArtBanner from '../components/ArtBanner.vue'
 import PageBody from '../components/PageBody.vue'
 import PageHeading from '../components/PageHeading.vue'
 import ProjectTile from '../components/ProjectTile.vue'
@@ -27,6 +28,8 @@ const building = computed(() => onlyProjects(props.projects).filter((project) =>
         }}</time>
       </p>
     </PageHeading>
+
+    <ArtBanner v-if="page.art" :src="page.art" eager class="animate-rise mb-16 aspect-[21/8] [animation-delay:200ms]" />
 
     <section v-if="building.length" aria-labelledby="on-the-bench" class="mb-20">
       <h2 id="on-the-bench" class="neat-eyebrow mb-5">On the bench</h2>
