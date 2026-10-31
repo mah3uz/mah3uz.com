@@ -1,0 +1,22 @@
+<h1><%= mail_text(@visitor ? "submission.visitor_heading" : "submission.staff_heading") %></h1>
+<% if @message %>
+  <%= simple_format(h(@message), {}, sanitize: false) %>
+<% elsif @visitor %>
+  <p><%= mail_html("submission.visitor_intro", title: tag.strong(@form.title(@locale) || @form.handle), site: site_name) %></p>
+<% else %>
+  <p><%= mail_html("submission.staff_intro", title: tag.strong(@form.title(@locale) || @form.handle), site: site_name) %></p>
+<% end %>
+<table role="presentation" cellpadding="0" cellspacing="0">
+  <% @rows.each do |label, value| %>
+    <tr>
+      <th><%= label %></th>
+      <td><%= value.presence || "—" %></td>
+    </tr>
+  <% end %>
+</table>
+<% if @reply_to %>
+  <p class="note"><%= mail_text("submission.reply_to", email: @reply_to) %></p>
+<% end %>
+<% if @link %>
+  <p class="note"><%= link_to mail_text("submission.open"), @link %></p>
+<% end %>

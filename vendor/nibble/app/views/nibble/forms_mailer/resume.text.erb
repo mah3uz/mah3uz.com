@@ -1,0 +1,7 @@
+<%= mail_text("resume.heading", title: @title) %>
+
+<%= mail_text("resume.intro_text", title: @title, site: site_name) %>
+
+<%= @link %>
+
+<%= mail_text("resume.note", expires: l(@expires_at, format: :long, locale: Nibble::Localized.i18n_locale(@mail_locale))) %>

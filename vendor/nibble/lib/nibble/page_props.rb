@@ -1,0 +1,178 @@
+module Nibble
+  class PageProps
+    Result = Data.define(:props, :seo, :view)
+
+    # inertia-rails records where to append before it runs the prop that would say so, so the path is set when built.
+    class ScrollingPage < InertiaRails::ScrollProp
+      def initialize(...)
+        super
+        append("data")
+      end
+    end
+
+    def initialize(match, params: {}, request_path: nil, preview: false, form_result: nil)
+      @match = match
+      @form_result = form_result
+      @params = params
+      @request_path = request_path || match.record&.uri || "/"
+      @preview = preview
+    end
+
+    def build
+      sidecar = Views.sidecar(@match.template)
+      layout = Views.layout_sidecar(layout_for)
+      declared = @params.slice(*self.class.param_names(@match.template))
+      context = Query::Context.public(locale: @match.locale, entry: (@match.record if @match.kind == :entry),
+        term: (@match.record if @match.kind == :term), params: declared)
+      presenter = Presenter.new(context:)
+
+      page = present_page(presenter, sidecar.page_include | layout.page_include)
+      run_set_sidecars(page, context, presenter)
+      site = site_props(context, presenter, declared)
+      seo = Seo.new(page:, site:, kind: @match.kind, url: site["url"]).to_h
+      props = { "page" => page, "layout" => layout_for }
+        .merge(run_queries(layout.queries, context, presenter))
+        .merge(run_queries(sidecar.queries, context, presenter))
+        .merge("site" => site, "seo" => seo, "preview" => preview_prop)
+      Result.new(props:, seo:, view: @match.template)
+    end
+
+    def self.declared_params(template, params) = params.slice(*param_names(template))
+
+    def self.param_names(template)
+      sidecars = [ Views.sidecar(template), *Views.sidecars.select { |sidecar| sidecar.view.start_with?("sets/") }, *Views.sidecars(folder: "layouts") ]
+      sidecars.flat_map { |sidecar| [ *sidecar.params, *form_params(sidecar) ] }.uniq
+    end
+
+    def self.form_params(sidecar)
+      sidecar.queries.values.flat_map do |spec|
+        kind, handle = (spec["from"] if spec.is_a?(Hash)).to_s.split(":", 2)
+        form = Forms.find(handle) if kind == "form"
+        form ? Forms::Definition.prefill_params(form) : []
+      end
+    end
+
+    private
+
+    def present_page(presenter, include)
+      return presenter.present([ @match.record ], include: page_include(include)).first if @match.record
+      return { "collection" => @match.collection.handle, "title" => @match.collection["title"] } if @match.collection
+      return { "title" => @match.template == "errors/500" ? "Something went wrong" : "Page not found" } unless @match.taxonomy
+
+      { "taxonomy" => @match.taxonomy.handle, "title" => @match.taxonomy["title"] }
+    end
+
+    # One layout or view serves records of many blueprints, so it may name a field only some of them have.
+    def page_include(include)
+      fields = @match.record.blueprint_fields
+      include.select { |handle| handle == "children" || fields.get(handle)&.fieldtype_class&.relationship }
+    end
+
+    def preview_prop
+      return nil unless @preview
+
+      { "label" => "Draft", "edit_url" => nil }
+    end
+
+    def run_queries(queries, context, presenter)
+      queries.to_h do |name, spec|
+        spec = Query::Spec.parse(spec, context:)
+        next [ name, Forms::Definition.call(Forms.find(spec.source.handle), result: @form_result, params: context.params, locale: context.locale) ] if spec.source.form?
+
+        result = Query.build(spec, context).result
+        data = presenter.present(result.records, fields: result.spec.fields, include: result.spec.include)
+        data.each { |item| item["entries_count"] = result.counts[item["id"]] } if result.counts.any?
+        data.each { |item| item["search_snippet"] = result.snippets["#{item['type']}:#{item['id']}"] } if result.snippets.any?
+        [ name, result.pagination ? paginated(result, data) : data ]
+      end
+    end
+
+    # A scrolling query is one Inertia appends to, so a theme's InfiniteScroll adds each page's data to the last.
+    def paginated(result, data)
+      value = { "data" => data, "meta" => result.pagination }
+      return value unless result.spec.paginate["scroll"]
+
+      current, last = result.pagination.values_at("current_page", "last_page")
+      metadata = { page_name: result.spec.paginate["param"], current_page: current,
+                   previous_page: (current - 1 if current > 1), next_page: (current + 1 if current < last) }
+      ScrollingPage.new(metadata:) { value }
+    end
+
+    def run_set_sidecars(value, context, presenter)
+      case value
+      when Array then value.each { |item| run_set_sidecars(item, context, presenter) }
+      when Hash
+        if value["id"].is_a?(String) && value["type"].is_a?(String) && (queries = Views.sidecar("sets/#{value['type']}").queries).any?
+          value["queries"] = run_queries(queries, context.with(set: value), presenter)
+        end
+        value.each_value { |item| run_set_sidecars(item, context, presenter) }
+      end
+    end
+
+    def site_props(context, presenter, declared)
+      schema = Nibble.schema
+      globals = Records::GlobalSet.where(locale: context.locale).index_by(&:handle)
+      menus = Records::NavigationTree.where(locale: context.locale).index_by(&:handle)
+      presenter.preload(globals.values + menus.values)
+      Dependencies.add("global:#{Integrations::HANDLE}")
+      {
+        "locale" => context.locale, "time_zone" => ::Time.zone.tzinfo.name, "url" => Presenter.url(@request_path), "params" => declared,
+        "globals" => schema.globals.reject { |item| item.handle == Integrations::HANDLE }
+          .to_h { |item| [ item.handle, present_global(presenter, globals[item.handle], item.handle) ] },
+        "navigation" => schema.navigations.to_h { |item| [ item.handle, present_navigation(presenter, menus[item.handle], item.handle) ] }
+      }
+    end
+
+    def present_global(presenter, record, handle)
+      return presenter.present_global(record) if record
+
+      Dependencies.add("global:#{handle}")
+      {}
+    end
+
+    def present_navigation(presenter, record, handle)
+      # A folder is its own tree, so a navigation named after one is read from the files rather than a record.
+      return with_trail(file_links(Files.index.tree(handle))) if Files.collections.any? { |item| item.handle == handle }
+      return with_trail(presenter.present_navigation(record)) if record
+
+      Dependencies.add("navigation:#{handle}")
+      []
+    end
+
+    def file_links(links) = links.map { |link| link.merge("kind" => "link", "new_tab" => false, "fields" => {}, "children" => file_links(link["children"])) }
+
+    def with_trail(items)
+      items.map do |item|
+        children = with_trail(item["children"].to_a)
+        path = site_path(item["url"])
+        current = !path.nil? && path == page_path
+        trail = current || children.any? { |child| child["in_trail"] } || (path.present? && page_path.start_with?("#{path}/"))
+        item.merge("current" => current, "in_trail" => trail, "children" => children)
+      end
+    end
+
+    def page_path = @page_path ||= trimmed(@request_path.to_s.split("?", 2).first.to_s)
+
+    # A link with a fragment points into a page rather than at it, so it is never the current item.
+    def site_path(url)
+      url = url.to_s.strip
+      return nil if url.empty? || url.include?("#")
+
+      unless url.start_with?("/") && !url.start_with?("//")
+        uri = URI.parse(url)
+        return nil unless [ nil, "http", "https" ].include?(uri.scheme&.downcase) && uri.host&.casecmp?(URI.parse(Nibble.config.url.to_s).host.to_s)
+
+        url = uri.path.presence || "/"
+      end
+      trimmed(url.split("?", 2).first)
+    rescue URI::InvalidURIError
+      nil
+    end
+
+    def trimmed(path) = path.length > 1 ? path.chomp("/") : path
+
+    def layout_for
+      @match.item&.[]("layout") || "default"
+    end
+  end
+end

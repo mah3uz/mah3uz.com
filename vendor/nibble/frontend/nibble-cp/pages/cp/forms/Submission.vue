@@ -1,0 +1,246 @@
+<script setup lang="ts">
+import { Link, router, useForm } from '@inertiajs/vue3'
+import { computed, ref } from 'vue'
+import SubmissionFilesField from '@/components/cp/forms/SubmissionFilesField.vue'
+import CpIcon from '@/components/cp/icons/CpIcon.vue'
+import StatusCell from '@/components/cp/listing/cells/StatusCell.vue'
+import PageHeader from '@/components/cp/page/PageHeader.vue'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { useConfirm } from '@/lib/confirm'
+import { formatDateTime } from '@/lib/format'
+import { registerCoreFieldtypes } from '@nibble-cp/fieldtypes/core'
+import { registerFieldtype } from '@nibble-cp/fieldtypes/registry'
+import PublishContainer from '@nibble-cp/publish/PublishContainer.vue'
+import PublishSections from '@nibble-cp/publish/PublishSections.vue'
+import type { PublishBlueprint } from '@nibble-cp/fieldtypes/types'
+
+registerCoreFieldtypes()
+registerFieldtype('files', SubmissionFilesField)
+
+type Delivery = {
+  key: string
+  target: string
+  mode: string
+  status: string
+  attempts: number
+  error?: string | null
+  errors?: Record<string, string[]> | null
+  at?: string | null
+  can_retry: boolean
+}
+
+type Note = { id: number; body: string; author: string | null; created_at: string }
+
+const props = defineProps<{
+  form: { handle: string; title: string }
+  submission: {
+    id: number
+    status: string
+    created_at: string
+    deliveries: Delivery[]
+    values_kept: boolean
+    handled: boolean
+    handled_at: string | null
+    handled_by: string | null
+    notes: Note[]
+  }
+  blueprint: PublishBlueprint
+  values: Record<string, unknown>
+  meta: Record<string, unknown>
+  can_delete: boolean
+  can_edit: boolean
+  can_mark_not_spam: boolean
+  can_resend_notifications: boolean
+  spam_days: number | null
+}>()
+
+const confirm = useConfirm()
+const values = ref(props.values)
+const note = useForm({ body: '' })
+const listUrl = computed(() => `/cp/forms/${props.form.handle}`)
+const base = computed(() => `${listUrl.value}/submissions/${props.submission.id}`)
+const spamNote = computed(() => {
+  if (props.submission.status !== 'spam') return null
+  if (!props.submission.values_kept)
+    return "This was caught as spam and its values weren't kept, so it can't be marked as not spam."
+  const deleted = props.spam_days ? ` It's deleted ${props.spam_days} days after it arrived.` : ''
+  return `This was caught as spam, so nothing was sent on.${deleted}`
+})
+const notifications = computed(() => props.submission.deliveries.filter((item) => item.key.startsWith('notify.')))
+const deliveries = computed(() => props.submission.deliveries.filter((item) => !item.key.startsWith('notify.')))
+const date = formatDateTime
+
+function retry(delivery: Delivery) {
+  router.post(`${base.value}/deliveries/${encodeURIComponent(delivery.key)}/retry`, {}, { preserveScroll: true })
+}
+
+function setHandled(handled: boolean) {
+  router.post(`${base.value}/handled`, { handled }, { preserveScroll: true })
+}
+
+function markUnread() {
+  router.post(`${base.value}/unread`)
+}
+
+function addNote() {
+  note.post(`${base.value}/notes`, { preserveScroll: true, onSuccess: () => note.reset() })
+}
+
+async function markNotSpam() {
+  const ok = await confirm({
+    title: 'Mark as not spam?',
+    description:
+      'It becomes a real submission: its notifications, API deliveries and handler run now, as they would have when it was sent.',
+    confirmText: 'Not spam',
+  })
+  if (ok) router.post(`${base.value}/not_spam`, {}, { preserveScroll: true })
+}
+
+async function resendNotifications() {
+  const ok = await confirm({
+    title: 'Send notifications again?',
+    description: 'Every notification email for this form is sent again, to the addresses it names now.',
+    confirmText: 'Send again',
+  })
+  if (ok) router.post(`${base.value}/resend_notifications`, {}, { preserveScroll: true })
+}
+
+async function destroy() {
+  const ok = await confirm({
+    title: 'Delete this submission?',
+    description: "Its files and delivery logs are deleted too. This can't be undone.",
+    confirmText: 'Delete',
+    dangerous: true,
+  })
+  if (ok) router.delete(base.value)
+}
+</script>
+
+<template>
+  <div class="mx-auto max-w-5xl">
+    <Link
+      :href="listUrl"
+      class="relative z-10 -mb-6 flex w-fit items-center gap-1 pt-6 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+    >
+      <CpIcon name="chevron-left" class="size-4" />{{ form.title }}
+    </Link>
+    <PageHeader
+      :title="date(submission.created_at)"
+      icon="forms"
+      :breadcrumbs="[
+        { label: 'Forms', url: '/cp/forms' },
+        { label: form.title, url: listUrl },
+        { label: date(submission.created_at) },
+      ]"
+    >
+      <template #meta><StatusCell :value="submission.status" /></template>
+      <template #actions>
+        <Button v-if="can_edit" variant="outline" @click="setHandled(!submission.handled)">{{
+          submission.handled ? 'Mark not handled' : 'Mark handled'
+        }}</Button>
+        <Button v-if="can_edit" variant="outline" @click="markUnread">Mark unread</Button>
+        <Button v-if="can_mark_not_spam && submission.values_kept" variant="outline" @click="markNotSpam"
+          >Not spam</Button
+        >
+        <Button v-if="can_resend_notifications" variant="outline" @click="resendNotifications"
+          >Send notifications again</Button
+        >
+        <Button v-if="can_delete" variant="outline" @click="destroy">Delete</Button>
+      </template>
+    </PageHeader>
+
+    <p v-if="submission.handled" class="mb-6 text-sm text-gray-600 dark:text-gray-400">
+      Handled<template v-if="submission.handled_by"> by {{ submission.handled_by }}</template
+      ><template v-if="submission.handled_at"> on {{ date(submission.handled_at) }}</template
+      >.
+    </p>
+
+    <p v-if="spamNote" class="mb-6 text-sm text-gray-600 dark:text-gray-400">{{ spamNote }}</p>
+
+    <PublishContainer v-model="values" :blueprint="blueprint" :meta="meta" read-only name="submission">
+      <PublishSections :sections="blueprint.tabs[0].sections" />
+    </PublishContainer>
+
+    <section
+      v-if="can_edit || submission.notes.length"
+      class="relative mb-6 w-full rounded-2xl bg-gray-150 p-1.75 pt-0 dark:bg-gray-950/35 dark:inset-shadow-2xs dark:inset-shadow-black"
+    >
+      <header class="px-4.5 py-3">
+        <h3 class="text-sm font-medium tracking-tight text-gray-700 dark:text-white">Notes</h3>
+      </header>
+      <div
+        class="space-y-4 rounded-xl bg-white p-4.5 text-sm shadow-ui-md ring ring-gray-200 dark:bg-gray-850 dark:ring-gray-700/80"
+      >
+        <ul v-if="submission.notes.length" class="space-y-3">
+          <li v-for="item in submission.notes" :key="item.id">
+            <p class="text-xs text-gray-600 dark:text-gray-400">
+              {{ item.author ?? 'Someone' }} · {{ date(item.created_at) }}
+            </p>
+            <p class="whitespace-pre-wrap">{{ item.body }}</p>
+          </li>
+        </ul>
+        <p v-else class="text-gray-600 dark:text-gray-400">No notes yet.</p>
+        <form v-if="can_edit" class="space-y-2" @submit.prevent="addNote">
+          <Textarea v-model="note.body" aria-label="Note" placeholder="Add a note for your team…" maxlength="5000" />
+          <Button type="submit" size="sm" :disabled="note.processing || !note.body.trim()">Add note</Button>
+        </form>
+      </div>
+    </section>
+
+    <section
+      v-if="notifications.length"
+      class="relative mb-6 w-full rounded-2xl bg-gray-150 p-1.75 pt-0 dark:bg-gray-950/35 dark:inset-shadow-2xs dark:inset-shadow-black"
+    >
+      <header class="px-4.5 py-3">
+        <h3 class="text-sm font-medium tracking-tight text-gray-700 dark:text-white">Notifications</h3>
+      </header>
+      <ul
+        class="divide-y divide-gray-200 rounded-xl bg-white text-sm shadow-ui-md ring ring-gray-200 dark:divide-gray-700 dark:bg-gray-850 dark:ring-gray-700/80"
+      >
+        <li v-for="item in notifications" :key="item.key" class="min-w-0 space-y-1 px-4.5 py-3">
+          <div class="flex items-center gap-2">
+            <span class="truncate font-medium" :title="item.target">{{ item.target || 'No recipient' }}</span>
+            <StatusCell :value="item.status" />
+          </div>
+          <p class="text-xs text-gray-600 dark:text-gray-400">
+            Email · {{ item.attempts }} {{ item.attempts === 1 ? 'attempt' : 'attempts' }}
+            <template v-if="item.at"> · {{ date(item.at) }}</template>
+          </p>
+          <p v-if="item.error" class="text-xs text-red-700 dark:text-red-400">{{ item.error }}</p>
+        </li>
+      </ul>
+    </section>
+
+    <section
+      v-if="deliveries.length"
+      class="relative mb-6 w-full rounded-2xl bg-gray-150 p-1.75 pt-0 dark:bg-gray-950/35 dark:inset-shadow-2xs dark:inset-shadow-black"
+    >
+      <header class="px-4.5 py-3">
+        <h3 class="text-sm font-medium tracking-tight text-gray-700 dark:text-white">Deliveries</h3>
+      </header>
+      <ul
+        class="divide-y divide-gray-200 rounded-xl bg-white text-sm shadow-ui-md ring ring-gray-200 dark:divide-gray-700 dark:bg-gray-850 dark:ring-gray-700/80"
+      >
+        <li v-for="delivery in deliveries" :key="delivery.key" class="flex items-start gap-4 px-4.5 py-3">
+          <div class="min-w-0 flex-1 space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="truncate font-medium" :title="delivery.target">{{ delivery.target }}</span>
+              <StatusCell :value="delivery.status" />
+            </div>
+            <p class="text-xs text-gray-600 dark:text-gray-400">
+              {{ delivery.mode === 'sync' ? 'During submission' : 'In the background' }} · {{ delivery.attempts }}
+              {{ delivery.attempts === 1 ? 'attempt' : 'attempts' }}
+              <template v-if="delivery.at"> · {{ date(delivery.at) }}</template>
+            </p>
+            <p v-if="delivery.error" class="text-xs text-red-700 dark:text-red-400">{{ delivery.error }}</p>
+            <ul v-if="delivery.errors" class="text-xs text-red-700 dark:text-red-400">
+              <li v-for="(messages, field) in delivery.errors" :key="field">{{ field }}: {{ messages.join(', ') }}</li>
+            </ul>
+          </div>
+          <Button v-if="delivery.can_retry" size="sm" variant="outline" @click="retry(delivery)">Retry</Button>
+        </li>
+      </ul>
+    </section>
+  </div>
+</template>

@@ -1,0 +1,137 @@
+schema: 1
+title: Integrations
+blueprint:
+  title: Integrations
+  tabs:
+    analytics:
+      display: Analytics
+      sections:
+        - display: Tools
+          instructions: Paste each tool's snippet as it gives it. Runs on the live site only, never in previews or the Control Plane.
+          fields:
+            - handle: analytics
+              field:
+                type: replicator
+                display: Analytics
+                hide_display: true
+                button_label: Add analytics
+                button_position: header
+                insert_below: false
+                tab_count: true
+                sets:
+                  private:
+                    display: No cookies
+                    sets:
+                      plausible:
+                        display: Plausible
+                        icon: chart
+                        badge: No cookies
+                        fields:
+                          - handle: head
+                            field: { type: code, display: Snippet, required: true, rows: 5, replicator_preview: false, validate: [analytics_snippet], instructions: "From Plausible → Site settings → Site installation. [Guide](https://plausible.io/docs/plausible-script)" }
+                      fathom:
+                        display: Fathom
+                        icon: chart
+                        badge: No cookies
+                        fields:
+                          - handle: head
+                            field: { type: code, display: Snippet, required: true, rows: 5, replicator_preview: false, validate: [analytics_snippet], instructions: "From Fathom → Settings → Sites → Embed code. Add data-spa=\"auto\" to its script tag, so page changes are counted. [Guide](https://usefathom.com/docs/script/embed)" }
+                      umami:
+                        display: Umami
+                        icon: chart
+                        badge: No cookies
+                        fields:
+                          - handle: head
+                            field: { type: code, display: Snippet, required: true, rows: 5, replicator_preview: false, validate: [analytics_snippet], instructions: "From Umami → Settings → Websites → Edit → Tracking code. [Guide](https://docs.umami.is/docs/tracker-configuration)" }
+                      cloudflare:
+                        display: Cloudflare Web Analytics
+                        icon: chart
+                        badge: No cookies
+                        max: 1
+                        fields:
+                          - handle: body_end
+                            field: { type: code, display: Snippet, required: true, rows: 5, replicator_preview: false, validate: [analytics_snippet], instructions: "From Cloudflare → Web Analytics → Manage site. Added at the end of the page, as Cloudflare asks. [Guide](https://developers.cloudflare.com/web-analytics/get-started/)" }
+                  consent:
+                    display: Needs cookie consent
+                    sets:
+                      ga4:
+                        display: Google Analytics 4
+                        icon: chart
+                        badge: Needs consent
+                        fields:
+                          - handle: head
+                            field: { type: code, display: Snippet, required: true, rows: 5, replicator_preview: false, validate: [analytics_snippet], instructions: "From Google Analytics → Admin → Data streams → View tag instructions → Install manually. [Guide](https://support.google.com/analytics/answer/9304153)" }
+                      gtm:
+                        display: Google Tag Manager
+                        icon: chart
+                        badge: Needs consent
+                        fields:
+                          - handle: head
+                            field: { type: code, display: Head snippet, required: true, rows: 5, replicator_preview: false, validate: [analytics_snippet], instructions: "From Tag Manager → Admin → Install Google Tag Manager: the part for the head. [Guide](https://support.google.com/tagmanager/answer/14842164)" }
+                          - handle: body_start
+                            field: { type: code, display: Body snippet, rows: 4, replicator_preview: false, validate: [analytics_snippet], instructions: "The part for straight after the opening body tag." }
+    code:
+      display: Custom code
+      sections:
+        - display: Snippets
+          instructions: Added to every live page exactly as written. Only paste code from sources you trust.
+          fields:
+            - handle: custom_code
+              field:
+                type: replicator
+                display: Custom code
+                hide_display: true
+                button_label: Add snippet
+                button_position: header
+                insert_below: false
+                tab_count: true
+                sets:
+                  snippet:
+                    display: Snippet
+                    icon: code-block
+                    fields:
+                      - handle: name
+                        field: { type: text, display: Name, required: true, placeholder: Chat widget, width: 50 }
+                      - handle: placement
+                        field:
+                          type: select
+                          display: Where
+                          required: true
+                          default: head
+                          options: { head: In the head, body_start: At the start of the body, body_end: At the end of the body }
+                          width: 50
+                      - handle: code
+                        field: { type: code, display: Code, required: true, replicator_preview: false }
+    captcha:
+      display: CAPTCHA
+      sections:
+        - display: CAPTCHA
+          instructions: Used by forms that turn CAPTCHA on.
+          fields:
+            - handle: captcha_provider
+              field: { type: select, display: Provider, clearable: true, options: { turnstile: Cloudflare Turnstile, recaptcha: Google reCAPTCHA v3 }, width: 50 }
+            - handle: captcha_site_key
+              field: { type: text, display: Site key, width: 50 }
+            - handle: captcha_secret_key
+              field: { type: secret, display: Secret key }
+            - handle: recaptcha_min_score
+              field:
+                type: text
+                input_type: number
+                display: Minimum score
+                instructions: reCAPTCHA v3 rates each visitor from 0.0 (likely a bot) to 1.0 (likely human). Submissions below this score are rejected.
+                default: 0.5
+                placeholder: "0.5"
+                validate: ["regex:/\\A(0(\\.\\d+)?|1(\\.0+)?)\\z/"]
+                if: { captcha_provider: "recaptcha" }
+                width: 50
+    email:
+      display: Email
+      sections:
+        - display: Sender
+          instructions: Every email the site sends comes from this address, including form notifications and account invites.
+          fields:
+            - handle: mail_from_name
+              field: { type: text, display: Sender name, placeholder: Nibble, width: 50 }
+            - handle: mail_from_address
+              field: { type: text, input_type: email, display: Sender address, placeholder: noreply@example.com, width: 50 }

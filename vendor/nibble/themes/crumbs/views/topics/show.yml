@@ -1,0 +1,7 @@
+params: [page]
+posts:
+  from: entries:posts
+  where:
+    topics: $term
+  paginate: { per_page: 12 }
+  fields: [excerpt, published_at, featured_image]

@@ -1,0 +1,11 @@
+module Nibble
+  module Records
+    class WorkflowTransition < Nibble::ApplicationRecord
+      self.table_name = "workflow_transitions"
+      include TypedPolymorphism
+
+      belongs_to :record, polymorphic: true
+      belongs_to :actor, class_name: "Nibble::User", optional: true
+    end
+  end
+end

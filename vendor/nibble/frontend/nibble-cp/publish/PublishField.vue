@@ -1,0 +1,166 @@
+<script setup lang="ts">
+import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
+import CpIcon from '@/components/cp/icons/CpIcon.vue'
+import { Button } from '@/components/ui/button'
+import { FieldDescription, FieldError } from '@/components/ui/field'
+import { Label } from '@/components/ui/label'
+import { isVisible } from '../conditions'
+import type { FieldAction } from '../fieldtypes/actions'
+import { resolveFieldtype } from '../fieldtypes/registry'
+import { fieldConfig, type PublishField } from '../fieldtypes/types'
+import { getPath, joinPath } from '../lib/paths'
+import { useContainer } from './context'
+import FieldInstructions from './FieldInstructions.vue'
+
+const props = defineProps<{
+  field: PublishField
+  fieldPathPrefix?: string
+  metaPathPrefix?: string
+  readOnly?: boolean
+}>()
+const container = useContainer()
+
+const path = computed(() => joinPath(props.fieldPathPrefix, props.field.handle))
+const metaPath = computed(() => joinPath(props.metaPathPrefix ?? props.fieldPathPrefix, props.field.handle))
+const value = computed(() => getPath(container.values.value, path.value))
+const meta = computed(() => (getPath(container.meta.value, metaPath.value) ?? {}) as Record<string, unknown>)
+const config = computed(() => fieldConfig(props.field))
+const component = computed(() => resolveFieldtype(props.field.component))
+
+const siblings = computed(
+  () =>
+    ({
+      ...container.extraValues.value,
+      ...((props.fieldPathPrefix
+        ? getPath(container.values.value, props.fieldPathPrefix)
+        : container.values.value) as Record<string, unknown>),
+    }) as Record<string, unknown>,
+)
+const conditionContext = computed(() => ({
+  values: siblings.value,
+  rootValues: container.values.value,
+  path: path.value,
+  prefix: props.field.prefix,
+}))
+const visible = computed(() => isVisible(props.field, conditionContext.value))
+const required = computed(
+  () =>
+    props.field.required ||
+    (props.field.required_when
+      ? isVisible(props.field.required_when as Record<string, unknown>, conditionContext.value)
+      : false),
+)
+watch(
+  visible,
+  (shown) => {
+    if (shown) container.unsetHiddenField(path.value)
+    else container.setHiddenField(path.value, { hidden: true, omitValue: !props.field.always_save })
+  },
+  { immediate: true },
+)
+onBeforeUnmount(() => container.unsetHiddenField(path.value))
+
+const errors = computed(() => container.errors.value[path.value] ?? [])
+const readOnly = computed(
+  () =>
+    props.readOnly ||
+    container.readOnly.value ||
+    props.field.read_only ||
+    (props.field.read_only_when != null && isVisible(props.field.read_only_when, conditionContext.value)),
+)
+
+const control = ref<{ fieldActions?: FieldAction[] }>()
+const actions = computed(() => (props.field.actions ? (control.value?.fieldActions ?? []) : []))
+
+const showsInstructions = computed(
+  () =>
+    !!props.field.instructions &&
+    (props.field.instructions_position === 'below' || !props.field.hide_display || actions.value.length > 0),
+)
+const instructionsId = computed(() => `${path.value}-instructions`)
+const labelId = computed(() => `${path.value}-label`)
+const errorId = computed(() => `${path.value}-error`)
+const describedBy = computed(() =>
+  [showsInstructions.value && instructionsId.value, errors.value.length > 0 && errorId.value].filter(Boolean).join(' '),
+)
+const wrapper = useTemplateRef<HTMLElement>('wrapper')
+const LABELABLE = new Set(['button', 'input', 'meter', 'output', 'progress', 'select', 'textarea'])
+
+// Fieldtypes put the id they are given on their control, so linking it here spares each one, an extension's too, a prop.
+function linkDescription() {
+  const target = wrapper.value?.querySelector(`#${CSS.escape(path.value)}`)
+  if (!target) return
+  if (describedBy.value) target.setAttribute('aria-describedby', describedBy.value)
+  else target.removeAttribute('aria-describedby')
+  if (!props.field.hide_display && !LABELABLE.has(target.localName) && !target.hasAttribute('aria-labelledby'))
+    target.setAttribute('aria-labelledby', labelId.value)
+}
+watch(describedBy, linkDescription, { flush: 'post' })
+</script>
+
+<template>
+  <div
+    v-if="visible && field.visibility !== 'hidden'"
+    ref="wrapper"
+    :class="['form-group flex min-w-0 flex-col gap-2', `field-w-${field.width}`]"
+    :data-field-path="path"
+    :data-invalid="errors.length > 0 || undefined"
+  >
+    <div v-if="!field.hide_display || actions.length" class="flex flex-col gap-1.5">
+      <div class="flex items-center justify-between gap-2">
+        <Label v-if="!field.hide_display" :id="labelId" :for="path" class="block"
+          >{{ field.display
+          }}<template v-if="required"
+            ><span class="relative -top-px ms-0.5 text-red-600" aria-hidden="true">*</span
+            ><span class="sr-only"> (required)</span></template
+          ></Label
+        >
+        <div v-if="actions.length" class="flex items-center gap-1">
+          <Button
+            v-for="action in actions"
+            :key="action.title"
+            type="button"
+            variant="outline"
+            class="-my-1 h-7 rounded-md px-2"
+            :aria-label="action.title"
+            :title="action.title"
+            :disabled="action.disabled"
+            @click="action.run()"
+          >
+            <CpIcon :name="action.icon" class="size-3.5" />
+          </Button>
+        </div>
+      </div>
+      <FieldDescription
+        v-if="field.instructions && field.instructions_position === 'above'"
+        :id="instructionsId"
+        class="st-text-trim-start"
+        ><FieldInstructions :text="field.instructions"
+      /></FieldDescription>
+    </div>
+    <component
+      :is="component"
+      v-if="component"
+      :id="path"
+      ref="control"
+      :value="value"
+      :config="config"
+      :handle="field.handle"
+      :meta="meta"
+      :read-only="readOnly"
+      :field-path-prefix="path"
+      :meta-path-prefix="metaPath"
+      @update:value="(updated: unknown) => container.setFieldValue(path, updated)"
+      @update:meta="(updated: unknown) => container.setFieldMeta(metaPath, updated)"
+      @vue:mounted="linkDescription"
+      @vue:updated="linkDescription"
+    />
+    <p v-else class="text-sm text-red-600">
+      This field can't be shown here ({{ field.component }}). Ask a developer to check its type.
+    </p>
+    <FieldDescription v-if="field.instructions && field.instructions_position === 'below'" :id="instructionsId"
+      ><FieldInstructions :text="field.instructions"
+    /></FieldDescription>
+    <FieldError v-if="errors.length" :id="errorId" :errors="errors" />
+  </div>
+</template>

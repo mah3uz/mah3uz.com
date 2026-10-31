@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+# Before the server starts, bring the database up to this release; a refusal stops the boot.
+if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
+  ./bin/rails nibble:prepare
+fi
+
+exec "${@}"

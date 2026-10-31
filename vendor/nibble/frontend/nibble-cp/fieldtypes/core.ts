@@ -1,0 +1,38 @@
+import { registerFieldtype } from './registry'
+
+const components = {
+  assets: () => import('./components/AssetsFieldtype.vue'),
+  button_group: () => import('./components/ButtonGroupFieldtype.vue'),
+  checkboxes: () => import('./components/CheckboxesFieldtype.vue'),
+  code: () => import('./components/CodeFieldtype.vue'),
+  color: () => import('./components/ColorFieldtype.vue'),
+  date: () => import('./components/DateFieldtype.vue'),
+  decimal: () => import('./components/DecimalFieldtype.vue'),
+  entries: () => import('./components/EntriesFieldtype.vue'),
+  grid: () => import('./components/GridFieldtype.vue'),
+  integer: () => import('./components/IntegerFieldtype.vue'),
+  note: () => import('./components/NoteFieldtype.vue'),
+  link: () => import('./components/LinkFieldtype.vue'),
+  list: () => import('./components/ListFieldtype.vue'),
+  markdown: () => import('./components/MarkdownFieldtype.vue'),
+  radio: () => import('./components/RadioFieldtype.vue'),
+  range: () => import('./components/RangeFieldtype.vue'),
+  rating: () => import('./components/RatingFieldtype.vue'),
+  replicator: () => import('./components/ReplicatorFieldtype.vue'),
+  rich_text: () => import('./components/RichTextFieldtype.vue'),
+  select: () => import('./components/SelectFieldtype.vue'),
+  secret: () => import('./components/SecretFieldtype.vue'),
+  seo: () => import('./components/SeoFieldtype.vue'),
+  slug: () => import('./components/SlugFieldtype.vue'),
+  terms: () => import('./components/TermsFieldtype.vue'),
+  text: () => import('./components/TextFieldtype.vue'),
+  textarea: () => import('./components/TextareaFieldtype.vue'),
+  time: () => import('./components/TimeFieldtype.vue'),
+  toggle: () => import('./components/ToggleFieldtype.vue'),
+}
+
+export const coreFieldtypeHandles = Object.keys(components)
+
+export function registerCoreFieldtypes() {
+  for (const [handle, loader] of Object.entries(components)) registerFieldtype(handle, loader)
+}

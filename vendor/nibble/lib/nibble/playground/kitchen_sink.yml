@@ -1,0 +1,80 @@
+title: Kitchen sink
+tabs:
+  main:
+    display: Main
+    sections:
+      - display: Basics
+        fields:
+          - { handle: title, field: { type: text, required: true, character_limit: 60, listable: true } }
+          - { handle: slug, field: { type: slug, from: title, show_regenerate: true } }
+          - { handle: excerpt, field: { type: textarea, character_limit: 200, instructions: Shown on listings. } }
+          - { handle: notes, field: { type: markdown, rows: 8, instructions: "Markdown, with a preview." } }
+          - { handle: embed, field: { type: code, placeholder: "<iframe src=\"https://…\"></iframe>", instructions: "HTML, with line numbers and highlighting." } }
+          - { handle: count, field: { type: integer, min: 1, max: 10, width: 50 } }
+          - { handle: price, field: { type: decimal, decimals: 2, min: 0, prepend: "$", width: 50 } }
+          - { handle: volume, field: { type: range, min: 0, max: 10, width: 50 } }
+          - { handle: score, field: { type: rating, max: 5, width: 50 } }
+          - { handle: opens_at, field: { type: time, earliest: "09:00", latest: "17:30", width: 50 } }
+          - { handle: accent, field: { type: color, swatches: ["#1a2b3c", "#ffaa00"], width: 50 } }
+          - { handle: size, field: { type: button_group, options: { small: Small, large: Large }, width: 50 } }
+          - { handle: featured, field: { type: toggle, inline_label: Feature on the home page, width: 50 } }
+          - { handle: editing_note, field: { type: note, text: "Keep it **short**. See the [style guide](/style)." } }
+          - { handle: category, field: { type: select, options: { news: News, guides: Guides }, clearable: true, width: 50 } }
+          - { handle: tags, field: { type: select, multiple: true, taggable: true, options: [design, culture], width: 50 } }
+          - { handle: layout, field: { type: radio, options: [narrow, wide], inline: true, width: 50 } }
+          - { handle: channels, field: { type: checkboxes, options: { email: Email, sms: SMS }, inline: true, width: 50 } }
+          - { handle: published_on, field: { type: date, width: 50 } }
+          - { handle: event_starts, field: { type: date, time_enabled: true, width: 50 } }
+          - { handle: api_key, field: { type: secret, display: API key, width: 50 } }
+          - { handle: show_cta, field: { type: toggle, display: Show call to action } }
+          - { handle: cta_label, field: { type: text, required: true, if: { show_cta: "true" } } }
+      - display: Structured
+        fields:
+          - { handle: hours, field: { type: list, add_row: Add hours } }
+          - handle: links
+            field:
+              type: grid
+              add_row: Add link
+              max_rows: 3
+              fields:
+                - { handle: label, field: { type: text, required: true, width: 50 } }
+                - { handle: url, field: { type: text, input_type: url, width: 50 } }
+          - handle: blocks
+            field:
+              type: replicator
+              button_label: Add block
+              sets:
+                content:
+                  display: Content
+                  sets:
+                    hero:
+                      display: Hero
+                      fields:
+                        - { handle: heading, field: { type: text, required: true } }
+                        - { handle: image, field: { type: assets, max_files: 1, alt: required } }
+                    quote:
+                      display: Quote
+                      fields:
+                        - { handle: quote, field: { type: textarea, required: true } }
+                        - { handle: attribution, field: { type: text, if: { quote: "not empty" } } }
+          - handle: body
+            field:
+              type: rich_text
+              sets:
+                callout:
+                  display: Callout
+                  fields:
+                    - { handle: message, field: { type: textarea, required: true } }
+  relations:
+    display: Relations
+    sections:
+      - fields:
+          - { handle: related, field: { type: entries, collections: [pages] } }
+          - { handle: topics, field: { type: terms, taxonomies: [topics], max_items: 3 } }
+          - { handle: cta_link, field: { type: link, collections: [pages] } }
+          - { handle: gallery, field: { type: assets, alt: optional } }
+  seo:
+    display: SEO
+    sections:
+      - fields:
+          - { handle: seo, field: { type: seo } }

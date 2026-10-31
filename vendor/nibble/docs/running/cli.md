@@ -1,0 +1,173 @@
+---
+id: running-cli
+title: The nibble command
+description: One command to start a site, run its tasks, and work on the content of any site you sign in to — from a
+  terminal, a script or an AI agent.
+order: 9
+---
+
+# The nibble command
+
+`nibble` is a single program for your computer. Tidewater's developer uses it three ways: to start a new site, to
+run the site's tasks without typing `bin/rails`, and to fix a post on the live site from a terminal.
+
+After reading this guide, you will know:
+
+- How to install it.
+- How to start a site with it.
+- How it runs a site's tasks.
+- How to sign in to one or more sites, and work on their content.
+- How to connect AI apps and install the site's guide for them.
+- How to set up completion in your shell.
+
+## 1. Installing it
+
+It is released on its own, from [mah3uz/nibble-cli](https://github.com/mah3uz/nibble-cli), for macOS and Linux on
+Intel and ARM, and for Windows:
+
+```sh
+curl -LsSf https://github.com/mah3uz/nibble-cli/releases/latest/download/nibble-cli-installer.sh | sh
+```
+
+On Windows, in PowerShell:
+
+```powershell
+irm https://github.com/mah3uz/nibble-cli/releases/latest/download/nibble-cli-installer.ps1 | iex
+```
+
+Each installer downloads the build for this computer and puts `nibble` in `~/.local/bin`; every release also
+publishes a `sha256.sum` for checking a download by hand. To build it yourself, clone the repository and run
+`just install`.
+
+Any version works with any site on the same management API. When they differ, `nibble` says whether it or the site
+needs upgrading.
+
+## 2. Starting a site
+
+```sh
+nibble new tidewater
+```
+
+It checks this computer has what Nibble needs, downloads the latest release, checks it against its published
+checksum, and runs the installer. `--version 0.19.0` picks a release; anything after `--` goes to the installer.
+
+## 3. A site's tasks
+
+Inside a site's folder, a word that isn't one of the command's own runs a task: `nibble check` is
+`bin/rails nibble:check`, and `nibble schema show collections/posts` is `bin/rails nibble:schema:show collections/posts`.
+The command's own words are `new`, `auth`, `remote`, `mcp`, `skill`, `doctor`, `help` and `completion`; no task
+uses them.
+
+## 4. Signing in
+
+```sh
+nibble auth login tidewater.example
+```
+
+Your browser opens the site. Sign in there — the command never sees your password — and choose what it may do, as
+for [any app](../editing/ai-apps.md). The sign-in is kept in your system's keychain.
+
+| Command | Does |
+|---|---|
+| `nibble auth list` | every site and account you're signed in to; `*` marks the one commands use |
+| `nibble auth switch tidewater.example:you@tidewater.example` | use that site and account |
+| `nibble auth status` | who you are on the current site, and what you may do there |
+| `nibble auth logout` | sign out, and disconnect the command on the site |
+
+You can be signed in to many sites, and to one site as several people; `--site` on any command picks one.
+
+- **A server without a browser:** `nibble auth login tidewater.example --device` shows a code to type into the
+  Control Plane, if the site allows it.
+- **No keychain** (a bare Linux server): `--insecure-storage` keeps the sign-in in a file only you can read, and
+  `nibble doctor` reminds you.
+- **CI:** create a token for a script under **Connected apps**, and set `NIBBLE_SITE` and `NIBBLE_TOKEN`.
+
+**A folder that always means one site.** Put `site = "tidewater.example"` in a `.nibble.toml`, and run
+`nibble auth allow` there once. A `.nibble.toml` you haven't allowed is refused, so a repository you clone can't point
+your commands at a site you didn't choose.
+
+## 5. Working on content
+
+```sh
+nibble remote                                        # what you can do on this site
+nibble remote list-entries --collection posts
+nibble remote get-entry --id 12
+nibble remote update-entry --id 12 --lock-version 3 --data '{"title":"Invoices, faster"}' --dry-run
+nibble remote update-entry --id 12 --lock-version 3 --data @change.json
+```
+
+The operations come from the site, so they always match what it offers and what you may do. `--help` after one lists
+its arguments. Objects take JSON, `@file.json`, or `-` for standard input. `--dry-run` shows the change without
+making it. A change to an entry is a draft until it's published; every change says which site and account made it.
+
+On a terminal, lists print as tables and records as aligned fields, in colour; `NO_COLOR=1` turns colour off. Piped,
+or with `--json`, every command prints `{"ok": true, "data": …}` or `{"ok": false, "error": {"code", "message",
+"hint"}}`, never colour. `--pick entries.0.title` prints just that value, so a script can capture it:
+`id=$(nibble remote create-entry … --pick id)`.
+
+## 6. AI apps
+
+```sh
+nibble connect tidewater.example            # sign in if needed, then set up every AI app found
+nibble connect tidewater.example --client claude-code,cursor
+nibble disconnect tidewater.example         # remove what connect added
+```
+
+`connect` signs in if you aren't already, adds the site's MCP server to each AI app it finds (Claude Code, Codex and
+Cursor), and installs the site's skill where the app supports skills. `--client` limits it to the apps you name.
+Run it again to refresh what it installed.
+
+It installs into the current project, the folder you run it in, so run it in the folder where you will use the site's
+tools. The skill loads only there, and nothing is installed user-wide. It refuses the folder of another Nibble site,
+so one site's tools never end up in another's. `disconnect` removes what `connect` added to the current project, and
+also the user-wide entries that older versions wrote.
+
+For finer control, each part has its own command:
+
+```sh
+nibble mcp install --client claude-code     # or codex, cursor; claude and chatgpt show where to paste the address
+nibble skill install --client claude        # the site's guide, as a skill Claude or Codex loads when it's relevant
+nibble skill sync                           # refresh installed guides after the site's schema or notes change
+```
+
+The guide is written from the site's schema and its own notes in `site/agents/*.md` — put your editorial style
+there — so each site's is different.
+
+To connect a client without the `nibble` command, give it the site's address for apps, shown under **Connected apps**
+in the account menu — for example `https://tidewater.example/mcp`:
+
+| Client | How |
+|---|---|
+| Claude Code | `claude mcp add --transport http tidewater https://tidewater.example/mcp` |
+| Codex | `[mcp_servers.tidewater]` with `url = "https://tidewater.example/mcp"` in `~/.codex/config.toml`, then `codex mcp login tidewater` |
+| Cursor | its MCP settings, as a server with that URL |
+
+The client opens a browser to sign in and approve the connection, as in [Agent access](agent-access.md).
+
+## 7. Completion
+
+Add the line for your shell to its startup file, then open a new terminal:
+
+```sh
+eval "$(nibble completion bash)"                                   # ~/.bashrc
+eval "$(nibble completion zsh)"                                    # ~/.zshrc, after compinit
+nibble completion fish > ~/.config/fish/completions/nibble.fish    # fish, once
+nibble completion powershell | Out-String | Invoke-Expression      # PowerShell's $PROFILE
+```
+
+Tab completes the command's own words and options, a site's tasks inside its folder, your sites and accounts, and on
+`nibble remote` the operations this connection can run, their arguments, and values such as the collections you may
+use or the blueprints of the collection you named.
+
+Completion never contacts the site: it reads what `nibble remote` last learned, which sign-in saves first. After you
+change the schema, `nibble remote describe-site` brings it up to date at once. A site's tasks are learned the first
+time you run one there, or `nibble doctor`.
+
+## 8. When something is wrong
+
+```sh
+nibble doctor
+```
+
+checks the configuration, the keychain, the site folder, your sign-in and what the site lets you do, and says how to
+fix what fails.

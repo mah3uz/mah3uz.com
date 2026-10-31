@@ -1,0 +1,43 @@
+# CMS password reset (Rails 8 authentication), rendered in the Control Plane.
+module Nibble
+  module Cp
+    class PasswordsController < Nibble::ApplicationController
+      layout "nibble/cp"
+      allow_unauthenticated_access
+      before_action :set_user_by_token, only: %i[ edit update ]
+      rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_cp_password_path, alert: "Too many tries. Wait a few minutes and try again." }
+
+      def new
+        render inertia: "cp/auth/ForgotPassword", props: { flash: flash.to_hash.slice("notice", "alert") }
+      end
+
+      def create
+        if (user = Nibble::User.find_by(email_address: params[:email_address]))
+          Nibble::PasswordsMailer.reset(user).deliver_later
+        end
+
+        redirect_to new_cp_session_path, notice: "If that email has an account, we've sent it a reset link."
+      end
+
+      def edit
+        render inertia: "cp/auth/ResetPassword", props: { token: params[:token], flash: flash.to_hash.slice("notice", "alert") }
+      end
+
+      def update
+        if @user.update(params.permit(:password, :password_confirmation))
+          @user.sessions.destroy_all
+          redirect_to new_cp_session_path, notice: "Password has been reset."
+        else
+          redirect_to edit_cp_password_path(params[:token]), alert: "The two passwords don't match."
+        end
+      end
+
+      private
+        def set_user_by_token
+          # Also accepts invitation links (Nibble::Cp::UsersController), which last longer than a reset link.
+          @user = Nibble::User.find_by_password_reset_token(params[:token]) || Nibble::User.find_by_token_for(:invitation, params[:token])
+          redirect_to new_cp_password_path, alert: "This reset link has expired. Ask for a new one." unless @user
+        end
+    end
+  end
+end

@@ -1,0 +1,28 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./vendor/nibble/frontend/nibble-cp/*"
+      ],
+      "@nibble": [
+        "./vendor/nibble/frontend/nibble/index.ts"
+      ],
+      "@nibble/*": [
+        "./vendor/nibble/frontend/nibble/*"
+      ],
+      "@site/*": [
+        "./site/*"
+      ]
+    }
+  }
+}

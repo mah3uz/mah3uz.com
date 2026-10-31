@@ -1,0 +1,10 @@
+page:
+  include: [authors]
+related:
+  from: entries:posts
+  where:
+    topics: { in: $entry.topics }
+  not:
+    id: $entry.id
+  limit: 3
+  fields: [excerpt, published_at, featured_image]

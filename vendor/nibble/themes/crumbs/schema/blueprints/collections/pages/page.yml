@@ -1,0 +1,31 @@
+schema: 1
+title: Page
+tabs:
+  main:
+    display: Content
+    sections:
+      - fields:
+          - handle: title
+            field: { type: text, required: true, listable: true, localizable: true, validate: [max:200] }
+          - handle: eyebrow
+            field: { type: text, instructions: Small line shown above the heading., localizable: true }
+          - handle: intro
+            field: { type: textarea, character_limit: 300, localizable: true }
+          - handle: blocks
+            field: nibble::page_fields.blocks
+            config:
+              add_sets:
+                content:
+                  latest_posts:
+                    display: Latest posts
+                    icon: layout-list
+                    fields:
+                      - handle: count
+                        field: { type: integer, min: 1, max: 12, default: 3 }
+                      - handle: heading
+                        field: { type: text }
+  seo:
+    display: SEO
+    sections:
+      - fields:
+          - import: nibble::seo

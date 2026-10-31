@@ -1,0 +1,25 @@
+module Nibble
+  class NotificationsMailer < Nibble::ApplicationMailer
+    SUBJECTS = {
+      "workflow.review_requested" => "A review was requested",
+      "workflow.approved" => "Your entry was approved",
+      "workflow.rejected" => "Your entry was sent back",
+      "comment.mentioned" => "You were mentioned",
+      "form.submitted" => "New form submission",
+      "webhook.disabled" => "A webhook was turned off after repeated failures",
+      "apps.connected" => "A new app was connected to your account",
+      "apps.access_changed" => "Someone changed what an app connected to your account may do",
+      "apps.approval_requested" => "An app is waiting for your approval",
+      "apps.approval_failed" => "A change you approved couldn't be made",
+      "task.failed" => "A scheduled task started failing"
+    }.freeze
+
+    def notify(notification)
+      @notification = notification
+      @user = Nibble::User.find_by(id: notification.user_id) or return
+      @title = notification.data["title"]
+      @comment = notification.data["comment"]
+      mail subject: SUBJECTS.fetch(notification.kind, "Something needs your attention"), to: @user.email_address
+    end
+  end
+end

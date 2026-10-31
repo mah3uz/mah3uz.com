@@ -1,0 +1,99 @@
+module Nibble
+  class Schema
+    module Rules
+      STRING = ->(value) { value.is_a?(String) && value.present? }
+      TEXT = ->(value) { STRING.(value) || (value.is_a?(Hash) && value.present? && value.values.all? { |item| STRING.(item) }) }
+      OPTIONAL_STRING = ->(value) { value.nil? || STRING.(value) }
+      BOOLEAN = ->(value) { value == true || value == false }
+      INTEGER = ->(value) { value.is_a?(Integer) && value >= 0 }
+      HASH = ->(value) { value.is_a?(Hash) }
+      ARRAY = ->(value) { value.is_a?(Array) }
+      STRINGS = ->(value) { value.is_a?(Array) && value.all? { |item| STRING.(item) } }
+      MENU_KINDS = ->(value) do
+        value.is_a?(Hash) && value.all? do |handle, kind|
+          STRING.(handle) && kind.is_a?(Hash) && (kind.keys - %w[display link children fields]).empty? &&
+            (kind["display"].nil? || STRING.(kind["display"])) && (kind["link"].nil? || %w[optional required none].include?(kind["link"])) &&
+            (kind["children"].nil? || BOOLEAN.(kind["children"])) && (kind["fields"].nil? || ARRAY.(kind["fields"]))
+        end
+      end
+      ROUTE =->(value) { value.nil? || (value.is_a?(String) && (value.start_with?("/") || value.start_with?("{"))) }
+      STRUCTURE = ->(value) do
+        value == false || (value.is_a?(Hash) && (value["max_depth"].nil? || INTEGER.(value["max_depth"])) && [ nil, true, false ].include?(value["root"]))
+      end
+      WORKFLOW = ->(value) { %w[simple review].include?(value) }
+      SORT = ->(value) { value.is_a?(String) && value.match?(/\A[a-z_]+:(asc|desc)\z/) }
+      # A folder inside site/content/, named without the prefix, so a collection cannot read from anywhere else.
+      IN_CONTENT = ->(value) { STRING.(value) && !value.start_with?("/") && !value.split("/").include?("..") }
+
+      KINDS = {
+        "collections" => {
+          required: %w[title blueprints],
+          keys: {
+            "title" => STRING, "route" => ROUTE, "dated" => BOOLEAN, "expires" => BOOLEAN, "structure" => STRUCTURE,
+            "index_route" => ROUTE, "index_template" => STRING,
+            "taxonomies" => STRINGS, "blueprints" => STRINGS, "template" => STRING, "layout" => STRING,
+            "workflow" => WORKFLOW, "requires_slugs" => BOOLEAN, "revisions" => HASH, "sitemap" => HASH, "search" => ->(v) { v == false || STRING.(v) },
+            "api" => BOOLEAN, "localizable" => BOOLEAN, "sort" => SORT, "icon" => STRING, "files" => IN_CONTENT,
+            "feed" => ->(value) { [ true, false ].include?(value) || value.is_a?(Hash) }
+          }
+        },
+        "taxonomies" => {
+          required: %w[title blueprints],
+          keys: {
+            "title" => STRING, "route" => ROUTE, "index_route" => ROUTE, "template" => STRING, "index_template" => STRING,
+            "layout" => STRING, "blueprints" => STRINGS, "sort" => SORT, "sitemap" => HASH, "api" => BOOLEAN,
+            "localizable" => BOOLEAN, "icon" => STRING, "search" => ->(v) { v == false || STRING.(v) }
+          }
+        },
+        "globals" => {
+          required: %w[title blueprint],
+          keys: { "title" => STRING, "blueprint" => HASH, "localizable" => BOOLEAN }
+        },
+        "navigation" => {
+          required: %w[title],
+          keys: {
+            "title" => STRING, "max_depth" => INTEGER, "collections" => STRINGS, "taxonomies" => STRINGS,
+            "globals" => ->(value) { BOOLEAN.(value) || STRINGS.(value) }, "assets" => BOOLEAN, "headings" => BOOLEAN, "item_fields" => ARRAY, "entry_fields" => STRINGS,
+            "kinds" => MENU_KINDS, "queries" => STRINGS
+          }
+        },
+        "forms" => {
+          required: %w[title],
+          keys: {
+            "title" => TEXT, "fields" => ARRAY, "sections" => ARRAY, "store" => BOOLEAN, "spam" => HASH, "notify" => ARRAY, "api" => ARRAY,
+            "handler" => STRING, "cp_notify" => BOOLEAN, "success" => HASH, "retention_days" => INTEGER, "limits" => HASH,
+            "steps" => BOOLEAN, "resume" => BOOLEAN, "resume_email" => STRING, "resume_days" => INTEGER, "submit_label" => TEXT
+          }
+        },
+        "apis" => {
+          required: %w[base_url],
+          keys: { "base_url" => STRING, "headers" => HASH, "timeout" => INTEGER, "errors" => HASH, "retry" => HASH }
+        },
+        "tasks" => {
+          required: %w[title schedule],
+          keys: {
+            "title" => STRING, "description" => STRING, "schedule" => STRING, "fetch" => HASH, "request" => HASH, "handler" => STRING
+          }
+        },
+        "blueprints" => {
+          required: %w[title tabs],
+          keys: { "title" => STRING, "hide" => BOOLEAN, "order" => INTEGER, "template" => STRING, "tabs" => HASH }
+        },
+        "fieldsets" => {
+          required: %w[title fields],
+          keys: { "title" => STRING, "fields" => ARRAY }
+        },
+        "search" => {
+          required: %w[indexes],
+          keys: { "indexes" => HASH }
+        },
+        "migrations" => {
+          required: %w[operations],
+          keys: { "operations" => ARRAY }
+        }
+      }.freeze
+
+      BLUEPRINT_PARENTS = %w[collections taxonomies].freeze
+    end
+  end
+end

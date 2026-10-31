@@ -1,0 +1,4 @@
+<h1><%= mail_text("resume.heading", title: @title) %></h1>
+<p><%= mail_html("resume.intro", title: tag.strong(@title), site: site_name) %></p>
+<p><%= link_to mail_text("resume.button"), @link, class: "button" %></p>
+<p class="note"><%= mail_text("resume.note", expires: l(@expires_at, format: :long, locale: Nibble::Localized.i18n_locale(@mail_locale))) %></p>

@@ -1,0 +1,22 @@
+<%= mail_text(@visitor ? "submission.visitor_heading" : "submission.staff_heading") %>
+
+<% if @message -%>
+<%= @message %>
+<% elsif @visitor -%>
+<%= mail_text("submission.visitor_intro", title: @form.title(@locale) || @form.handle, site: site_name) %>
+<% else -%>
+<%= mail_text("submission.staff_intro", title: @form.title(@locale) || @form.handle, site: site_name) %>
+<% end -%>
+<% @rows.each do |label, value| %>
+
+<%= label %>:
+<%= value.presence || "—" %>
+<% end %>
+<% if @reply_to %>
+
+<%= mail_text("submission.reply_to", email: @reply_to) %>
+<% end %>
+<% if @link %>
+
+<%= mail_text("submission.open") %>: <%= @link %>
+<% end %>

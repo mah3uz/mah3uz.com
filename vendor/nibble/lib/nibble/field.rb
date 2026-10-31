@@ -1,0 +1,194 @@
+module Nibble
+  class Field
+    VISIBILITIES = %w[visible read_only hidden computed].freeze
+    WIDTHS = [ 25, 33, 50, 66, 75, 100 ].freeze
+    CONDITION_KEYS = %w[if if_any unless unless_any show_when show_when_any hide_when hide_when_any].freeze
+    BOOLEAN = ->(value) { value == true || value == false }
+
+    TEXT = ->(value) { value.is_a?(String) || (value.is_a?(Hash) && value.values.all?(String)) }
+    CONDITIONAL = ->(value) { value.is_a?(Hash) && value.size == 1 && Conditions::KEYS.include?(value.keys.first.to_s) && [ Hash, String ].any? { |type| value.values.first.is_a?(type) } }
+
+    COMMON_OPTIONS = {
+      "type" => ->(value) { value.is_a?(String) },
+      "display" => TEXT,
+      "instructions" => TEXT,
+      "instructions_position" => ->(value) { %w[above below].include?(value) },
+      "width" => ->(value) { WIDTHS.include?(value) },
+      "required" => ->(value) { BOOLEAN.(value) || value.is_a?(Hash) },
+      "validate" => ->(value) { value.is_a?(String) || (value.is_a?(Array) && value.all? { |rule| rule.is_a?(String) }) },
+      "messages" => ->(value) { value.is_a?(Hash) && value.values.all? { |message| message.is_a?(String) || (message.is_a?(Hash) && message.values.all?(String)) } },
+      "default" => ->(_value) { true },
+      "visibility" => ->(value) { VISIBILITIES.include?(value) },
+      "read_only" => ->(value) { BOOLEAN.(value) || CONDITIONAL.(value) },
+      "always_save" => BOOLEAN,
+      "localizable" => BOOLEAN,
+      "listable" => ->(value) { [ true, false, "hidden" ].include?(value) },
+      "sortable" => BOOLEAN,
+      "filterable" => BOOLEAN,
+      "duplicate" => BOOLEAN,
+      "replicator_preview" => BOOLEAN,
+      "hide_display" => BOOLEAN,
+      "actions" => BOOLEAN,
+      "api" => BOOLEAN,
+      "hidden" => BOOLEAN,
+      "encrypt" => BOOLEAN,
+      "prefill" => ->(value) { value.is_a?(Hash) && value.keys == [ "query" ] && value["query"].is_a?(String) && value["query"].match?(/\A[\w\-.]+\z/) },
+      "value" => ->(value) { [ String, Numeric, TrueClass, FalseClass ].any? { |type| value.is_a?(type) } },
+      **CONDITION_KEYS.to_h { |key| [ key, ->(value) { value.is_a?(Hash) || value.is_a?(String) } ] }
+    }.freeze
+
+    COMPUTED_DEFAULT_PREFIX = "computed:".freeze
+
+    attr_reader :handle, :config, :prefix, :parent_field, :parent_index, :value
+
+    def initialize(handle, config, prefix: nil, parent_field: nil, parent_index: nil, value: nil, schema: nil)
+      @schema = schema
+      @handle = handle.to_s
+      @config = config.to_h.deep_stringify_keys.freeze
+      @prefix = prefix
+      @parent_field = parent_field
+      @parent_index = parent_index
+      @value = value
+    end
+
+    def with(handle: @handle, config: @config, prefix: @prefix, parent_field: @parent_field, parent_index: @parent_index, value: @value)
+      self.class.new(handle, config, prefix:, parent_field:, parent_index:, value:, schema: @schema)
+    end
+
+    def schema = @schema || Nibble.schema
+
+    def with_value(value) = with(value:)
+
+    def type = config.fetch("type", "text")
+    def fieldtype_class = Fieldtypes.find(type)
+    def fieldtype = fieldtype_class.new(self)
+    def options_source = @options_source ||= Options.for(self)
+
+    def get(key, fallback = nil)
+      value = config[key.to_s]
+      value.nil? ? fallback : value
+    end
+
+    def display(locale = nil) = Localized.resolve(get("display", handle.humanize), locale)
+    def instructions(locale = nil) = Localized.resolve(get("instructions"), locale)
+
+    def visibility
+      return get("visibility") if get("visibility")
+
+      get("read_only") == true ? "read_only" : "visible"
+    end
+
+    def read_only_condition = get("read_only").is_a?(Hash) ? get("read_only") : nil
+
+    def read_only?(values = {}, root_values: nil)
+      return true if visibility == "read_only"
+
+      read_only_condition.present? && Conditions.visible?(read_only_condition, values:, root_values:, path:, prefix:)
+    end
+
+    def required? = get("required", false) == true || validation_rules.include?("required")
+    def required_condition = get("required").then { |value| value if value.is_a?(Hash) }
+
+    def required_for?(values, root_values: nil, path: nil)
+      return true if required?
+
+      condition = required_condition
+      !condition.nil? && Conditions.visible?(condition, values:, root_values:, path:, prefix:)
+    end
+
+    def always_save? = get("always_save", false)
+    def localizable? = get("localizable", false)
+    def display_only? = fieldtype_class.display_only
+    def api? = !display_only? && get("api", true)
+    def duplicate?
+      return get("duplicate") if [ true, false ].include?(get("duplicate"))
+
+      type != "slug" && validation_rules.none? { |rule| rule.to_s.split(":").first == "unique" }
+    end
+    def computed? = visibility == "computed"
+
+    def listable? = !display_only? && get("listable", "hidden") != false
+    def visible_on_listing? = !display_only? && get("listable", "hidden") == true
+
+    def sortable?
+      return false if computed?
+
+      get("sortable", true)
+    end
+
+    def filterable? = get("filterable", listable?)
+
+    def validation_rules
+      rules = get("validate", [])
+      rules.is_a?(String) ? rules.split("|") : rules
+    end
+
+    def conditions = config.slice(*CONDITION_KEYS)
+
+    def computed_default? = get("default").is_a?(String) && get("default").start_with?(COMPUTED_DEFAULT_PREFIX)
+
+    def default_value
+      if computed_default?
+        Defaults.resolve(get("default").delete_prefix(COMPUTED_DEFAULT_PREFIX))
+      elsif config.key?("default")
+        config["default"]
+      else
+        fieldtype.default_value
+      end
+    end
+
+    def path_keys = [ *parent_field&.path_keys, *parent_index, handle ].map(&:to_s)
+    def path = path_keys.join(".")
+
+    def pre_process = with_value(fieldtype.pre_process(value))
+
+    def process
+      processed = fieldtype.process(value)
+      with_value(fieldtype.empty?(processed) ? nil : processed)
+    end
+    def pre_process_index = with_value(fieldtype.pre_process_index(value))
+    def pre_process_validatable = with_value(fieldtype.pre_process_validatable(value))
+    def augment = with_value(fieldtype.augment(value))
+    def shallow_augment = with_value(fieldtype.shallow_augment(value))
+    def meta = fieldtype.preload
+
+    def config_errors
+      errors = []
+      allowed = fieldtype_class.config_fields.handles
+      config.each do |key, value|
+        if (check = COMMON_OPTIONS[key])
+          errors << [ key, "has an invalid value: #{value.inspect}" ] unless check.(value)
+        elsif !allowed.include?(key)
+          errors << [ key, "isn't an option of the #{type} fieldtype" ]
+        end
+      end
+      errors
+    end
+
+    def to_publish_h
+      type_config = fieldtype.publish_config(fieldtype_class.config_defaults.merge(config.except(*COMMON_OPTIONS.keys)))
+      {
+        "handle" => handle,
+        "prefix" => prefix,
+        "type" => type,
+        "component" => fieldtype.component,
+        "display" => display,
+        "instructions" => instructions,
+        "instructions_position" => get("instructions_position", "above"),
+        "width" => get("width", 100),
+        "required" => required?,
+        "visibility" => visibility,
+        "read_only" => visibility == "read_only",
+        "read_only_when" => read_only_condition,
+        "always_save" => always_save?,
+        "localizable" => localizable?,
+        "hide_display" => get("hide_display", false),
+        "replicator_preview" => get("replicator_preview", true),
+        "actions" => get("actions", true),
+        **conditions,
+        **{ "required_when" => required_condition }.compact,
+        "config" => type_config
+      }
+    end
+  end
+end
