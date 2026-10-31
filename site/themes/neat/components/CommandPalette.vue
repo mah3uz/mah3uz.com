@@ -9,6 +9,7 @@ interface PaletteProject {
   uri: string | null
   tagline?: string | null
   monogram?: string | null
+  logo?: string | null
   accent?: string | null
 }
 
@@ -243,6 +244,7 @@ defineExpose({ show })
             >
               <ProjectTile
                 v-if="item.project"
+                :logo="item.project.logo"
                 :monogram="item.project.monogram"
                 :accent="item.project.accent"
                 size="size-8"

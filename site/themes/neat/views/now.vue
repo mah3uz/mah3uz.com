@@ -39,7 +39,13 @@ const building = computed(() => onlyProjects(props.projects).filter((project) =>
           :href="project.uri ?? '#'"
           class="group neat-card flex flex-col gap-4 p-6 transition-transform duration-500 hover:-translate-y-1"
         >
-          <ProjectTile :monogram="project.monogram" :accent="project.accent" size="size-12" text="text-lg" />
+          <ProjectTile
+            :logo="project.logo"
+            :monogram="project.monogram"
+            :accent="project.accent"
+            size="size-12"
+            text="text-lg"
+          />
           <span class="font-display text-xl font-extrabold tracking-tight">{{ project.title }}</span>
           <span class="text-sm leading-6 text-muted">{{ project.tagline }}</span>
         </Link>

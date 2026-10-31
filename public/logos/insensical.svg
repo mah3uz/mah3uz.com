@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Insensical">
+  <defs>
+    <linearGradient id="logo-isc-ground" x1=".14" y1="0" x2=".86" y2="1">
+      <stop offset="0" stop-color="#69c6ff"/>
+      <stop offset=".48" stop-color="#477fe8"/>
+      <stop offset="1" stop-color="#3447b5"/>
+    </linearGradient>
+    <linearGradient id="logo-metal" x1=".2" y1="0" x2=".8" y2="1">
+      <stop offset="0" stop-color="#f3fbff"/>
+      <stop offset=".42" stop-color="#b7d6ef"/>
+      <stop offset="1" stop-color="#7696c8"/>
+    </linearGradient>
+    <linearGradient id="logo-screen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#263b68"/>
+      <stop offset="1" stop-color="#141d3c"/>
+    </linearGradient>
+    <linearGradient id="logo-isc-ground-gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".22"/>
+      <stop offset=".48" stop-color="#fff" stop-opacity=".04"/>
+      <stop offset=".5" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#091b52" stop-opacity=".12"/>
+    </linearGradient>
+    <filter id="logo-lift" x="-.3" y="-.3" width="1.6" height="1.7" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#142b70" flood-opacity=".52"/>
+    </filter>
+    <clipPath id="logo-tile-clip"><rect x="16" y="16" width="480" height="480" rx="112"/></clipPath>
+  </defs>
+
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#logo-isc-ground)" stroke="#d8f4ff" stroke-opacity=".65" stroke-width="5"/>
+
+  <g filter="url(#logo-lift)">
+    <rect x="81" y="81" width="350" height="350" rx="77.8" fill="url(#logo-metal)" stroke="#effaff" stroke-width="6.1"/>
+    <rect x="111.4" y="111.4" width="289.2" height="289.2" rx="54.7" fill="url(#logo-screen)" stroke="#668ac5" stroke-width="6.1"/>
+    <path d="m192.8 206.2 62 49.8-62 49.8" fill="none" stroke="#baf4f1" stroke-width="24.3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M284 305.8h58.3" fill="none" stroke="#ffd783" stroke-width="24.3" stroke-linecap="round"/>
+    <path d="M144.2 138.1h119.1" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width="7.3" stroke-linecap="round"/>
+  </g>
+
+  <g clip-path="url(#logo-tile-clip)">
+    <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#logo-isc-ground-gloss)"/>
+  </g>
+</svg>

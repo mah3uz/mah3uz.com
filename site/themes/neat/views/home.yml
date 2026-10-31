@@ -10,6 +10,7 @@ projects:
       stage,
       kind,
       year,
+      logo,
       monogram,
       accent,
       featured,

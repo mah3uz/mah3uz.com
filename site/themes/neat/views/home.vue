@@ -4,6 +4,7 @@ import { computed } from 'vue'
 import type { PagesPage, ViewProps } from '@site/types'
 import Corners from '../components/Corners.vue'
 import HeroTerminal from '../components/HeroTerminal.vue'
+import Mascot from '../components/Mascot.vue'
 import PostCard from '../components/PostCard.vue'
 import ProjectCard from '../components/ProjectCard.vue'
 import ProjectTile from '../components/ProjectTile.vue'
@@ -97,6 +98,7 @@ const headline = computed(() => {
         >
           <ProjectTile
             v-if="all[1]"
+            :logo="all[1].logo"
             :monogram="all[1].monogram"
             :accent="all[1].accent"
             size="size-16"
@@ -106,11 +108,15 @@ const headline = computed(() => {
         <div class="animate-float absolute bottom-2 -left-4 z-10 hidden [--tilt:-10deg] sm:block" aria-hidden="true">
           <ProjectTile
             v-if="all[3]"
+            :logo="all[3].logo"
             :monogram="all[3].monogram"
             :accent="all[3].accent"
             size="size-14"
             text="text-xl"
           />
+        </div>
+        <div class="absolute -top-14 -left-3 z-20 sm:-top-16 sm:-left-8">
+          <Mascot size="size-24 sm:size-28" alive label="The mah3uz mascot, a cheerful keycap with headphones" />
         </div>
         <HeroTerminal :projects="featured.length ? featured : all" />
       </div>
@@ -182,7 +188,13 @@ const headline = computed(() => {
               :href="client.uri ?? '#'"
               class="group neat-card grid items-center gap-5 p-5 transition-transform duration-500 hover:-translate-y-1 sm:grid-cols-[auto_1fr_auto] sm:p-6"
             >
-              <ProjectTile :monogram="client.monogram" :accent="client.accent" size="size-16" text="text-xl" />
+              <ProjectTile
+                :logo="client.logo"
+                :monogram="client.monogram"
+                :accent="client.accent"
+                size="size-16"
+                text="text-xl"
+              />
               <span class="min-w-0">
                 <span class="flex flex-wrap items-center gap-3">
                   <span class="font-display text-2xl font-extrabold tracking-tight">{{ client.title }}</span>
@@ -231,7 +243,13 @@ const headline = computed(() => {
                 :href="project.uri ?? '#'"
                 class="group/row flex items-center gap-4 rounded-2xl p-3 transition-colors hover:bg-accent/8"
               >
-                <ProjectTile :monogram="project.monogram" :accent="project.accent" size="size-11" text="text-base" />
+                <ProjectTile
+                  :logo="project.logo"
+                  :monogram="project.monogram"
+                  :accent="project.accent"
+                  size="size-11"
+                  text="text-base"
+                />
                 <span class="min-w-0 flex-1">
                   <span class="font-display block font-bold">{{ project.title }}</span>
                   <span class="block truncate text-sm text-muted">{{ project.kind }}</span>

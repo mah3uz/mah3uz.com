@@ -3,7 +3,7 @@ import { Link } from '@inertiajs/vue3'
 import { useGlobals } from '@nibble'
 import { computed } from 'vue'
 import type { PagesPage, SiteGlobals, ViewProps } from '@site/types'
-import BrandMark from '../components/BrandMark.vue'
+import Mascot from '../components/Mascot.vue'
 import ContactForm from '../components/ContactForm.vue'
 import Corners from '../components/Corners.vue'
 import CoverPhoto from '../components/CoverPhoto.vue'
@@ -62,7 +62,7 @@ const timeline = computed(() => {
             aria-hidden="true"
           />
           <div class="relative">
-            <BrandMark size="size-20" />
+            <Mascot size="size-24" alive label="The mah3uz mascot, a cheerful keycap" />
             <p class="font-display mt-8 text-3xl font-extrabold tracking-tight">{{ site?.name ?? 'mah3uz' }}</p>
             <p class="text-mist mt-1">Software engineer · since {{ STARTED }}</p>
             <dl class="mt-8 grid grid-cols-3 gap-4 border-t border-white/10 pt-6">
@@ -140,7 +140,13 @@ const timeline = computed(() => {
                 :href="project.uri ?? '#'"
                 class="group neat-card flex items-center gap-4 !rounded-2xl p-4 transition-transform duration-500 hover:-translate-y-0.5"
               >
-                <ProjectTile :monogram="project.monogram" :accent="project.accent" size="size-11" text="text-base" />
+                <ProjectTile
+                  :logo="project.logo"
+                  :monogram="project.monogram"
+                  :accent="project.accent"
+                  size="size-11"
+                  text="text-base"
+                />
                 <span class="min-w-0 flex-1">
                   <span class="font-display block font-bold">{{ project.title }}</span>
                   <span class="block truncate text-sm text-muted">{{ project.tagline }}</span>

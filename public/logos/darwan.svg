@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="32" x2="0" y2="480" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#63c6f8"/>
+      <stop offset="1" stop-color="#2a63ec"/>
+    </linearGradient>
+    <linearGradient id="far" x1="0" y1="300" x2="0" y2="480" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3b7ce6"/>
+      <stop offset="1" stop-color="#2c5fd0"/>
+    </linearGradient>
+    <linearGradient id="near" x1="0" y1="340" x2="0" y2="480" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1f4db4"/>
+      <stop offset="1" stop-color="#163987"/>
+    </linearGradient>
+    <linearGradient id="frost" x1="0" y1="150" x2="0" y2="380" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#dce9fb"/>
+    </linearGradient>
+    <linearGradient id="flap" x1="452" y1="70" x2="350" y2="180" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#cfe2f8"/>
+    </linearGradient>
+    <filter id="lift" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="-6" dy="8" stdDeviation="8" flood-color="#0b2a6b" flood-opacity=".35"/>
+    </filter>
+  </defs>
+  <path d="M132 32H380A100 100 0 0 1 480 132V380A100 100 0 0 1 380 480H132A100 100 0 0 1 32 380V132A100 100 0 0 1 132 32z" fill="#eef6ff"/>
+  <path d="M290 58H446.3M290 84H466.7M290 110H476.5M290 136H479.0M290 162H479.0M290 188H479.0M290 214H479.0M310 33.0V224M336 33.0V224M362 33.0V224M388 33.3V224M414 39.0V224M440 53.0V224M466 82.0V224" stroke="#d3e5f7" stroke-width="3"/>
+  <path d="M132 32H300C372 70 440 140 480 214V380A100 100 0 0 1 380 480H132A100 100 0 0 1 32 380V132A100 100 0 0 1 132 32z" fill="url(#sky)"/>
+  <circle cx="150" cy="140" r="34" fill="#d6f0ff"/>
+  <path d="M32 356L118 318 190 342 268 300 340 332 410 298 480 324V380A100 100 0 0 1 380 480H132A100 100 0 0 1 32 380z" fill="url(#far)"/>
+  <path d="M32 404L108 372 176 392 250 360 330 394 400 368 480 390V380A100 100 0 0 1 380 480H132A100 100 0 0 1 32 380z" fill="url(#near)"/>
+  <path d="M206 236V204a50 50 0 0 1 100 0v32" fill="none" stroke="url(#frost)" stroke-width="30" stroke-linecap="round"/>
+  <rect x="170" y="226" width="172" height="134" rx="28" fill="url(#frost)"/>
+  <circle cx="256" cy="282" r="17" fill="#2f6be6"/>
+  <path d="M248 292h16l6 36h-28z" fill="#2f6be6"/>
+  <path d="M300 32C372 70 440 140 480 214C438 214 372 190 334 130C314 98 304 62 300 32z" fill="url(#flap)" filter="url(#lift)"/>
+</svg>

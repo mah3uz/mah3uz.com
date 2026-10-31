@@ -7,6 +7,7 @@ description: The command-line companion to Nibble, written in Rust. It creates n
 stage: building
 kind: Command-line tool
 year: "2026"
+logo: /logos/nibble-cli.svg
 monogram: "›_"
 accent: "#1388A6"
 featured: false

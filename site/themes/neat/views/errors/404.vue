@@ -3,6 +3,7 @@ import { Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import type { ViewProps } from '@site/types'
 import Corners from '../../components/Corners.vue'
+import Mascot from '../../components/Mascot.vue'
 import ProjectTile from '../../components/ProjectTile.vue'
 import { onlyProjects } from '../../lib/projects'
 
@@ -34,7 +35,13 @@ const suggestions = computed(() => onlyProjects(props.projects).slice(0, 3))
             :href="project.uri ?? '#'"
             class="group flex items-center gap-4 rounded-2xl p-2 transition-colors hover:bg-accent/8"
           >
-            <ProjectTile :monogram="project.monogram" :accent="project.accent" size="size-10" text="text-sm" />
+            <ProjectTile
+              :logo="project.logo"
+              :monogram="project.monogram"
+              :accent="project.accent"
+              size="size-10"
+              text="text-sm"
+            />
             <span class="font-display font-bold">{{ project.title }}</span>
             <span class="truncate text-sm text-muted max-sm:hidden">{{ project.tagline }}</span>
           </Link>
@@ -49,25 +56,12 @@ const suggestions = computed(() => onlyProjects(props.projects).slice(0, 3))
       <div class="bg-midnight relative size-full overflow-hidden rounded-[2.5rem]">
         <div class="neat-dots absolute inset-0" />
         <div class="animate-drift absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,#21bdb066,transparent_60%)]" />
-        <p
-          class="font-display absolute inset-0 grid place-items-center text-[7rem] font-extrabold tracking-tighter text-white sm:text-[9rem]"
-        >
-          4<span class="neat-gradient-text">0</span>4
-        </p>
-        <svg class="animate-float absolute right-0 bottom-0 size-2/5 origin-bottom-right" viewBox="0 0 104 104">
-          <defs>
-            <linearGradient id="nf-flap" x1="93.6" y1="93.6" x2="20.8" y2="20.8" gradientUnits="userSpaceOnUse">
-              <stop offset="0" stop-color="#A6D3D6" />
-              <stop offset="0.5" stop-color="#E9F7F7" />
-              <stop offset="1" stop-color="#FFFFFF" />
-            </linearGradient>
-          </defs>
-          <path d="M104 0Q45.76 45.76 0 104H104Z" fill="#62EDD4" />
-          <path
-            d="M104 0C68.64 -3.12 33.28 6.24 20.8 20.8C6.24 33.28 -3.12 68.64 0 104Q45.76 45.76 104 0Z"
-            fill="url(#nf-flap)"
-          />
-        </svg>
+        <div class="absolute inset-0 grid place-content-center justify-items-center gap-2">
+          <Mascot size="size-40 sm:size-48" alive label="The mah3uz mascot, looking for the missing page" />
+          <p class="font-display text-6xl font-extrabold tracking-tighter text-white">
+            4<span class="neat-gradient-text">0</span>4
+          </p>
+        </div>
       </div>
     </div>
   </div>

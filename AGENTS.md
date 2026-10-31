@@ -35,6 +35,12 @@ stops Claude Code editing `vendor/nibble/`.
 - **Projects** are Markdown files in `site/content/projects/` (schema in `site/schema/`). `category: client` marks
   client work, shown separately from my own products. `stage` is building / shipped / experiment / archived.
   Run `bin/rails nibble:build` after editing them.
+- **Mascot:** the site's brand is a cheerful teal keycap with headphones, smiling with the sideways "3" of mah3uz —
+  `components/Mascot.vue` (animated; pass `alive` to make its eyes follow the pointer) and `site/art/mascot.svg`
+  (favicon, social card). It matches the family of the product logos. No animals.
+- **Project logos** are each product's own logo, copied from its repository into `public/logos/` and named in the
+  project's `logo:` frontmatter. Nibble CLI's is Nibble's mark with a terminal badge. A project without a logo
+  (client work) falls back to a plain monogram.
 - **Cover art** is generated SVG in `public/art/`, from `site/art/generate.py`
   (`python3 site/art/generate.py public/art`). Add a function there for a new project rather than drawing by hand.
 - **Pages, posts, menus and site settings** were seeded from `site/packages/default`, which `site/packages/build.py`

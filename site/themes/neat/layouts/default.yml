@@ -1,3 +1,3 @@
 palette:
   from: entries:projects
-  fields: [category, tagline, monogram, accent, stage]
+  fields: [category, tagline, logo, monogram, accent, stage]

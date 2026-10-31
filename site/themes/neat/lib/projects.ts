@@ -14,6 +14,7 @@ export interface ProjectLike {
   kind?: string | null
   year?: string | null
   monogram?: string | null
+  logo?: string | null
   accent?: string | null
   featured?: boolean | null
   stack?: string[] | null

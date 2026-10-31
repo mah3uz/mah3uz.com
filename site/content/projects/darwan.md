@@ -7,6 +7,7 @@ description: Darwan is a theme manager for Arch Linux. Choose, configure, previe
 stage: shipped
 kind: Desktop app · Themes
 year: "2026"
+logo: /logos/darwan.svg
 monogram: "D"
 accent: "#2A8FB0"
 featured: true

@@ -83,6 +83,7 @@ onBeforeUnmount(() => {
           <div v-if="scene && showOutput" :key="index" class="mt-4 grid gap-4">
             <div class="flex items-center gap-4">
               <ProjectTile
+                :logo="scene.project.logo"
                 :monogram="scene.project.monogram"
                 :accent="scene.project.accent"
                 size="size-14"

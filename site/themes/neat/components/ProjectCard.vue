@@ -39,7 +39,13 @@ const status = computed(() => statusOf(props.project))
     </div>
     <div class="flex flex-1 flex-col gap-4 p-6 pr-16 sm:p-7 sm:pr-20" :class="{ 'lg:p-9': large }">
       <div class="flex items-center gap-4">
-        <ProjectTile :monogram="project.monogram" :accent="project.accent" size="size-11" text="text-base" />
+        <ProjectTile
+          :logo="project.logo"
+          :monogram="project.monogram"
+          :accent="project.accent"
+          size="size-11"
+          text="text-base"
+        />
         <div class="min-w-0">
           <h3 class="font-display font-extrabold tracking-tight" :class="large ? 'text-3xl lg:text-4xl' : 'text-2xl'">
             <Link :href="project.uri ?? '#'" class="after:absolute after:inset-0 after:z-10 focus:outline-none">

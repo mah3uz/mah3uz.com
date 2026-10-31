@@ -7,6 +7,7 @@ description: Nibble is a content management system that ships as a Rails 8 appli
 stage: building
 kind: Content management system
 year: "2026"
+logo: /logos/nibble.svg
 monogram: "n"
 accent: "#21BDB0"
 featured: true

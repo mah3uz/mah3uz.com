@@ -65,6 +65,7 @@ export interface ProjectsProject extends RecordBase {
   stage: { value: string | null; label: string | null }
   kind: string | null
   year: string | null
+  logo: string | null
   monogram: string | null
   accent: string | null
   featured: boolean
@@ -127,18 +128,18 @@ export interface FormValues {
 
 export interface ViewProps {
   'about': {
-    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'kind' | 'year' | 'monogram' | 'accent' | 'stage' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'kind' | 'year' | 'logo' | 'monogram' | 'accent' | 'stage' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
     contact: NibbleForm<ContactFormValues>
   }
   'errors/404': {
-    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'monogram' | 'accent' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'logo' | 'monogram' | 'accent' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'home': {
-    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'description' | 'stage' | 'kind' | 'year' | 'monogram' | 'accent' | 'featured' | 'stack' | 'cover' | 'website' | 'repository' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'description' | 'stage' | 'kind' | 'year' | 'logo' | 'monogram' | 'accent' | 'featured' | 'stack' | 'cover' | 'website' | 'repository' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
     posts: Pick<(PostsPost), 'excerpt' | 'published_at' | 'photo' | 'photo_credit' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'now': {
-    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'kind' | 'monogram' | 'accent' | 'stage' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'kind' | 'logo' | 'monogram' | 'accent' | 'stage' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'posts/index': {
     posts: Paginated<Pick<(PostsPost), 'excerpt' | 'published_at' | 'photo' | 'photo_credit' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>>
@@ -148,10 +149,10 @@ export interface ViewProps {
     related: Pick<(PostsPost), 'excerpt' | 'published_at' | 'photo' | 'photo_credit' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'projects/index': {
-    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'description' | 'stage' | 'kind' | 'year' | 'monogram' | 'accent' | 'featured' | 'stack' | 'cover' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+    projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'description' | 'stage' | 'kind' | 'year' | 'logo' | 'monogram' | 'accent' | 'featured' | 'stack' | 'cover' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'projects/show': {
-    siblings: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'monogram' | 'accent' | 'stage' | 'kind' | 'cover' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+    siblings: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'logo' | 'monogram' | 'accent' | 'stage' | 'kind' | 'cover' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'search': {
     results: Paginated<(PagesPage | PostsPost | ProjectsProject)>
@@ -169,6 +170,6 @@ export interface ViewProps {
 
 export interface LayoutProps {
   'default': {
-    palette: Pick<(ProjectsProject), 'category' | 'tagline' | 'monogram' | 'accent' | 'stage' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+    palette: Pick<(ProjectsProject), 'category' | 'tagline' | 'logo' | 'monogram' | 'accent' | 'stage' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
 }

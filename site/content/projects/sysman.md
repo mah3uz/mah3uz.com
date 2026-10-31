@@ -7,6 +7,7 @@ description: Sysman pairs a lightweight collector daemon, which records your mac
 stage: building
 kind: Desktop app · Linux
 year: "2026"
+logo: /logos/sysman.svg
 monogram: "S"
 accent: "#0E9AA7"
 featured: true

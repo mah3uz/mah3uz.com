@@ -42,6 +42,8 @@ tabs:
             field: { type: text, instructions: "What it is, in two or three words: CMS, Terminal app, Desktop app…" }
           - handle: year
             field: { type: text, width: 50 }
+          - handle: logo
+            field: { type: text, instructions: "The product's own logo, such as /logos/quarry.svg. Without one, the monogram is drawn instead." }
           - handle: monogram
             field: { type: text, width: 50, instructions: "One or two characters drawn on the project's tile." }
           - handle: accent

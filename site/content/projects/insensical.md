@@ -7,6 +7,7 @@ description: Insensical brings the splits, tabs and sessions of a terminal multi
 stage: building
 kind: Terminal multiplexer
 year: "2026"
+logo: /logos/insensical.svg
 monogram: "i"
 accent: "#17A398"
 featured: false

@@ -7,6 +7,7 @@ description: Quarry is a keyboard-driven database client that runs in the termin
 stage: shipped
 kind: Database client · TUI
 year: "2026"
+logo: /logos/quarry.svg
 monogram: "Q"
 accent: "#1388A6"
 featured: true

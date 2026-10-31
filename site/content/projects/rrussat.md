@@ -7,6 +7,7 @@ description: An experiment in private messaging with no server in the middle. Pe
 stage: experiment
 kind: Messenger · Terminal
 year: "2026"
+logo: /logos/rrussat.svg
 monogram: "R"
 accent: "#167A8E"
 featured: false

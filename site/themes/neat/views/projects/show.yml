@@ -1,3 +1,3 @@
 siblings:
   from: entries:projects
-  fields: [category, client, role, tagline, monogram, accent, stage, kind, cover]
+  fields: [category, client, role, tagline, logo, monogram, accent, stage, kind, cover]

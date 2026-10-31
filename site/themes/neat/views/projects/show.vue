@@ -41,6 +41,7 @@ const facts = computed(() =>
       <div>
         <div class="animate-rise flex items-center gap-5">
           <ProjectTile
+            :logo="page.logo"
             :monogram="page.monogram"
             :accent="page.accent"
             size="size-20 sm:size-24"
@@ -151,7 +152,7 @@ const facts = computed(() =>
         class="group neat-card flex items-center gap-5 p-6"
         :class="{ 'sm:flex-row-reverse sm:text-right': index === 1 }"
       >
-        <ProjectTile :monogram="item.monogram" :accent="item.accent" size="size-14" text="text-xl" />
+        <ProjectTile :logo="item.logo" :monogram="item.monogram" :accent="item.accent" size="size-14" text="text-xl" />
         <span class="min-w-0 flex-1">
           <span class="neat-eyebrow block">{{ index === 0 ? '← Previous' : 'Next →' }}</span>
           <span class="font-display mt-1 block text-2xl font-extrabold tracking-tight">{{ item.title }}</span>

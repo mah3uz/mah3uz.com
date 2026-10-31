@@ -3,7 +3,7 @@ import { Link, usePage } from '@inertiajs/vue3'
 import { useGlobals, useNavigation } from '@nibble'
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
 import type { SiteGlobals } from '@site/types'
-import BrandMark from './BrandMark.vue'
+import Mascot from './Mascot.vue'
 import CommandPalette from './CommandPalette.vue'
 import { socialLinks } from '../lib/links'
 import MenuLink from './MenuLink.vue'
@@ -15,6 +15,7 @@ interface PaletteProject {
   uri: string | null
   tagline?: string | null
   monogram?: string | null
+  logo?: string | null
   accent?: string | null
 }
 
@@ -80,7 +81,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
       "
     >
       <Link href="/" class="flex items-center gap-3 rounded-full pr-2" aria-label="Home">
-        <BrandMark size="size-9" />
+        <Mascot size="size-9" />
         <span class="font-display text-lg font-extrabold tracking-tight">{{ site?.name ?? 'mah3uz' }}</span>
       </Link>
 
