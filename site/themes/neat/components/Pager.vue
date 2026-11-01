@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3'
 import { Pagination, type PaginationMeta } from '@nibble'
+import ArrowIcon from './ArrowIcon.vue'
 
 withDefaults(defineProps<{ meta: PaginationMeta; label?: string; previousLabel?: string; nextLabel?: string }>(), {
   label: 'Pages',
@@ -14,7 +15,7 @@ withDefaults(defineProps<{ meta: PaginationMeta; label?: string; previousLabel?:
     <template #default="{ href, current, pages }">
       <div class="mt-16 flex flex-wrap items-center justify-between gap-6">
         <Link v-if="current > 1" :href="href(current - 1)" rel="prev" class="neat-button-ghost"
-          ><span aria-hidden="true">←</span> {{ previousLabel }}</Link
+          ><ArrowIcon direction="left" /> {{ previousLabel }}</Link
         >
         <span v-else />
         <ol class="flex gap-1" role="list">
@@ -29,8 +30,8 @@ withDefaults(defineProps<{ meta: PaginationMeta; label?: string; previousLabel?:
           </li>
         </ol>
         <Link v-if="current < meta.last_page" :href="href(current + 1)" rel="next" class="neat-button-ghost"
-          >{{ nextLabel }} <span aria-hidden="true">→</span></Link
-        >
+          >{{ nextLabel }} <ArrowIcon
+        /></Link>
         <span v-else />
       </div>
     </template>

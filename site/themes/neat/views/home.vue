@@ -10,6 +10,7 @@ import ProjectTile from '../components/ProjectTile.vue'
 import StatusPill from '../components/StatusPill.vue'
 import { vReveal, vSpotlight } from '../lib/motion'
 import { isClient, onlyProjects, statusLabel, statusOf, STATUS_COPY, type Status } from '../lib/projects'
+import ArrowIcon from '../components/ArrowIcon.vue'
 
 const props = defineProps<ViewProps['home'] & { page: PagesPage }>()
 
@@ -75,7 +76,7 @@ const headline = computed(() => {
           {{ page.intro }}
         </p>
         <div class="animate-rise mt-9 flex flex-wrap gap-3 [animation-delay:280ms]">
-          <Link href="/projects" class="neat-button">Explore the work <span aria-hidden="true">→</span></Link>
+          <Link href="/projects" class="neat-button">Explore the work <ArrowIcon /></Link>
           <Link href="/about" class="neat-button-ghost">About me</Link>
         </div>
         <dl class="animate-rise mt-12 grid grid-cols-2 gap-x-6 gap-y-6 [animation-delay:360ms] sm:grid-cols-4">
@@ -119,7 +120,9 @@ const headline = computed(() => {
             Things I’m proud to have built
           </h2>
         </div>
-        <Link href="/projects" class="neat-link font-medium text-accent">All {{ all.length }} projects →</Link>
+        <Link href="/projects" class="neat-link font-medium text-accent"
+          >All {{ all.length }} projects <ArrowIcon
+        /></Link>
       </div>
       <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-6">
         <div
@@ -146,8 +149,8 @@ const headline = computed(() => {
             every day.
           </p>
           <Link href="/projects?view=clients" class="neat-link mt-6 inline-block font-medium text-accent"
-            >All client work →</Link
-          >
+            >All client work <ArrowIcon
+          /></Link>
         </div>
         <ul role="list" class="grid gap-4">
           <li v-for="(client, position) in clients" :key="client.id" v-reveal="position * 110">
@@ -222,11 +225,9 @@ const headline = computed(() => {
                   <span class="font-display block font-bold">{{ project.title }}</span>
                   <span class="block truncate text-sm text-muted">{{ project.kind }}</span>
                 </span>
-                <span
+                <ArrowIcon
                   class="text-accent opacity-0 transition-all duration-300 group-hover/row:translate-x-1 group-hover/row:opacity-100"
-                  aria-hidden="true"
-                  >→</span
-                >
+                />
               </Link>
             </li>
           </ul>
@@ -264,7 +265,7 @@ const headline = computed(() => {
             Notes from the workshop
           </h2>
         </div>
-        <Link href="/blog" class="neat-link font-medium text-accent">Everything I’ve written →</Link>
+        <Link href="/blog" class="neat-link font-medium text-accent">Everything I’ve written <ArrowIcon /></Link>
       </div>
       <div class="grid gap-5 md:grid-cols-3">
         <div v-for="(post, position) in posts" :key="post.id" v-reveal="position * 110">

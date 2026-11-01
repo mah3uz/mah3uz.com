@@ -8,6 +8,7 @@ import PostCard from '../../components/PostCard.vue'
 import Prose from '../../components/Prose.vue'
 import { isoDate, useFormatDate } from '../../lib/format'
 import { vReveal } from '../../lib/motion'
+import ArrowIcon from '../../components/ArrowIcon.vue'
 
 const props = defineProps<ViewProps['posts/show'] & { page: PostsPost }>()
 const formatDate = useFormatDate()
@@ -44,7 +45,12 @@ onBeforeUnmount(() => window.removeEventListener('scroll', measure))
     />
     <header class="mx-auto max-w-4xl text-center">
       <div class="animate-rise flex flex-wrap items-center justify-center gap-2">
-        <Link href="/blog" class="neat-eyebrow neat-link">← Writing</Link>
+        <Link href="/blog" class="neat-eyebrow neat-link group inline-flex items-center gap-1.5"
+          ><ArrowIcon
+            direction="left"
+            class="transition-transform duration-300 group-hover:-translate-x-1"
+          />Writing</Link
+        >
         <Link
           v-for="topic in page.topics"
           :key="topic.id"

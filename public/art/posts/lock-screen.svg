@@ -7,9 +7,8 @@
 <linearGradient id="ls-flap" x1="1574" y1="974" x2="1392" y2="792" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#A6D3D6"/><stop offset="0.5" stop-color="#E9F7F7"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
 <linearGradient id="ls-line" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#62EDD4" stop-opacity="0"/><stop offset="0.5" stop-color="#62EDD4"/><stop offset="1" stop-color="#62EDD4" stop-opacity="0"/></linearGradient>
 <pattern id="ls-dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#62EDD4" fill-opacity="0.12"/></pattern>
-<filter id="ls-blur" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="10"/></filter>
 <filter id="ls-soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="24"/></filter>
-<clipPath id="ls-cut"><path d="M0 0H1600V740Q1454.4 854.4 1340 1000H0Z"/></clipPath>
+<clipPath id="ls-cut"><path d="M0 0H1600V740Q1390 790 1340 1000H0Z"/></clipPath>
 </defs>
 <rect width="1600" height="1000" fill="url(#ls-back)"/>
 <g clip-path="url(#ls-cut)">
@@ -17,7 +16,6 @@
 <rect width="1600" height="1000" fill="url(#ls-dots)"/>
 <rect width="1600" height="1000" fill="url(#ls-glow)"/>
 <circle cx="800" cy="500" r="270" fill="none" stroke="#62EDD4" stroke-opacity="0.18" stroke-width="22"/><path d="M800 230A270 270 0 1 1 544 419" fill="none" stroke="url(#ls-tile)" stroke-width="22" stroke-linecap="round"/><path d="M508 409l36 -44 30 50z" fill="#62EDD4"/><path d="M725.0 490V427.5a75.0 75.0 0 0 1 150.0 0V490" fill="none" stroke="#E9F7F7" stroke-width="27.5" stroke-linecap="round"/><rect x="675.0" y="482.5" width="250.0" height="200.0" rx="40.0" fill="url(#ls-tile)"/><circle cx="800" cy="570.0" r="25.0" fill="#043040"/><rect x="790.0" y="577.5" width="20.0" height="55.0" rx="10.0" fill="#043040"/><g transform="translate(1150 640)"><rect width="300" height="90" rx="24" fill="#0E2B33" stroke="#62EDD4" stroke-opacity="0.5" stroke-width="2"/><circle cx="50" cy="45" r="9" fill="#E9F7F7"/><circle cx="84" cy="45" r="9" fill="#E9F7F7"/><circle cx="118" cy="45" r="9" fill="#E9F7F7"/><circle cx="152" cy="45" r="9" fill="#E9F7F7"/><circle cx="186" cy="45" r="9" fill="#E9F7F7"/><circle cx="220" cy="45" r="9" fill="#E9F7F7"/></g><g transform="translate(240 300)"><path d="M100 0L200 40V140C200 210 150 250 100 270C50 250 0 210 0 140V40Z" fill="#0E2B33" stroke="#62EDD4" stroke-opacity="0.6" stroke-width="4"/><circle cx="100" cy="130" r="40" fill="#62EDD4"/><path d="M82.0 130l12.8 12.8 24.0-24.8" fill="none" stroke="#043040" stroke-width="8.8" stroke-linecap="round" stroke-linejoin="round"/></g>
-<path d="M1600 740C1511.6 732.2 1423.2 755.6 1392 792C1355.6 823.2 1332.2 911.6 1340 1000Q1454.4 854.4 1600 740Z" transform="translate(-12 15)" fill="#043040" fill-opacity="0.4" filter="url(#ls-blur)"/>
 </g>
 <path d="M1600 740C1511.6 732.2 1423.2 755.6 1392 792C1355.6 823.2 1332.2 911.6 1340 1000Q1454.4 854.4 1600 740Z" fill="url(#ls-flap)"/>
 <path d="M60 150V96Q60 60 96 60H150M1540 150V96Q1540 60 1504 60H1450M60 850V904Q60 940 96 940H150" fill="none" stroke="#21BDB0" stroke-opacity="0.6" stroke-width="8" stroke-linecap="round"/>

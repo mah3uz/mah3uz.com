@@ -269,6 +269,15 @@
   }
 }
 
+/* An element whose bottom-right corner is peeled (Peel.vue, beside it rather than inside it). The corner is cut
+   away along a diagonal that the peel's back covers, so the element's own rounded corner, border and background are
+   not under the peel and cannot show round its edge as a dark line. --peel-cut is how far in, measured on the
+   diagonal. */
+@utility neat-peeled {
+  -webkit-mask-image: linear-gradient(315deg, transparent var(--peel-cut, 2rem), #000 var(--peel-cut, 2rem));
+  mask-image: linear-gradient(315deg, transparent var(--peel-cut, 2rem), #000 var(--peel-cut, 2rem));
+}
+
 @utility neat-gradient-text {
   background: linear-gradient(100deg, #62edd4 0%, #21bdb0 45%, #1388a6 100%);
   -webkit-background-clip: text;

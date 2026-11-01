@@ -10,6 +10,7 @@ import UnsplashImage from '../../components/UnsplashImage.vue'
 import { vReveal } from '../../lib/motion'
 import { compact, detailsFor, exposureSettings, referral } from '../../lib/unsplash'
 import { isoDate, useFormatDate } from '../../lib/format'
+import ArrowIcon from '../../components/ArrowIcon.vue'
 
 const props = defineProps<{ page: PhotosPhoto }>()
 const formatDate = useFormatDate()
@@ -62,7 +63,7 @@ const icons: Record<string, string> = {
     </Link>
 
     <figure
-      class="animate-rise border-line overflow-hidden rounded-[2rem] border [animation-delay:80ms]"
+      class="animate-rise overflow-hidden rounded-[2rem] [animation-delay:80ms]"
       :style="{ backgroundColor: page.color ?? 'var(--neat-surface-strong)' }"
     >
       <UnsplashImage
@@ -226,7 +227,10 @@ const icons: Record<string, string> = {
             >View on Unsplash ↗</a
           >
         </dl>
-        <Link href="/photography" class="neat-button-ghost justify-center text-sm">← Back to all photographs</Link>
+        <Link href="/photography" class="neat-button-ghost group justify-center gap-2 text-sm"
+          ><ArrowIcon direction="left" class="transition-transform duration-300 group-hover:-translate-x-1" /> Back to
+          all photographs</Link
+        >
       </aside>
     </div>
   </article>

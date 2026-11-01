@@ -24,9 +24,8 @@ def frame(uid, body, glow=(420, 380), hue='#21BDB0'):
 <linearGradient id="{uid}-flap" x1="{W-26}" y1="{H-26}" x2="{W-208}" y2="{H-208}" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#A6D3D6"/><stop offset="0.5" stop-color="#E9F7F7"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
 <linearGradient id="{uid}-line" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#62EDD4" stop-opacity="0"/><stop offset="0.5" stop-color="#62EDD4"/><stop offset="1" stop-color="#62EDD4" stop-opacity="0"/></linearGradient>
 <pattern id="{uid}-dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#62EDD4" fill-opacity="0.12"/></pattern>
-<filter id="{uid}-blur" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="10"/></filter>
 <filter id="{uid}-soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="24"/></filter>
-<clipPath id="{uid}-cut"><path d="M0 0H{W}V{H-260}Q{W-145.6} {H-145.6} {W-260} {H}H0Z"/></clipPath>
+<clipPath id="{uid}-cut"><path d="M0 0H{W}V{H-260}Q{W-210} {H-210} {W-260} {H}H0Z"/></clipPath>
 </defs>
 <rect width="{W}" height="{H}" fill="url(#{uid}-back)"/>
 <g clip-path="url(#{uid}-cut)">
@@ -34,7 +33,6 @@ def frame(uid, body, glow=(420, 380), hue='#21BDB0'):
 <rect width="{W}" height="{H}" fill="url(#{uid}-dots)"/>
 <rect width="{W}" height="{H}" fill="url(#{uid}-glow)"/>
 {body}
-<path d="M{W} {H-260}C{W-88.4} {H-267.8} {W-176.8} {H-244.4} {W-208} {H-208}C{W-244.4} {H-176.8} {W-267.8} {H-88.4} {W-260} {H}Q{W-145.6} {H-145.6} {W} {H-260}Z" transform="translate(-12 15)" fill="#043040" fill-opacity="0.4" filter="url(#{uid}-blur)"/>
 </g>
 <path d="M{W} {H-260}C{W-88.4} {H-267.8} {W-176.8} {H-244.4} {W-208} {H-208}C{W-244.4} {H-176.8} {W-267.8} {H-88.4} {W-260} {H}Q{W-145.6} {H-145.6} {W} {H-260}Z" fill="url(#{uid}-flap)"/>
 <path d="M60 150V96Q60 60 96 60H150M{W-60} 150V96Q{W-60} 60 {W-96} 60H{W-150}M60 {H-150}V{H-96}Q60 {H-60} 96 {H-60}H150" fill="none" stroke="#21BDB0" stroke-opacity="0.6" stroke-width="8" stroke-linecap="round"/>

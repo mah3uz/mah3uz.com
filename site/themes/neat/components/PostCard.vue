@@ -5,6 +5,7 @@ import type { AssetValue } from '@site/types'
 import { isoDate, useFormatDate } from '../lib/format'
 import { vSpotlight } from '../lib/motion'
 import ArtBanner from './ArtBanner.vue'
+import ArrowIcon from './ArrowIcon.vue'
 
 defineProps<{
   post: {
@@ -52,7 +53,7 @@ const formatDate = useFormatDate()
       </h3>
       <p v-if="post.excerpt" class="line-clamp-3 leading-7 text-muted">{{ post.excerpt }}</p>
       <p class="mt-auto pt-2 text-sm font-medium text-accent">
-        Read <span class="inline-block transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+        Read <ArrowIcon class="transition-transform group-hover:translate-x-1" />
       </p>
     </div>
   </article>

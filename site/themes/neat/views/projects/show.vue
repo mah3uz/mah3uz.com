@@ -3,12 +3,13 @@ import { Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import type { ProjectsProject, ViewProps } from '@site/types'
 import Corners from '../../components/Corners.vue'
-import Peel from '../../components/Peel.vue'
+import Peel, { peelCut } from '../../components/Peel.vue'
 import ProjectTile from '../../components/ProjectTile.vue'
 import Prose from '../../components/Prose.vue'
 import StatusPill from '../../components/StatusPill.vue'
 import { vReveal, vTilt } from '../../lib/motion'
 import { hostOf, isClient, onlyProjects, statusLabel, statusOf } from '../../lib/projects'
+import ArrowIcon from '../../components/ArrowIcon.vue'
 
 const props = defineProps<ViewProps['projects/show'] & { page: ProjectsProject }>()
 
@@ -83,17 +84,22 @@ const facts = computed(() =>
 
     <div v-if="page.cover" class="animate-rise relative mt-14 p-3 [animation-delay:300ms] sm:p-5">
       <Corners size="2.25rem" />
-      <figure v-tilt="3" class="group border-line relative overflow-hidden rounded-[2rem] border">
-        <img
-          :src="page.cover"
-          :alt="`Illustration for ${page.title}`"
-          width="1600"
-          height="1000"
-          loading="eager"
-          class="aspect-16/10 w-full object-cover"
-        />
-        <Peel :size="120" />
-      </figure>
+      <div v-tilt="3" class="group relative">
+        <figure
+          class="border-line neat-peeled relative overflow-hidden rounded-[2rem] border"
+          :style="{ '--peel-cut': peelCut(120) }"
+        >
+          <img
+            :src="page.cover"
+            :alt="`Illustration for ${page.title}`"
+            width="1600"
+            height="1000"
+            loading="eager"
+            class="aspect-16/10 w-full object-cover"
+          />
+        </figure>
+        <Peel :size="120" :radius="32" />
+      </div>
     </div>
 
     <div class="mt-16 grid gap-12 lg:grid-cols-[1fr_20rem] lg:gap-16">
@@ -154,7 +160,10 @@ const facts = computed(() =>
       >
         <ProjectTile :logo="item.logo" :monogram="item.monogram" :accent="item.accent" size="size-14" text="text-xl" />
         <span class="min-w-0 flex-1">
-          <span class="neat-eyebrow block">{{ index === 0 ? '← Previous' : 'Next →' }}</span>
+          <span class="neat-eyebrow flex items-center gap-1.5" :class="{ 'sm:justify-end': index === 1 }"
+            ><template v-if="index === 0"><ArrowIcon direction="left" /> Previous</template
+            ><template v-else>Next <ArrowIcon /></template
+          ></span>
           <span class="font-display mt-1 block text-2xl font-extrabold tracking-tight">{{ item.title }}</span>
           <span class="block truncate text-sm text-muted">{{ item.kind }}</span>
         </span>

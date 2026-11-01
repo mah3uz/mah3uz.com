@@ -53,7 +53,7 @@ const totals = computed(() => ({
 
     <div v-if="photos.length" class="columns-1 gap-5 sm:columns-2 lg:columns-3">
       <div v-for="(photo, index) in photos" :key="photo.id" v-reveal="(index % 3) * 90" class="mb-5 break-inside-avoid">
-        <Link :href="photo.uri ?? '#'" class="group border-line relative block overflow-hidden rounded-[1.5rem] border">
+        <Link :href="photo.uri ?? '#'" class="group relative block overflow-hidden rounded-[1.5rem]">
           <UnsplashImage
             :raw="photo.image_raw"
             :image="photo.image"

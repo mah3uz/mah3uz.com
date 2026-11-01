@@ -8,6 +8,7 @@ import { vReveal } from '../lib/motion'
 import BrandMark from './BrandMark.vue'
 import Corners from './Corners.vue'
 import MenuLink from './MenuLink.vue'
+import ArrowIcon from './ArrowIcon.vue'
 
 const site = useGlobals<SiteGlobals>('site')
 const footer = useNavigation('footer')
@@ -30,45 +31,49 @@ const year = new Date().getUTCFullYear()
 
 <template>
   <footer class="relative mt-32 overflow-hidden px-5 pb-10 sm:px-10">
-    <section
-      v-reveal
-      aria-labelledby="footer-cta"
-      class="border-line bg-midnight relative mx-auto max-w-6xl overflow-hidden rounded-[2.5rem] border px-6 py-16 text-white sm:px-14 sm:py-20"
-    >
-      <div class="neat-dots absolute inset-0 opacity-60" aria-hidden="true" />
-      <div
-        class="animate-drift absolute -top-1/2 -left-1/4 size-[48rem] rounded-full bg-[radial-gradient(circle,#21bdb066,transparent_65%)]"
-        aria-hidden="true"
-      />
-      <Corners inset="1.5rem" />
-      <div class="relative grid items-end gap-10 pb-6 sm:pb-0 lg:grid-cols-[1.4fr_1fr] lg:pr-16">
-        <div>
-          <p class="neat-eyebrow !text-mint">Open for the right work</p>
-          <h2 id="footer-cta" class="font-display mt-5 text-4xl font-extrabold tracking-tight text-balance sm:text-6xl">
-            Have something <span class="neat-gradient-text">worth building</span>? Let’s talk.
-          </h2>
-          <p class="text-mist mt-6 max-w-[46ch] text-lg leading-8">
-            Software built carefully, and the infrastructure to run it — from the first design to production and every
-            day after. I’ve been doing both since 2009.
-          </p>
+    <div v-reveal class="relative mx-auto max-w-6xl">
+      <section
+        aria-labelledby="footer-cta"
+        class="border-line bg-midnight neat-peeled relative overflow-hidden rounded-[2.5rem] border px-6 py-16 text-white [--peel-cut:32px] sm:px-14 sm:py-20 sm:[--peel-cut:36px]"
+      >
+        <div class="neat-dots absolute inset-0 opacity-60" aria-hidden="true" />
+        <div
+          class="animate-drift absolute -top-1/2 -left-1/4 size-[48rem] rounded-full bg-[radial-gradient(circle,#21bdb066,transparent_65%)]"
+          aria-hidden="true"
+        />
+        <Corners inset="1.5rem" />
+        <div class="relative grid items-end gap-10 pb-6 sm:pb-0 lg:grid-cols-[1.4fr_1fr] lg:pr-16">
+          <div>
+            <p class="neat-eyebrow !text-mint">Open for the right work</p>
+            <h2
+              id="footer-cta"
+              class="font-display mt-5 text-4xl font-extrabold tracking-tight text-balance sm:text-6xl"
+            >
+              Have something <span class="neat-gradient-text">worth building</span>? Let’s talk.
+            </h2>
+            <p class="text-mist mt-6 max-w-[46ch] text-lg leading-8">
+              Software built carefully, and the infrastructure to run it — from the first design to production and every
+              day after. I’ve been doing both since 2009.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-3 lg:justify-end">
+            <Link
+              href="/about#contact"
+              class="bg-mint text-abyss inline-flex min-h-12 items-center gap-3 rounded-full px-6 py-3 font-semibold transition-transform duration-500 hover:-translate-y-0.5"
+            >
+              Start a conversation <ArrowIcon />
+            </Link>
+            <Link
+              href="/projects"
+              class="hover:border-mint inline-flex min-h-12 items-center gap-3 rounded-full border border-white/20 px-6 py-3 font-semibold transition-colors"
+            >
+              See the work
+            </Link>
+          </div>
         </div>
-        <div class="flex flex-wrap gap-3 lg:justify-end">
-          <Link
-            href="/about#contact"
-            class="bg-mint text-abyss inline-flex min-h-12 items-center gap-3 rounded-full px-6 py-3 font-semibold transition-transform duration-500 hover:-translate-y-0.5"
-          >
-            Start a conversation <span aria-hidden="true">→</span>
-          </Link>
-          <Link
-            href="/projects"
-            class="hover:border-mint inline-flex min-h-12 items-center gap-3 rounded-full border border-white/20 px-6 py-3 font-semibold transition-colors"
-          >
-            See the work
-          </Link>
-        </div>
-      </div>
+      </section>
       <svg
-        class="pointer-events-none absolute right-0 bottom-0 size-16 sm:size-20"
+        class="pointer-events-none absolute right-0 bottom-0 size-16 overflow-visible sm:size-20"
         viewBox="0 0 104 104"
         aria-hidden="true"
       >
@@ -79,13 +84,16 @@ const year = new Date().getUTCFullYear()
             <stop offset="1" stop-color="#FFFFFF" />
           </linearGradient>
         </defs>
-        <path d="M104 0Q45.76 45.76 0 104H104Z" fill="#62EDD4" />
+        <path
+          d="M104 0C68.64 -3.12 33.28 6.24 20.8 20.8C6.24 33.28 -3.12 68.64 0 104H52A52 52 0 0 0 104 52Z"
+          fill="#62EDD4"
+        />
         <path
           d="M104 0C68.64 -3.12 33.28 6.24 20.8 20.8C6.24 33.28 -3.12 68.64 0 104Q45.76 45.76 104 0Z"
           fill="url(#cta-flap)"
         />
       </svg>
-    </section>
+    </div>
 
     <div class="mx-auto mt-16 grid max-w-6xl gap-10 sm:grid-cols-[1.5fr_1fr_1fr]">
       <div>

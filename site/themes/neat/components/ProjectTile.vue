@@ -46,7 +46,6 @@ const base = computed(() => props.accent || '#21BDB0')
         stroke-width="5"
         stroke-linecap="round"
       />
-      <path d="M100 62C86 61 73 65 68 70C63 75 60 88 61 100H100Z" fill="#043040" fill-opacity="0.35" />
       <path d="M100 62C86 61 73 65 68 70C63 75 60 88 61 100Q78 78 100 62Z" fill="#E9F7F7" />
     </svg>
     <span :class="text" class="relative -translate-x-[6%] -translate-y-[6%] leading-none tracking-tight">{{

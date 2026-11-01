@@ -24,18 +24,29 @@ const props = withDefaults(
 const preview = computed(() => blurPreview(props.blurHash, props.width, props.height))
 
 // Server-rendered HTML shows the photo as soon as the browser has it. Only a photo still loading when the page wakes
-// up is hidden, so it can fade in rather than paint in strips.
+// up is hidden, so it can fade in rather than paint in strips. Once it has loaded, the colour and preview behind it
+// are removed: left there, they show round the photo's rounded edge as a dark line.
 const img = ref<HTMLImageElement>()
 const waiting = ref(false)
+const loaded = ref(false)
 onMounted(() => {
-  if (img.value && !img.value.complete) waiting.value = true
+  if (!img.value) return
+  if (img.value.complete && img.value.naturalWidth) loaded.value = true
+  else waiting.value = true
 })
+const settle = () => {
+  waiting.value = false
+  loaded.value = true
+}
 </script>
 
 <template>
-  <div class="relative isolate overflow-hidden" :style="{ backgroundColor: color ?? 'var(--neat-surface-strong)' }">
+  <div
+    class="relative isolate overflow-hidden"
+    :style="{ backgroundColor: loaded ? undefined : (color ?? 'var(--neat-surface-strong)') }"
+  >
     <div
-      v-if="preview"
+      v-if="preview && !loaded"
       aria-hidden="true"
       class="absolute inset-0 -z-10 scale-110 bg-cover bg-center blur-xl"
       :style="{ backgroundImage: `url(${preview})` }"
@@ -53,7 +64,7 @@ onMounted(() => {
       decoding="async"
       class="transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
       :class="[imgClass, { 'opacity-0': waiting }]"
-      @load="waiting = false"
+      @load="settle"
       @error="waiting = false"
     />
   </div>

@@ -20,7 +20,7 @@ withDefaults(defineProps<{ size?: string }>(), { size: 'size-10' })
         <stop offset="0.5" stop-color="#E9F7F7" />
         <stop offset="1" stop-color="#FFFFFF" />
       </linearGradient>
-      <clipPath id="mark-cut"><path d="M0 0H512V280H480Q368 368 280 480V512H0Z" /></clipPath>
+      <clipPath id="mark-cut"><path d="M0 0H512V280H480Q314 314 280 480V512H0Z" /></clipPath>
     </defs>
     <rect x="32" y="32" width="448" height="448" rx="110" fill="url(#mark-back)" />
     <g clip-path="url(#mark-cut)">

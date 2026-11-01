@@ -3,6 +3,7 @@ import { Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import { onSite } from '../../lib/links'
 import Corners from '../../components/Corners.vue'
+import ArrowIcon from '../../components/ArrowIcon.vue'
 
 const props = defineProps<{
   heading: string
@@ -29,7 +30,7 @@ const internal = computed(() => !!props.link && onSite(props.link.url))
       :href="link.url"
       class="bg-mint text-abyss relative mt-6 inline-flex min-h-12 items-center gap-3 rounded-full px-6 py-3 font-semibold"
     >
-      {{ button_label }} <span aria-hidden="true">→</span>
+      {{ button_label }} <ArrowIcon />
     </component>
   </aside>
 </template>
