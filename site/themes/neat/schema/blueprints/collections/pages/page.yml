@@ -96,6 +96,12 @@ tabs:
                   field: { type: text, required: true, width: 50 }
                 - handle: text
                   field: { type: textarea, required: true }
+                - handle: logo
+                  field:
+                    {
+                      type: text,
+                      instructions: 'A picture for the card: a project logo in /logos, or a mark in /art/marks, e.g. /art/marks/linux.svg.',
+                    }
                 - handle: url
                   field: { type: text, instructions: 'A web address, or a path on this site such as /projects/quarry.' }
   seo:

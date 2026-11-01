@@ -22,86 +22,110 @@ milestones:
     tag: Linux
     title: Linux from the start
     text: Linux has been my operating system since I first sat down at a computer. It shaped everything that followed — a habit of reading the source, living in a terminal, and wanting to understand the whole system rather than one layer of it.
+    logo: /art/marks/linux.svg
   - year: "2009"
     tag: Freelance
     title: Freelancing on oDesk, now Upwork
     text: From 2009 to 2014 I worked as an independent contractor on oDesk (Upwork, as it became), on both sides from the start — building web applications for clients, and installing, configuring and maintaining the Linux servers they ran on. Five years of scoping, delivering and supporting work for clients I met only online taught me to communicate plainly and leave every system documented.
+    logo: /art/marks/freelance.svg
   - year: "2013"
     tag: Open source
     title: A public footprint on GitHub
     text: My first public repository. Most professional work — for clients and employers — is private, so the public record from here on is a partial one.
     url: https://github.com/mah3uz
+    logo: /art/marks/commits.svg
   - year: "2014"
     tag: Consultancy
     title: mah3uz – IT Consultancy
     text: After five years of freelancing I founded my own company, mah3uz – IT Consultancy, which I still run today — software engineering and systems work for clients, owning each project from the server to the front end.
     url: https://github.com/mah3uz/mah3uz.github.io
+    logo: /art/marks/mah3uz.svg
   - year: "2015"
     tag: Automation
     title: Agents that act on your behalf
     text: Working with Huginn, a self-hosted Ruby system for building agents that watch the web and act on events — an early taste of automation as infrastructure.
+    logo: /art/marks/radar.svg
   - year: "2016"
     tag: Employment
     title: System engineer at Jacos
     text: From 2016 to 2018 I worked as a system engineer for Jacos, a Japanese software company, on both sides of the work — developing its software, and building, deploying to and maintaining the servers it ran on.
+    logo: /art/marks/server-sun.svg
   - year: "2020"
     tag: Infrastructure
     title: Self-hosted private networking
     text: Working with WireGuard and Subspace, a web interface for managing VPN peers — private networking without a third-party service in the middle.
+    logo: /art/marks/network.svg
   - year: "2020"
     tag: Client work
     title: TLC — a lending CRM and its broker API
     text: The start of a long engagement with TLC, an Australian lender of medical, dental and lifestyle payment plans — building its CRM in Laravel, designing the API partners use to submit loan applications, and running the servers underneath.
     url: /projects/tlc
+    logo: /logos/tlc.svg
   - year: "2025"
     tag: Infrastructure
     title: Bare metal, home servers and Matrix
     text: Proxmox VE on Hetzner dedicated servers, self-hosted Matrix with its sticker tooling, and umbrelOS for apps at home.
+    logo: /art/marks/rack.svg
   - year: "2026"
     tag: Client work
     title: TourHub — a marketplace for live-events crew
     text: Building TourHub in Ruby on Rails — verified crew profiles, contracts and payments secured through Stripe — and the staging and production environments it ships through.
     url: /projects/tourhub
+    logo: /logos/tourhub.svg
   - year: "2026"
     tag: Open source
-    title: tide, redesigned, and AirPods on Hyprland
-    text: A full redesign of tide, a self-hosted video meeting service, with an installable app and a screen-share popout; and a Dux Shell plugin that brings EarPort's AirPods support from GNOME to Hyprland.
+    title: tide, redesigned
+    text: A full redesign of tide, a self-hosted video meeting service in Go and LiveKit — light and dark themes on one layout, a new meeting stage, an installable app and a screen-share popout.
     url: /projects/tide
+    logo: /logos/tide.svg
+  - year: "2026"
+    tag: Open source
+    title: AirPods on Hyprland
+    text: A Dux Shell plugin that brings EarPort's AirPods support — battery, noise control and settings — from GNOME to Hyprland, with a daemon that no longer needs GNOME.
+    url: /projects/earport
+    logo: /logos/earport.svg
   - year: "2026"
     tag: Product
     title: rrussat
     text: A peer-to-peer, end-to-end encrypted messenger in Rust, with a terminal client and an app for Linux, macOS, Android and iOS, all on one shared core — an exercise in applied cryptography and honest engineering.
     url: /projects/rrussat
+    logo: /logos/rrussat.svg
   - year: "2026"
     tag: Product
     title: Nibble and Nibble CLI
     text: A schema-driven CMS you install as your own Rails application, and the Rust command-line tool that goes with it — 25 public releases in its first weeks.
     url: /projects/nibble
+    logo: /logos/nibble.svg
   - year: "2026"
     tag: Product
     title: Darwan
     text: A Rust and Qt theme manager for the Linux login and lock screens, built around safety — a lock that can't lock you out, a root helper that trusts nothing.
     url: /projects/darwan
+    logo: /logos/darwan.svg
   - year: "2026"
     tag: Product
     title: Quarry
     text: A SQL client that lives in the terminal, for PostgreSQL, MySQL, MariaDB and SQLite — the database tool I wanted for my own work, built to production standards.
     url: /projects/quarry
+    logo: /logos/quarry.svg
   - year: "2026"
     tag: Product
     title: Insensical
     text: A terminal multiplexer with a native window, built for running many coding agents at once — a daemon that owns every program, and a window that always shows which one needs you.
     url: /projects/insensical
+    logo: /logos/insensical.svg
   - year: "2026"
     tag: Product
     title: Sysman
     text: A crash-proof system monitor for Linux, whose first rule is that the last reading before a crash is already on disk.
     url: /projects/sysman
+    logo: /logos/sysman.svg
   - year: "Now"
     tag: Today
     title: Still taking things apart
     text: Seventeen years in, the curiosity hasn't worn off. I'm still trying new languages, new hardware and new ways to run a server, mostly in the homelab first, and building the tools I wish existed. This site is one of them, on Nibble, deployed with Kamal to a server I run.
     url: /now
+    logo: /art/marks/gear.svg
 seo:
   title: About
   description: About Mahfuz Shaikh — software engineer and Linux systems administrator since 2009, building products and running production infrastructure.

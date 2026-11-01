@@ -44,6 +44,9 @@ stops Claude Code editing `vendor/nibble/`.
   badge. A project without a logo falls back to the bracketed tile with its monogram (`components/ProjectTile.vue`).
 - **Cover art** is generated SVG in `public/art/`, from `site/art/generate.py`
   (`python3 site/art/generate.py public/art`). Add a function there for a new project rather than drawing by hand.
+- **Timeline marks:** every About milestone has a `logo` — the project's own from `/logos`, or a mark from
+  `/art/marks`, drawn in `site/art/marks.py` on the brand's teal tile (`/art/marks/mah3uz.svg` is the brand mark).
+  Add a mark there for a new milestone that has no logo.
 - **Pages, posts, menus and site settings** come from the content package `site/packages/default`, which
   `site/packages/build.py` writes from the Markdown sources in `site/packages/source/pages/` and `source/posts/`.
   Import with `--mode=update` to replace live content with the package.

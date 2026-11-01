@@ -28,6 +28,7 @@ const milestones = computed(() =>
     title: String(row.title ?? ''),
     text: String(row.text ?? ''),
     url: row.url ? String(row.url) : '',
+    logo: row.logo ? String(row.logo) : '',
   })),
 )
 </script>
@@ -137,26 +138,43 @@ const milestones = computed(() =>
           :class="index % 2 ? 'lg:[&>article]:col-start-2' : 'lg:[&>article]:col-start-1 lg:[&>article]:text-right'"
         >
           <span class="neat-timeline-dot" aria-hidden="true" />
-          <article class="neat-card p-6" :class="index % 2 ? '' : 'lg:[&_.neat-milestone-meta]:justify-end'">
-            <p class="neat-milestone-meta flex flex-wrap items-center gap-3">
-              <span class="font-display text-2xl font-extrabold tracking-tight text-accent">{{ milestone.year }}</span>
-              <span
-                v-if="milestone.tag"
-                class="border-line-strong rounded-full border px-2.5 py-0.5 font-mono text-[0.65rem] tracking-wider text-muted uppercase"
-                >{{ milestone.tag }}</span
-              >
-            </p>
-            <h3 class="font-display mt-3 text-xl font-bold tracking-tight">
-              <component
-                :is="milestone.url ? linkTag(milestone.url) : 'span'"
-                :href="milestone.url || undefined"
-                :target="milestone.url && !milestone.url.startsWith('/') ? '_blank' : undefined"
-                :rel="milestone.url && !milestone.url.startsWith('/') ? 'noopener' : undefined"
-                :class="{ 'neat-link': milestone.url }"
-                >{{ milestone.title }}</component
-              >
-            </h3>
-            <p class="mt-2 leading-7 text-muted">{{ milestone.text }}</p>
+          <!-- The card's logo sits on its outer edge: left in the right-hand column, right in the left-hand one. -->
+          <article
+            class="neat-card flex flex-col items-start gap-4 p-6 sm:flex-row sm:gap-5"
+            :class="index % 2 ? '' : 'lg:flex-row-reverse lg:items-start lg:[&_.neat-milestone-meta]:justify-end'"
+          >
+            <img
+              v-if="milestone.logo"
+              :src="milestone.logo"
+              alt=""
+              width="56"
+              height="56"
+              loading="lazy"
+              class="size-12 shrink-0 rounded-[28%] object-contain drop-shadow-[0_8px_14px_rgba(4,48,64,0.22)] sm:size-14"
+            />
+            <div class="min-w-0 flex-1">
+              <p class="neat-milestone-meta flex flex-wrap items-center gap-3">
+                <span class="font-display text-2xl font-extrabold tracking-tight text-accent">{{
+                  milestone.year
+                }}</span>
+                <span
+                  v-if="milestone.tag"
+                  class="border-line-strong rounded-full border px-2.5 py-0.5 font-mono text-[0.65rem] tracking-wider text-muted uppercase"
+                  >{{ milestone.tag }}</span
+                >
+              </p>
+              <h3 class="font-display mt-3 text-xl font-bold tracking-tight">
+                <component
+                  :is="milestone.url ? linkTag(milestone.url) : 'span'"
+                  :href="milestone.url || undefined"
+                  :target="milestone.url && !milestone.url.startsWith('/') ? '_blank' : undefined"
+                  :rel="milestone.url && !milestone.url.startsWith('/') ? 'noopener' : undefined"
+                  :class="{ 'neat-link': milestone.url }"
+                  >{{ milestone.title }}</component
+                >
+              </h3>
+              <p class="mt-2 leading-7 text-muted">{{ milestone.text }}</p>
+            </div>
           </article>
         </li>
       </ol>

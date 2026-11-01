@@ -401,6 +401,10 @@ import more  # noqa: E402
 
 ARTS.update(more.arts(frame, window, bars))
 
+import marks  # noqa: E402
+
+ARTS.update(marks.marks())
+
 for name, fn in ARTS.items():
     target = OUT / f'{name}.svg'
     target.parent.mkdir(parents=True, exist_ok=True)
