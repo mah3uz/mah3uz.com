@@ -71,6 +71,8 @@ tabs:
                   field: { type: text, instructions: 'A web address, or a path on this site such as /projects/quarry.' }
                 - handle: mine
                   field: { type: toggle, instructions: 'Something I built.' }
+                - handle: key
+                  field: { type: text, character_limit: 3, instructions: 'What its keycap shows, e.g. K4. Leave empty for the initials of its name.' }
       - display: Milestones
         instructions: For About — the timeline, oldest first.
         fields:

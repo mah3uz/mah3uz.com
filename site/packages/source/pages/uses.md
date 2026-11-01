@@ -2,9 +2,14 @@
 title: The tools I use every day
 template: uses
 eyebrow: Uses
-intro: The software behind my work — for building, for running servers, and for living on the Linux desktop. Several of these I built because I wanted them to exist.
+intro: The hardware and software behind my work — for building, for running servers, for the homelab, and for living on the Linux desktop. Several of these I built because I wanted them to exist.
 art: /art/pages/uses.svg
 tools:
+  - { group: Hardware, name: "Workstation — Ryzen 9 7950X3D", key: "PC", note: "16 cores and 32 threads, a GeForce RTX 4090 and 128 GB of memory, running Arch Linux on 2 TB of btrfs. Big builds and virtual machines without waiting." }
+  - { group: Hardware, name: "27-inch 1440p display", key: "27", note: "2560×1440 at 120 Hz — sharp enough for text all day, fast enough that scrolling feels right." }
+  - { group: Hardware, name: MacBook Pro M1, key: "MB", note: "For work away from the desk, and for building and testing the macOS side of my tools." }
+  - { group: Hardware, name: Keychron K4, key: "K4", note: "A compact 96% mechanical keyboard that switches between the workstation and the MacBook.", url: "https://www.keychron.com" }
+  - { group: Hardware, name: Logitech MX Master 3, key: "MX", note: "The mouse for long days; the free-spinning wheel earns its keep in long logs.", url: "https://www.logitech.com" }
   - { group: Desktop, name: Arch Linux, note: "A rolling base I understand top to bottom, and the distribution I ship packages for.", url: "https://archlinux.org" }
   - { group: Desktop, name: Hyprland, note: "A tiling Wayland compositor: fast, scriptable, and out of the way.", url: "https://hyprland.org" }
   - { group: Desktop, name: Omarchy, note: "An opinionated Arch and Hyprland setup I follow and adapt.", url: "https://omarchy.org" }
@@ -32,9 +37,12 @@ tools:
   - { group: Servers & ops, name: Docker, note: "Packaging applications so production is the same everywhere." }
   - { group: Servers & ops, name: systemd, note: "Services, timers, sandboxing and the journal — far more capable than it gets credit for." }
   - { group: Servers & ops, name: Ansible, note: "Configuration as code for fleets of servers." }
-  - { group: Servers & ops, name: Proxmox VE, note: "Virtualisation on bare metal, including dedicated servers." }
-  - { group: Servers & ops, name: WireGuard, note: "Private networking between machines, simply." }
   - { group: Servers & ops, name: OpenSSH, note: "Keys, jump hosts and tunnels — the most important tool on every server." }
+  - { group: Homelab, name: Proxmox VE, note: "Virtualisation on bare metal — the base of my homelab, and of the dedicated servers I run.", url: "https://www.proxmox.com" }
+  - { group: Homelab, name: WireGuard, note: "One private network across the homelab, my servers and my laptop.", url: "https://www.wireguard.com" }
+  - { group: Homelab, name: umbrelOS app store, note: "A community app store I publish for umbrelOS home servers.", url: "/projects/umbrel-apps", mine: true }
+  - { group: Homelab, name: Matrix, note: "Self-hosted chat, with its sticker tooling.", url: "https://matrix.org" }
+  - { group: Homelab, name: Umami, note: "Analytics without tracking, on my own hardware.", url: "https://umami.is" }
   - { group: Data, name: PostgreSQL, note: "When many writers need one database." }
   - { group: Data, name: SQLite, note: "For far more than people expect — this site, Nibble and Sysman all run on it." }
   - { group: Data, name: MySQL & MariaDB, note: "Still behind a great deal of the web I look after." }
@@ -45,5 +53,5 @@ tools:
   - { group: Shipping, name: Cloudflare, note: "Static sites and documentation at the edge." }
 seo:
   title: Uses
-  description: The software Mahfuz Shaikh uses for development, Linux systems administration and the desktop — from Arch and Neovim to Kamal, PostgreSQL and his own tools.
+  description: "The hardware and software Mahfuz Shaikh uses for development, Linux systems administration, the homelab and the desktop — from a Ryzen workstation, Arch and Neovim to Kamal, Proxmox and self-built tools."
 ---

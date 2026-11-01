@@ -41,7 +41,7 @@ const columns = computed(() => [
             :href="project.uri ?? '#'"
             :tabindex="copy === 2 ? -1 : undefined"
             :aria-hidden="copy === 2 ? 'true' : undefined"
-            class="group/card border-line bg-midnight relative block shrink-0 overflow-hidden rounded-[1.4rem] border shadow-[0_24px_50px_-28px_rgba(4,48,64,0.6)]"
+            class="group/card relative block shrink-0 overflow-hidden rounded-[1.4rem] shadow-[0_24px_50px_-28px_rgba(4,48,64,0.6)]"
           >
             <img
               :src="project.cover ?? ''"

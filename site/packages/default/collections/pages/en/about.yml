@@ -117,8 +117,8 @@ milestones:
 - year: '2026'
   tag: Product
   title: rrussat
-  text: A peer-to-peer, end-to-end encrypted messenger in Rust, with a terminal client and a Flutter app on one shared core
-    — an exercise in applied cryptography and honest engineering.
+  text: A peer-to-peer, end-to-end encrypted messenger in Rust, with a terminal client and an app for Linux, macOS, Android
+    and iOS, all on one shared core — an exercise in applied cryptography and honest engineering.
   url: /projects/rrussat
 - year: '2026'
   tag: Product
@@ -170,11 +170,12 @@ content: "I'm **Mahfuz Shaikh**, known online as **mah3uz**. For more than seven
   \ a problem actually needs.\n- **Linux systems administration** — building and maintaining servers, users and permissions,\
   \ services and their\n  configuration, storage, networking and VPNs, monitoring and logging, security hardening, patching,\
   \ backups and recovery.\n- **DevOps and delivery** — containerised applications, repeatable deployments, CI and release\
-  \ automation, staging\n  environments that tell the truth, and production operations.\n- **Self-hosting and infrastructure**\
-  \ — virtualisation on bare metal, private networking, and running the services a team\n  depends on without handing them\
-  \ to someone else.\n\n## How I work\n\nI like small, frequent releases, written changelogs and runbooks, and automation\
-  \ that anyone on the team can run. I would\nrather spend an afternoon making a failure mode safe than a week hoping it doesn't\
-  \ happen. I keep things simple on\npurpose, and I take security seriously by default rather than as a phase at the end.\n\
-  \n## Working together\n\nThrough my company, **mah3uz – IT Consultancy**, I take on a limited amount of client work alongside\
-  \ my own products — engineering, infrastructure, or the place where the\ntwo meet. If you have a platform that needs to\
-  \ be built carefully *and* run reliably, [tell me about it](#contact)."
+  \ automation, staging\n  environments that tell the truth, and production operations.\n- **Self-hosting and homelab** —\
+  \ an extensive homelab of my own: virtualisation on bare metal, private networking, and\n  running the services a team depends\
+  \ on without handing them to someone else. It is where new infrastructure gets tried\n  before it goes anywhere near a client.\n\
+  \n## How I work\n\nI like small, frequent releases, written changelogs and runbooks, and automation that anyone on the team\
+  \ can run. I would\nrather spend an afternoon making a failure mode safe than a week hoping it doesn't happen. I keep things\
+  \ simple on\npurpose, and I take security seriously by default rather than as a phase at the end.\n\n## Working together\n\
+  \nThrough my company, **mah3uz – IT Consultancy**, I take on a limited amount of client work alongside my own products —\
+  \ engineering, infrastructure, or the place where the\ntwo meet. If you have a platform that needs to be built carefully\
+  \ *and* run reliably, [tell me about it](#contact)."

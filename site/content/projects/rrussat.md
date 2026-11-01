@@ -2,11 +2,11 @@
 id: rrussat
 order: 7
 title: rrussat
-tagline: A peer-to-peer, end-to-end encrypted messenger with a terminal client and a Flutter app — and no application server in the middle.
+tagline: A peer-to-peer, end-to-end encrypted messenger with a terminal client and an app for Linux, macOS, Android and iOS — and no application server in the middle.
 description: rrussat is a one-to-one messenger built in Rust on iroh and QUIC. Identities are keypairs, pairing is a QR code or a line of text, messages are protected with X3DH and a Double Ratchet, and history lives in a local SQLite file sealed under a passphrase. It is an exercise in applied cryptography and honest engineering, not an audited security product — and it says so.
 category: product
 stage: experiment
-kind: Messenger · Terminal & app
+kind: Messenger · Terminal, desktop & mobile
 year: "2026"
 logo: /logos/rrussat.svg
 monogram: "R"
@@ -16,12 +16,12 @@ cover: /art/rrussat.svg
 repository: https://github.com/mah3uz/rrussat
 stack: [Rust, iroh, QUIC, X3DH, Double Ratchet, SQLite, ratatui, Flutter]
 highlights:
-  - One Rust core behind two very different clients — a terminal UI and a Flutter app
+  - One Rust core behind two very different clients — a terminal UI, and a Flutter app for Linux, macOS, Android and iOS
   - X3DH handshake and Double Ratchet, with every key derivation labelled and every stored blob bound to its context
   - Direct, LAN or relayed — each contact shows which path is actually in use
   - 330 tests, mutation-checked so that security tests can actually fail
 seo:
-  description: "rrussat is a Rust peer-to-peer end-to-end encrypted messenger with a terminal client and a Flutter app, built on iroh, X3DH and the Double Ratchet."
+  description: "rrussat is a Rust peer-to-peer end-to-end encrypted messenger with a terminal client and a Flutter app for Linux, macOS, Android and iOS, built on iroh, X3DH and the Double Ratchet."
 ---
 
 ## The question
@@ -77,7 +77,7 @@ in the terminal are rebuilt into an image and decoded, to prove the code a phone
 ## One core, two clients
 
 The cryptography, networking and storage live in a core crate with no UI dependency. A terminal client built on ratatui and a
-Flutter app for Linux and Android (with iOS and macOS built and verified) sit on top of it through a generated bridge. The
+Flutter app for Linux, macOS, Android and iOS sit on top of it through a generated bridge. The
 app adds what a phone needs — camera QR scanning, a keyring or biometric-gated key cache, notifications and a background
 service — while the terminal client offers clipboard copy that works over SSH and tmux. Attachments and voice messages are
 sealed once per file and fetched over a separate stream, resumable and authenticated by a digest that arrived through the

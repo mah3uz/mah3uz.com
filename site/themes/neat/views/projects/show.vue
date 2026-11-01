@@ -85,10 +85,7 @@ const facts = computed(() =>
     <div v-if="page.cover" class="animate-rise relative mt-14 p-3 [animation-delay:300ms] sm:p-5">
       <Corners size="2.25rem" />
       <div v-tilt="3" class="group relative">
-        <figure
-          class="border-line neat-peeled relative overflow-hidden rounded-[2rem] border"
-          :style="{ '--peel-cut': peelCut(120) }"
-        >
+        <figure class="neat-peeled relative overflow-hidden rounded-[2rem]" :style="{ '--peel-cut': peelCut(120) }">
           <img
             :src="page.cover"
             :alt="`Illustration for ${page.title}`"

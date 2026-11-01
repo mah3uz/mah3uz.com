@@ -33,6 +33,7 @@ const tools = computed(() =>
     note: row.note ? String(row.note) : '',
     url: row.url ? String(row.url) : '',
     mine: Boolean(row.mine),
+    key: row.key ? String(row.key) : '',
   })),
 )
 type Tool = (typeof tools.value)[number]
@@ -103,7 +104,7 @@ const mineCount = computed(() => tools.value.filter((tool) => tool.mine).length)
               class="neat-keycap neat-keycap-sm grid size-11 shrink-0 place-items-center rounded-xl font-mono text-sm font-semibold"
               :class="{ 'neat-keycap-mine': tool.mine }"
               aria-hidden="true"
-              >{{ initials(tool.name) }}</span
+              >{{ tool.key || initials(tool.name) }}</span
             >
             <div class="min-w-0">
               <p class="flex flex-wrap items-center gap-2">

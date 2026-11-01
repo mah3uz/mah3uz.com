@@ -96,7 +96,7 @@ milestones:
   - year: "2026"
     tag: Product
     title: rrussat
-    text: A peer-to-peer, end-to-end encrypted messenger in Rust, with a terminal client and a Flutter app on one shared core — an exercise in applied cryptography and honest engineering.
+    text: A peer-to-peer, end-to-end encrypted messenger in Rust, with a terminal client and an app for Linux, macOS, Android and iOS, all on one shared core — an exercise in applied cryptography and honest engineering.
     url: /projects/rrussat
   - year: "2026"
     tag: Product
@@ -157,8 +157,9 @@ the last reading before a crash is already on disk, a lock-screen manager design
   configuration, storage, networking and VPNs, monitoring and logging, security hardening, patching, backups and recovery.
 - **DevOps and delivery** — containerised applications, repeatable deployments, CI and release automation, staging
   environments that tell the truth, and production operations.
-- **Self-hosting and infrastructure** — virtualisation on bare metal, private networking, and running the services a team
-  depends on without handing them to someone else.
+- **Self-hosting and homelab** — an extensive homelab of my own: virtualisation on bare metal, private networking, and
+  running the services a team depends on without handing them to someone else. It is where new infrastructure gets tried
+  before it goes anywhere near a client.
 
 ## How I work
 

@@ -8,7 +8,7 @@ withDefaults(defineProps<{ src?: string | null; alt?: string; eager?: boolean }>
 </script>
 
 <template>
-  <figure v-if="src" class="border-line bg-midnight relative overflow-hidden rounded-[1.75rem] border">
+  <figure v-if="src" class="relative overflow-hidden rounded-[1.75rem]">
     <img
       :src="src"
       :alt="alt"
