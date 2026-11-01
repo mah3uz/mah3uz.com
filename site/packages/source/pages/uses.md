@@ -48,7 +48,7 @@ tools:
   - { group: Homelab, name: SearXNG, key: "SX", note: "Private metasearch: results from many engines, with nothing about me sent to any of them.", url: "https://docs.searxng.org" }
   - { group: Homelab, name: Pangolin and Headscale, key: "PH", note: "Reaching the lab from outside without opening a port — tunnelled through Pangolin and Newt, or over a self-hosted Tailscale network.", url: "https://github.com/fosrl/pangolin" }
   - { group: Homelab, name: WireGuard, key: "WG", note: "One private network across the homelab, my servers and my laptop.", url: "https://www.wireguard.com" }
-  - { group: Homelab, name: umbrelOS, key: "UM", note: "A home-server OS in a VM of its own, with the community app store I publish for it.", url: "/projects/umbrel-apps", mine: true }
+  - { group: Homelab, name: umbrelOS, key: "UM", note: "A home-server OS for one-click apps, in a virtual machine of its own.", url: "https://umbrel.com" }
   - { group: Homelab, name: An agents VM, key: "AI", note: "Coding agents get a virtual machine of their own, kept apart from everything else on the lab." }
   - { group: Data, name: PostgreSQL, note: "When many writers need one database." }
   - { group: Data, name: SQLite, note: "For far more than people expect — this site, Nibble and Sysman all run on it." }

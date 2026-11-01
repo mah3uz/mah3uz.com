@@ -181,9 +181,8 @@ tools:
 - group: Homelab
   name: umbrelOS
   key: UM
-  note: A home-server OS in a VM of its own, with the community app store I publish for it.
-  url: /projects/umbrel-apps
-  mine: true
+  note: A home-server OS for one-click apps, in a virtual machine of its own.
+  url: https://umbrel.com
 - group: Homelab
   name: An agents VM
   key: AI

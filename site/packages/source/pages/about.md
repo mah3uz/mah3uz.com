@@ -81,8 +81,7 @@ milestones:
   - year: "2025"
     tag: Infrastructure
     title: Bare metal, home servers and Matrix
-    text: Proxmox VE on Hetzner dedicated servers, self-hosted Matrix with its sticker tooling, and a community app store for umbrelOS home servers.
-    url: /projects/umbrel-apps
+    text: Proxmox VE on Hetzner dedicated servers, self-hosted Matrix with its sticker tooling, and umbrelOS for apps at home.
   - year: "2025"
     tag: Open source
     title: Documentation for Walker
@@ -93,6 +92,11 @@ milestones:
     title: TourHub — a marketplace for live-events crew
     text: Building TourHub in Ruby on Rails — verified crew profiles, contracts and payments secured through Stripe — and the staging and production environments it ships through.
     url: /projects/tourhub
+  - year: "2026"
+    tag: Open source
+    title: tide, redesigned, and AirPods on Hyprland
+    text: A full redesign of tide, a self-hosted video meeting service, with an installable app and a screen-share popout; and a Dux Shell plugin that brings EarPort's AirPods support from GNOME to Hyprland.
+    url: /projects/tide
   - year: "2026"
     tag: Product
     title: rrussat

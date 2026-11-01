@@ -95,35 +95,65 @@ def arts(frame, window, bars):
                            f'fill="{FOAM}" fill-opacity="{0.9 if i == 0 else 0.5}"/>' for i in range(3)) + '</g>')
         return frame(u, ''.join(b), glow=(1100, 300))
 
-    def umbrel_apps():
-        u = 'ua'
-        b = []
-        # a home server
-        b.append(f'<g transform="translate(200 300)"><rect y="20" width="420" height="440" rx="60" fill="#000" fill-opacity="0.45" '
-                 f'filter="url(#{u}-soft)"/><rect width="420" height="440" rx="60" fill="#0E2B33" stroke="{MINT}" stroke-opacity="0.3" '
-                 f'stroke-width="2"/><rect x="40" y="40" width="340" height="300" rx="40" fill="url(#{u}-tile)"/>'
-                 f'<circle cx="210" cy="190" r="70" fill="#0A1A20" fill-opacity="0.3"/><circle cx="210" cy="190" r="34" fill="{FOAM}"/>'
-                 f'<rect x="150" y="380" width="120" height="14" rx="7" fill="{MINT}"/><circle cx="330" cy="387" r="8" fill="{MINT}"/></g>')
-        # app grid
-        apps = [(MINT, 'down'), (TEAL, ''), (SEA, ''), (MIST, ''), (TEAL, ''), (MINT, ''), (SEA, ''), (MIST, ''), (TEAL, '')]
-        for i, (color, kind) in enumerate(apps):
-            x = 760 + (i % 3) * 200
-            y = 220 + (i // 3) * 200
-            big = i == 0
-            b.append(f'<rect x="{x}" y="{y + 12}" width="160" height="160" rx="40" fill="#000" fill-opacity="0.35" filter="url(#{u}-soft)"/>')
-            b.append(f'<rect x="{x}" y="{y}" width="160" height="160" rx="40" fill="{"url(#" + u + "-tile)" if big else color}" '
-                     f'fill-opacity="{1 if big else 0.28}" stroke="{MINT}" stroke-opacity="{0.8 if big else 0.18}" stroke-width="{4 if big else 2}"/>')
-            if big:
-                b.append(f'<path d="M{x + 80} {y + 40}V{y + 104}M{x + 52} {y + 78}l28 28 28-28" fill="none" stroke="{ABYSS}" '
-                         f'stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>'
-                         f'<rect x="{x + 46}" y="{y + 118}" width="68" height="10" rx="5" fill="{ABYSS}"/>')
-            else:
-                b.append(f'<rect x="{x + 50}" y="{y + 50}" width="60" height="60" rx="16" fill="{color}" fill-opacity="0.6"/>')
-        b.append(f'<path d="M620 520C680 520 690 300 760 300" fill="none" stroke="url(#{u}-line)" stroke-width="5" '
-                 f'stroke-dasharray="2 14" stroke-linecap="round"/>')
-        return frame(u, ''.join(b), glow=(420, 520))
+    def tide():
+        u = 'td'
+        b = [window(150, 150, 1300, 700, u)]
+        # the hairline across the top of the app: the status channel
+        b.append(f'<rect x="150" y="212" width="1300" height="4" fill="url(#{u}-tile)"/>')
+        # the Orbit stage: the speaker in the lens, everyone else a portal around it
+        b.append(f'<circle cx="640" cy="520" r="250" fill="{MINT}" fill-opacity="0.06"/>')
+        b.append(f'<circle cx="640" cy="520" r="212" fill="#0E2B33" stroke="{MINT}" stroke-width="6"/>')
+        b.append(f'<circle cx="640" cy="520" r="226" fill="none" stroke="{MINT}" stroke-opacity="0.25" stroke-width="4"/>')
+        b.append(f'<circle cx="640" cy="470" r="70" fill="url(#{u}-tile)"/><path d="M520 640C540 560 740 560 760 640" fill="url(#{u}-tile)"/>')
+        for i, (x, y, r, c) in enumerate([(990, 330, 74, TEAL), (1130, 470, 64, SEA), (1000, 640, 70, MIST), (300, 360, 60, SEA)]):
+            b.append(f'<circle cx="{x}" cy="{y}" r="{r}" fill="#0E2B33" stroke="{MINT}" stroke-opacity="0.3" stroke-width="3"/>')
+            b.append(f'<circle cx="{x}" cy="{y - r * 0.2:.0f}" r="{r * 0.36:.0f}" fill="{c}" fill-opacity="0.8"/>')
+        # the control capsule
+        b.append(f'<rect x="880" y="760" width="400" height="64" rx="32" fill="#071419" stroke="{MINT}" stroke-opacity="0.3" stroke-width="2"/>')
+        for k in range(5):
+            cx = 926 + k * 76
+            fill = '#E5484D' if k == 4 else (MINT if k == 0 else MIST)
+            b.append(f'<circle cx="{cx}" cy="792" r="20" fill="{fill}" fill-opacity="{0.9 if k in (0, 4) else 0.35}"/>')
+        # a chat sheet
+        b.append(f'<rect x="180" y="560" width="200" height="250" rx="24" fill="#0E2B33" stroke="{MINT}" stroke-opacity="0.18" stroke-width="2"/>')
+        b.append(bars(204, 600, [140, 100, 150, 90, 130], gap=36, h=12, colors=[FOAM, MIST, MINT, MIST, FOAM]))
+        return frame(u, ''.join(b), glow=(640, 520))
 
-    # ------------------------------------------------------------------ pages
+    def earport():
+        u = 'ep'
+        b = []
+        # a bar along the top of a Hyprland desktop, with the plugin's widget
+        b.append(f'<rect x="150" y="150" width="1300" height="64" rx="20" fill="#071419" stroke="{MINT}" stroke-opacity="0.2" stroke-width="2"/>')
+        b.append(bars(184, 176, [70, 50, 90], gap=0, h=12, colors=[MIST]).replace('<rect ', '<rect ', 1))
+        b.append(f'<rect x="1130" y="164" width="150" height="36" rx="18" fill="{TEAL}" fill-opacity="0.22"/>')
+        b.append(f'<circle cx="1160" cy="182" r="10" fill="{MINT}"/><rect x="1180" y="176" width="80" height="12" rx="6" fill="{FOAM}"/>')
+        # the panel it opens
+        b.append(f'<g transform="translate(640 270)"><rect y="18" width="760" height="560" rx="36" fill="#000" fill-opacity="0.45" '
+                 f'filter="url(#{u}-soft)"/><rect width="760" height="560" rx="36" fill="#0E2B33" stroke="{MINT}" stroke-opacity="0.35" '
+                 f'stroke-width="2"/></g>')
+        # battery rings: left, right, case
+        for i, (cx, level) in enumerate([(780, 0.85), (980, 0.82), (1180, 0.64)]):
+            r = 70
+            circ = 2 * 3.14159 * r
+            b.append(f'<circle cx="{cx}" cy="420" r="{r}" fill="none" stroke="{MIST}" stroke-opacity="0.15" stroke-width="16"/>')
+            b.append(f'<circle cx="{cx}" cy="420" r="{r}" fill="none" stroke="url(#{u}-tile)" stroke-width="16" stroke-linecap="round" '
+                     f'stroke-dasharray="{circ * level:.1f} {circ:.1f}" transform="rotate(-90 {cx} 420)"/>')
+            if i < 2:
+                b.append(f'<path d="M{cx - 12} 392a18 18 0 0 1 36 0v18c0 10-6 14-12 14v26a6 6 0 0 1-12 0Z" fill="{FOAM}"/>')
+            else:
+                b.append(f'<rect x="{cx - 30}" y="396" width="60" height="48" rx="14" fill="{FOAM}"/><path d="M{cx - 30} 412h60" stroke="#0E2B33" stroke-width="4"/>')
+        # noise control: off, ANC, transparency, adaptive
+        for k in range(4):
+            x = 700 + k * 165
+            on = k == 1
+            b.append(f'<rect x="{x}" y="560" width="145" height="90" rx="22" fill="{TEAL if on else "#071419"}" fill-opacity="{0.35 if on else 0.8}" '
+                     f'stroke="{MINT}" stroke-opacity="{0.8 if on else 0.15}" stroke-width="2"/>')
+            b.append(f'<rect x="{x + 30}" y="598" width="{85 - k * 6}" height="14" rx="7" fill="{FOAM if on else MIST}" fill-opacity="{0.95 if on else 0.4}"/>')
+        b.append(bars(700, 700, [380, 260], gap=34, h=12, colors=[MIST]))
+        # a pair of AirPods
+        b.append(f'<g transform="translate(250 380)" fill="url(#{u}-tile)"><path d="M60 0a60 60 0 0 1 60 60v40c0 30-20 40-36 40v120a24 24 0 0 1-48 0V130C14 120 0 100 0 70V60A60 60 0 0 1 60 0Z"/>'
+                 f'<path d="M260 0a60 60 0 0 0-60 60v40c0 30 20 40 36 40v120a24 24 0 0 0 48 0V130c22-10 36-30 36-60V60A60 60 0 0 0 260 0Z"/></g>')
+        return frame(u, ''.join(b), glow=(500, 480))
 
     def about():
         u = 'ab'
@@ -373,7 +403,8 @@ def arts(frame, window, bars):
 
     return {
         'walker-docs': walker_docs,
-        'umbrel-apps': umbrel_apps,
+        'tide': tide,
+        'earport': earport,
         'pages/about': about,
         'pages/now': now,
         'pages/uses': uses,
