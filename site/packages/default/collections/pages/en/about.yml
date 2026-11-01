@@ -30,10 +30,12 @@ milestones:
   text: Linux has been my operating system since I first sat down at a computer. It shaped everything that followed — a habit
     of reading the source, living in a terminal, and wanting to understand the whole system rather than one layer of it.
 - year: '2009'
-  tag: Career
-  title: Working professionally, on both sides
-  text: I began working professionally across software development and Linux systems administration — building applications,
-    and installing, configuring and maintaining the servers they ran on. The combination has defined my career ever since.
+  tag: Freelance
+  title: Freelancing on oDesk, now Upwork
+  text: From 2009 to 2014 I worked as an independent contractor on oDesk (Upwork, as it became), on both sides from the start
+    — building web applications for clients, and installing, configuring and maintaining the Linux servers they ran on. Five
+    years of scoping, delivering and supporting work for clients I met only online taught me to communicate plainly and leave
+    every system documented.
 - year: '2013'
   tag: Open source
   title: A public footprint on GitHub
@@ -43,8 +45,8 @@ milestones:
 - year: '2014'
   tag: Consultancy
   title: mah3uz IT Consultancy
-  text: Until 2016 I ran a small IT consultancy offering web development and systems work, serving as its systems administrator
-    and web developer — owning client projects from server to front end.
+  text: After five years of freelancing, I set up a small IT consultancy of my own, which I ran until 2016, offering web development
+    and systems work — its systems administrator and web developer, owning client projects from server to front end.
   url: https://github.com/mah3uz/mah3uz.github.io
 - year: '2015'
   tag: Automation
@@ -67,6 +69,12 @@ milestones:
   title: Self-hosted private networking
   text: Working with WireGuard and Subspace, a web interface for managing VPN peers — private networking without a third-party
     service in the middle.
+- year: '2020'
+  tag: Client work
+  title: TLC — a lending CRM and its broker API
+  text: The start of a long engagement with TLC, an Australian lender of medical, dental and lifestyle payment plans — building
+    its CRM in Laravel, designing the API partners use to submit loan applications, and running the servers underneath.
+  url: /projects/tlc
 - year: '2022'
   tag: Front end
   title: Modern front ends with Next.js and React
@@ -95,6 +103,12 @@ milestones:
   title: Documentation for Walker
   text: Writing and maintaining community documentation for Walker, a fast application launcher for the Linux desktop.
   url: /projects/walker-docs
+- year: '2026'
+  tag: Client work
+  title: TourHub — a marketplace for live-events crew
+  text: Building TourHub in Ruby on Rails — verified crew profiles, contracts and payments secured through Stripe — and the
+    staging and production environments it ships through.
+  url: /projects/tourhub
 - year: '2026'
   tag: Product
   title: rrussat
@@ -132,27 +146,30 @@ seo:
 content: "I'm **Mahfuz Shaikh**, known online as **mah3uz**. For more than seventeen years I have worked on both sides of\
   \ the line\nthat many organisations draw between *building* software and *running* it. I write applications, and I administer\
   \ the\nLinux servers and infrastructure they depend on — provisioning machines, managing configuration, automating deployments,\n\
-  securing and patching systems, and keeping production healthy long after launch day.\n\nLinux has been my operating system\
-  \ since I first started using computers. That shaped how I work: I would rather\nunderstand the whole system than one layer\
-  \ of it, and I am most at home in a terminal, reading logs and source code until\nthe behaviour makes sense.\n\n## What\
-  \ that combination is good for\n\nThe most expensive problems I have solved lived in the gap between application and infrastructure:\
-  \ the slow page that was\nreally a database configuration, the failed deploy that was really a full disk, the intermittent\
-  \ error that was really a\nDNS cache, the \"random\" restart that was really a memory limit. When the same person understands\
-  \ the code *and* the\nmachine, those gaps close quickly — and, more importantly, the next system gets designed so they don't\
-  \ open at all.\n\nIt also changes how I write software. I build things that are pleasant to operate: they fail loudly and\
-  \ safely, log what an\non-call engineer needs, start and stop cleanly, back themselves up, and upgrade without drama. You\
-  \ can see that in the\nproducts I build today — a CMS whose upgrades refuse to run over modified files, a system monitor\
-  \ whose first rule is that\nthe last reading before a crash is already on disk, a lock-screen manager designed so it can\
-  \ never lock you out.\n\n## What I do\n\n- **Software engineering** — web applications and APIs, back ends and front ends,\
-  \ command-line tools and desktop software;\n  from architecture and data modelling to the last detail of the interface.\
-  \ Ruby and Rails, Rust, Python, TypeScript and\n  Vue, and whatever a problem actually needs.\n- **Linux systems administration**\
-  \ — building and maintaining servers, users and permissions, services and their\n  configuration, storage, networking and\
-  \ VPNs, monitoring and logging, security hardening, patching, backups and recovery.\n- **DevOps and delivery** — containerised\
-  \ applications, repeatable deployments, CI and release automation, staging\n  environments that tell the truth, and production\
-  \ operations.\n- **Self-hosting and infrastructure** — virtualisation on bare metal, private networking, and running the\
-  \ services a team\n  depends on without handing them to someone else.\n\n## How I work\n\nI like small, frequent releases,\
-  \ written changelogs and runbooks, and automation that anyone on the team can run. I would\nrather spend an afternoon making\
-  \ a failure mode safe than a week hoping it doesn't happen. I keep things simple on\npurpose, and I take security seriously\
-  \ by default rather than as a phase at the end.\n\n## Working together\n\nI take on a limited amount of client work alongside\
-  \ my own products — engineering, infrastructure, or the place where the\ntwo meet. If you have a platform that needs to\
-  \ be built carefully *and* run reliably, [tell me about it](#contact)."
+  securing and patching systems, and keeping production healthy long after launch day.\n\nI started out in 2009 as a freelancer\
+  \ on oDesk, now Upwork, and spent five years there taking on development and server\nwork for clients I knew only through\
+  \ the platform. That is where I learned that the job isn't finished until the client\ncan understand what was done and the\
+  \ next person can maintain it.\n\nLinux has been my operating system since I first started using computers. That shaped\
+  \ how I work: I would rather\nunderstand the whole system than one layer of it, and I am most at home in a terminal, reading\
+  \ logs and source code until\nthe behaviour makes sense.\n\n## What that combination is good for\n\nThe most expensive problems\
+  \ I have solved lived in the gap between application and infrastructure: the slow page that was\nreally a database configuration,\
+  \ the failed deploy that was really a full disk, the intermittent error that was really a\nDNS cache, the \"random\" restart\
+  \ that was really a memory limit. When the same person understands the code *and* the\nmachine, those gaps close quickly\
+  \ — and, more importantly, the next system gets designed so they don't open at all.\n\nIt also changes how I write software.\
+  \ I build things that are pleasant to operate: they fail loudly and safely, log what an\non-call engineer needs, start and\
+  \ stop cleanly, back themselves up, and upgrade without drama. You can see that in the\nproducts I build today — a CMS whose\
+  \ upgrades refuse to run over modified files, a system monitor whose first rule is that\nthe last reading before a crash\
+  \ is already on disk, a lock-screen manager designed so it can never lock you out.\n\n## What I do\n\n- **Software engineering**\
+  \ — web applications and APIs, back ends and front ends, command-line tools and desktop software;\n  from architecture and\
+  \ data modelling to the last detail of the interface. Ruby and Rails, Rust, Python, TypeScript and\n  Vue, and whatever\
+  \ a problem actually needs.\n- **Linux systems administration** — building and maintaining servers, users and permissions,\
+  \ services and their\n  configuration, storage, networking and VPNs, monitoring and logging, security hardening, patching,\
+  \ backups and recovery.\n- **DevOps and delivery** — containerised applications, repeatable deployments, CI and release\
+  \ automation, staging\n  environments that tell the truth, and production operations.\n- **Self-hosting and infrastructure**\
+  \ — virtualisation on bare metal, private networking, and running the services a team\n  depends on without handing them\
+  \ to someone else.\n\n## How I work\n\nI like small, frequent releases, written changelogs and runbooks, and automation\
+  \ that anyone on the team can run. I would\nrather spend an afternoon making a failure mode safe than a week hoping it doesn't\
+  \ happen. I keep things simple on\npurpose, and I take security seriously by default rather than as a phase at the end.\n\
+  \n## Working together\n\nI take on a limited amount of client work alongside my own products — engineering, infrastructure,\
+  \ or the place where the\ntwo meet. If you have a platform that needs to be built carefully *and* run reliably, [tell me\
+  \ about it](#contact)."

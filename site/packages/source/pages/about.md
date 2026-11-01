@@ -23,9 +23,9 @@ milestones:
     title: Linux from the start
     text: Linux has been my operating system since I first sat down at a computer. It shaped everything that followed — a habit of reading the source, living in a terminal, and wanting to understand the whole system rather than one layer of it.
   - year: "2009"
-    tag: Career
-    title: Working professionally, on both sides
-    text: I began working professionally across software development and Linux systems administration — building applications, and installing, configuring and maintaining the servers they ran on. The combination has defined my career ever since.
+    tag: Freelance
+    title: Freelancing on oDesk, now Upwork
+    text: From 2009 to 2014 I worked as an independent contractor on oDesk (Upwork, as it became), on both sides from the start — building web applications for clients, and installing, configuring and maintaining the Linux servers they ran on. Five years of scoping, delivering and supporting work for clients I met only online taught me to communicate plainly and leave every system documented.
   - year: "2013"
     tag: Open source
     title: A public footprint on GitHub
@@ -34,7 +34,7 @@ milestones:
   - year: "2014"
     tag: Consultancy
     title: mah3uz IT Consultancy
-    text: Until 2016 I ran a small IT consultancy offering web development and systems work, serving as its systems administrator and web developer — owning client projects from server to front end.
+    text: After five years of freelancing, I set up a small IT consultancy of my own, which I ran until 2016, offering web development and systems work — its systems administrator and web developer, owning client projects from server to front end.
     url: https://github.com/mah3uz/mah3uz.github.io
   - year: "2015"
     tag: Automation
@@ -54,6 +54,11 @@ milestones:
     tag: Infrastructure
     title: Self-hosted private networking
     text: Working with WireGuard and Subspace, a web interface for managing VPN peers — private networking without a third-party service in the middle.
+  - year: "2020"
+    tag: Client work
+    title: TLC — a lending CRM and its broker API
+    text: The start of a long engagement with TLC, an Australian lender of medical, dental and lifestyle payment plans — building its CRM in Laravel, designing the API partners use to submit loan applications, and running the servers underneath.
+    url: /projects/tlc
   - year: "2022"
     tag: Front end
     title: Modern front ends with Next.js and React
@@ -79,6 +84,11 @@ milestones:
     title: Documentation for Walker
     text: Writing and maintaining community documentation for Walker, a fast application launcher for the Linux desktop.
     url: /projects/walker-docs
+  - year: "2026"
+    tag: Client work
+    title: TourHub — a marketplace for live-events crew
+    text: Building TourHub in Ruby on Rails — verified crew profiles, contracts and payments secured through Stripe — and the staging and production environments it ships through.
+    url: /projects/tourhub
   - year: "2026"
     tag: Product
     title: rrussat
@@ -113,6 +123,10 @@ I'm **Mahfuz Shaikh**, known online as **mah3uz**. For more than seventeen years
 that many organisations draw between *building* software and *running* it. I write applications, and I administer the
 Linux servers and infrastructure they depend on — provisioning machines, managing configuration, automating deployments,
 securing and patching systems, and keeping production healthy long after launch day.
+
+I started out in 2009 as a freelancer on oDesk, now Upwork, and spent five years there taking on development and server
+work for clients I knew only through the platform. That is where I learned that the job isn't finished until the client
+can understand what was done and the next person can maintain it.
 
 Linux has been my operating system since I first started using computers. That shaped how I work: I would rather
 understand the whole system than one layer of it, and I am most at home in a terminal, reading logs and source code until
