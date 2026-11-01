@@ -98,6 +98,8 @@
 }
 
 @theme {
+  /* The page's frame: the header, the content and the footer share these edges. `max-w-frame`. */
+  --container-frame: 90rem;
   --color-mint: #62edd4;
   --color-teal: #21bdb0;
   --color-sea: #1388a6;

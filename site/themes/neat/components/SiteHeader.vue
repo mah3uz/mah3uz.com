@@ -71,9 +71,9 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
 </script>
 
 <template>
-  <header class="sticky top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-4" @keydown.escape="menuOpen = false">
+  <header class="sticky top-0 z-50 px-5 pt-3 sm:px-8 sm:pt-4" @keydown.escape="menuOpen = false">
     <div
-      class="mx-auto flex max-w-6xl items-center justify-between gap-4 rounded-full border px-3 py-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:px-4"
+      class="max-w-frame mx-auto flex items-center justify-between gap-4 rounded-full border px-3 py-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:px-4"
       :class="
         scrolled || menuOpen
           ? 'border-line bg-surface-strong/95 shadow-[0_20px_50px_-30px_rgba(4,48,64,0.5)]'
@@ -146,7 +146,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
         v-show="menuOpen"
         id="mobile-navigation"
         aria-label="Mobile navigation"
-        class="border-line bg-surface-strong mx-auto mt-2 max-w-6xl rounded-3xl border p-3 shadow-xl lg:hidden"
+        class="border-line bg-surface-strong max-w-frame mx-auto mt-2 rounded-3xl border p-3 shadow-xl lg:hidden"
       >
         <ul role="list">
           <li v-for="(link, index) in links" :key="link.url">

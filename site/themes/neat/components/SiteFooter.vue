@@ -30,8 +30,8 @@ const year = new Date().getUTCFullYear()
 </script>
 
 <template>
-  <footer class="relative mt-32 overflow-hidden px-5 pb-10 sm:px-10">
-    <div v-reveal class="relative mx-auto max-w-6xl">
+  <footer class="relative mt-32 overflow-hidden px-5 pb-10 sm:px-8">
+    <div v-reveal class="max-w-frame relative mx-auto">
       <section
         aria-labelledby="footer-cta"
         class="border-line bg-midnight neat-peeled relative overflow-hidden rounded-[2.5rem] border px-6 py-16 text-white [--peel-cut:32px] sm:px-14 sm:py-20 sm:[--peel-cut:36px]"
@@ -95,7 +95,7 @@ const year = new Date().getUTCFullYear()
       </svg>
     </div>
 
-    <div class="mx-auto mt-16 grid max-w-6xl gap-10 sm:grid-cols-[1.5fr_1fr_1fr]">
+    <div class="max-w-frame mx-auto mt-16 grid gap-10 sm:grid-cols-[1.5fr_1fr_1fr]">
       <div>
         <Link href="/" class="inline-flex items-center gap-3">
           <BrandMark size="size-10" />
@@ -130,7 +130,7 @@ const year = new Date().getUTCFullYear()
     </div>
 
     <div
-      class="border-line text-faint mx-auto mt-14 flex max-w-6xl flex-wrap items-center justify-between gap-4 border-t pt-6 font-mono text-xs"
+      class="border-line text-faint max-w-frame mx-auto mt-14 flex flex-wrap items-center justify-between gap-4 border-t pt-6 font-mono text-xs"
     >
       <p>© {{ year }} {{ site?.name ?? 'mah3uz' }} · Built on Nibble, dressed in Neat.</p>
       <p>Press <kbd class="border-line rounded border px-1.5">/</kbd> to jump anywhere</p>

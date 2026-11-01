@@ -27,7 +27,11 @@ const props = defineProps<LayoutProps['default']>()
       >Skip to content</a
     >
     <SiteHeader :projects="onlyProjects(props.palette ?? [])" />
-    <main id="main" tabindex="-1" class="relative isolate mx-auto max-w-6xl px-5 pt-10 outline-none sm:px-8 lg:pt-16">
+    <main
+      id="main"
+      tabindex="-1"
+      class="max-w-frame relative isolate mx-auto box-content px-5 pt-10 outline-none sm:px-8 lg:pt-16"
+    >
       <slot />
     </main>
     <SiteFooter />
