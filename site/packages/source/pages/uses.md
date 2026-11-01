@@ -13,7 +13,7 @@ tools:
   - { group: Desktop, name: Arch Linux, note: "A rolling base I understand top to bottom, and the distribution I ship packages for.", url: "https://archlinux.org" }
   - { group: Desktop, name: Hyprland, note: "A tiling Wayland compositor: fast, scriptable, and out of the way.", url: "https://hyprland.org" }
   - { group: Desktop, name: Omarchy, note: "An opinionated Arch and Hyprland setup I follow and adapt.", url: "https://omarchy.org" }
-  - { group: Desktop, name: Walker, note: "The application launcher — I write its community documentation.", url: "https://walkerlauncher.com" }
+  - { group: Desktop, name: Walker, note: "The application launcher: fast, keyboard-first and easy to extend.", url: "https://github.com/abenz1267/walker" }
   - { group: Desktop, name: Darwan, note: "Themes for my login and lock screens.", url: "/projects/darwan", mine: true }
   - { group: Desktop, name: Sysman, note: "Watching my own machine — and remembering what it did.", url: "/projects/sysman", mine: true }
   - { group: Terminal, name: Neovim, note: "My editor for almost everything, configured with AstroNvim for a polyglot week.", url: "https://neovim.io" }

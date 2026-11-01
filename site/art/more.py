@@ -67,34 +67,6 @@ def arts(frame, window, bars):
 
     # ------------------------------------------------------------------ projects
 
-    def walker_docs():
-        u = 'wd'
-        b = [window(150, 180, 860, 640, u)]
-        # docs sidebar and page
-        for i in range(9):
-            b.append(f'<rect x="190" y="{270 + i * 50}" width="{150 - (i * 23) % 60}" height="12" rx="6" fill="{MIST}" '
-                     f'fill-opacity="{0.9 if i == 2 else 0.35}"/>')
-        b.append(f'<rect x="180" y="{258 + 2 * 50}" width="200" height="36" rx="10" fill="{TEAL}" fill-opacity="0.18"/>')
-        b.append(f'<rect x="420" y="270" width="320" height="26" rx="13" fill="{FOAM}" fill-opacity="0.9"/>')
-        b.append(bars(420, 330, [520, 480, 500, 300], gap=34, h=12, colors=[MIST]))
-        b.append(f'<rect x="420" y="480" width="540" height="150" rx="16" fill="#071419" stroke="{MINT}" stroke-opacity="0.2"/>')
-        b.append(bars(450, 510, [260, 340, 200], gap=32, h=12, colors=[MINT, TEAL, MIST]))
-        b.append(bars(420, 670, [500, 420], gap=34, h=12, colors=[MIST]))
-        # floating launcher
-        b.append(f'<g transform="translate(860 110)"><rect y="16" width="600" height="330" rx="30" fill="#000" fill-opacity="0.45" '
-                 f'filter="url(#{u}-soft)"/><rect width="600" height="330" rx="30" fill="#0E2B33" stroke="{MINT}" '
-                 f'stroke-opacity="0.45" stroke-width="2"/>'
-                 f'<rect x="28" y="28" width="544" height="64" rx="18" fill="#071419"/>'
-                 f'<circle cx="66" cy="60" r="13" fill="none" stroke="{MINT}" stroke-width="5"/>'
-                 f'<path d="M76 70l14 14" stroke="{MINT}" stroke-width="5" stroke-linecap="round"/>'
-                 f'<rect x="108" y="52" width="160" height="16" rx="8" fill="{FOAM}"/>'
-                 f'<rect x="272" y="46" width="4" height="28" rx="2" fill="{MINT}"/>'
-                 + ''.join(f'<rect x="28" y="{116 + i * 66}" width="544" height="54" rx="14" fill="{TEAL if i == 0 else "#071419"}" '
-                           f'fill-opacity="{0.22 if i == 0 else 0.7}"/><rect x="48" y="{130 + i * 66}" width="26" height="26" rx="7" '
-                           f'fill="url(#{u}-tile)"/><rect x="92" y="{136 + i * 66}" width="{220 - i * 30}" height="13" rx="6.5" '
-                           f'fill="{FOAM}" fill-opacity="{0.9 if i == 0 else 0.5}"/>' for i in range(3)) + '</g>')
-        return frame(u, ''.join(b), glow=(1100, 300))
-
     def tide():
         u = 'td'
         b = [window(150, 150, 1300, 700, u)]
@@ -402,7 +374,6 @@ def arts(frame, window, bars):
         return frame(u, ''.join(b), glow=(800, 500))
 
     return {
-        'walker-docs': walker_docs,
         'tide': tide,
         'earport': earport,
         'pages/about': about,

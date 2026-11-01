@@ -57,11 +57,6 @@ milestones:
     tag: Infrastructure
     title: Bare metal, home servers and Matrix
     text: Proxmox VE on Hetzner dedicated servers, self-hosted Matrix with its sticker tooling, and umbrelOS for apps at home.
-  - year: "2025"
-    tag: Open source
-    title: Documentation for Walker
-    text: Writing and maintaining community documentation for Walker, a fast application launcher for the Linux desktop.
-    url: /projects/walker-docs
   - year: "2026"
     tag: Client work
     title: TourHub — a marketplace for live-events crew
@@ -89,13 +84,23 @@ milestones:
     url: /projects/darwan
   - year: "2026"
     tag: Product
-    title: Quarry, Insensical and Sysman
-    text: A SQL client for the terminal, a multiplexer for running many coding agents, and a crash-proof system monitor for Linux — tools I wanted for my own work, built to production standards.
+    title: Quarry
+    text: A SQL client that lives in the terminal, for PostgreSQL, MySQL, MariaDB and SQLite — the database tool I wanted for my own work, built to production standards.
+    url: /projects/quarry
+  - year: "2026"
+    tag: Product
+    title: Insensical
+    text: A terminal multiplexer with a native window, built for running many coding agents at once — a daemon that owns every program, and a window that always shows which one needs you.
+    url: /projects/insensical
+  - year: "2026"
+    tag: Product
+    title: Sysman
+    text: A crash-proof system monitor for Linux, whose first rule is that the last reading before a crash is already on disk.
     url: /projects/sysman
   - year: "Now"
     tag: Today
-    title: This site
-    text: Built on Nibble with a theme of my own — the projects are files in a repository, deployed with Kamal to a server I run.
+    title: Still taking things apart
+    text: Seventeen years in, the curiosity hasn't worn off. I'm still trying new languages, new hardware and new ways to run a server, mostly in the homelab first, and building the tools I wish existed. This site is one of them, on Nibble, deployed with Kamal to a server I run.
     url: /now
 seo:
   title: About

@@ -114,6 +114,7 @@ write('globals/site/en.yml', {
                'infrastructure they depend on.',
     'social_links': [
         {'label': 'GitHub', 'url': 'https://github.com/mah3uz'},
+        {'label': 'X', 'url': 'https://x.com/mah3uz'},
         {'label': 'Unsplash', 'url': 'https://unsplash.com/@mah3uz'},
         {'label': 'Nibble', 'url': 'https://nibble.ink'},
         {'label': 'Darwan', 'url': 'https://darwan.dev'},

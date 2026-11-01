@@ -42,8 +42,8 @@ tools:
   url: https://omarchy.org
 - group: Desktop
   name: Walker
-  note: The application launcher — I write its community documentation.
-  url: https://walkerlauncher.com
+  note: 'The application launcher: fast, keyboard-first and easy to extend.'
+  url: https://github.com/abenz1267/walker
 - group: Desktop
   name: Darwan
   note: Themes for my login and lock screens.
