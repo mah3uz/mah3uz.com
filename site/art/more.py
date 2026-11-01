@@ -373,6 +373,90 @@ def arts(frame, window, bars):
                  f'fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/>')
         return frame(u, ''.join(b), glow=(800, 500))
 
+    def own_website_test_suite():
+        u = 'ow'
+        b = [window(150, 170, 820, 660, u)]
+        # a documentation site: nested pages
+        for i in range(10):
+            depth = 1 if i in (2, 3, 6, 7, 8) else 0
+            b.append(f'<rect x="{190 + depth * 26}" y="{262 + i * 52}" width="{150 - depth * 30}" height="12" rx="6" fill="{MIST}" '
+                     f'fill-opacity="{0.9 if i == 5 else 0.35}"/>')
+        b.append(f'<rect x="420" y="262" width="320" height="26" rx="13" fill="{FOAM}" fill-opacity="0.9"/>')
+        b.append(bars(420, 320, [500, 460, 480, 300, 420], gap=34, h=12, colors=[MIST]))
+        b.append(f'<rect x="420" y="520" width="500" height="220" rx="18" fill="#071419" stroke="{MINT}" stroke-opacity="0.2"/>')
+        b.append(bars(450, 556, [200, 320, 260, 180], gap=40, h=12, colors=[MINT, TEAL, MIST, MIST]))
+        # seven patch releases in one night
+        for i in range(7):
+            y = 210 + i * 86
+            x = 1040 + (i % 2) * 30
+            b.append(f'<rect x="{x}" y="{y}" width="360" height="64" rx="20" fill="#0E2B33" stroke="{MINT}" stroke-opacity="0.3" stroke-width="2"/>')
+            b.append(f'<circle cx="{x + 34}" cy="{y + 32}" r="14" fill="url(#{u}-tile)"/>'
+                     f'<path d="M{x + 27} {y + 32}l5 5 9-10" fill="none" stroke="{ABYSS}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>')
+            b.append(f'<text x="{x + 64}" y="{y + 42}" font-family="ui-monospace,Menlo,monospace" font-size="26" font-weight="700" fill="{FOAM}">0.14.{i + 1}</text>')
+            b.append(f'<rect x="{x + 200}" y="{y + 26}" width="{120 - (i * 13) % 50}" height="12" rx="6" fill="{MIST}" fill-opacity="0.4"/>')
+        return frame(u, ''.join(b), glow=(1200, 480))
+
+    def security_in_the_browser():
+        u = 'sb'
+        b = [window(150, 190, 820, 620, u)]
+        # the lock that lived in the browser
+        b.append(f'<rect x="170" y="250" width="780" height="540" rx="18" fill="#071419" fill-opacity="0.75"/>')
+        b.append(padlock(560, 470, 1.0, u))
+        b.append(f'<rect x="440" y="680" width="240" height="40" rx="20" fill="{FOAM}" fill-opacity="0.12" stroke="{MINT}" stroke-opacity="0.4"/>')
+        # a reload walking round it
+        b.append(f'<path d="M820 300a70 70 0 1 1-60 -35" fill="none" stroke="{MINT}" stroke-width="10" stroke-linecap="round"/>'
+                 f'<path d="M742 236l20 30 30-22" fill="none" stroke="{MINT}" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>')
+        # the session on the server, which is where it ends now
+        b.append(f'<g transform="translate(1080 280)"><rect y="16" width="340" height="440" rx="34" fill="#000" fill-opacity="0.4" '
+                 f'filter="url(#{u}-soft)"/><rect width="340" height="440" rx="34" fill="#0E2B33" stroke="{MINT}" stroke-opacity="0.35" stroke-width="2"/>'
+                 + ''.join(f'<rect x="40" y="{50 + k * 80}" width="260" height="56" rx="14" fill="#071419" stroke="{MINT}" stroke-opacity="0.2"/>'
+                           f'<circle cx="74" cy="{78 + k * 80}" r="9" fill="{MINT if k < 3 else "#FF7A6B"}"/>'
+                           f'<rect x="100" y="{72 + k * 80}" width="{150 - k * 15}" height="12" rx="6" fill="{MIST}" fill-opacity="0.5"/>' for k in range(4))
+                 + f'<rect x="40" y="380" width="260" height="28" rx="14" fill="url(#{u}-tile)"/></g>')
+        b.append(f'<path d="M980 500H1060" stroke="url(#{u}-line)" stroke-width="6" stroke-dasharray="2 14" stroke-linecap="round"/>')
+        return frame(u, ''.join(b), glow=(1250, 500))
+
+    def strangers_can_upgrade():
+        u = 'su'
+        b = []
+
+        def folder(x, y, w, h, op):
+            return (f'<g transform="translate({x} {y})" opacity="{op}"><path d="M0 30Q0 0 30 0H{w * 0.36:.0f}l30 34H{w - 30}Q{w} 34 {w} 64V{h - 30}'
+                    f'Q{w} {h} {w - 30} {h}H30Q0 {h} 0 {h - 30}Z" fill="url(#{u}-tile)"/>'
+                    f'<rect x="40" y="{h - 70}" width="{w * 0.5:.0f}" height="16" rx="8" fill="{ABYSS}" fill-opacity="0.6"/></g>')
+        b.append(folder(210, 330, 380, 300, 0.35))
+        b.append(folder(250, 290, 380, 300, 1))
+        b.append(f'<text x="290" y="520" font-family="ui-monospace,Menlo,monospace" font-size="34" font-weight="700" fill="{ABYSS}">vendor/nibble</text>')
+        # swap arrows
+        b.append(f'<path d="M690 400H860M820 360l40 40-40 40" fill="none" stroke="{MINT}" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>')
+        b.append(f'<path d="M860 560H690M730 520l-40 40 40 40" fill="none" stroke="{MIST}" stroke-opacity="0.5" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>')
+        # the manifest: a checksum per file, one edit refused
+        b.append(f'<g transform="translate(940 220)"><rect width="480" height="560" rx="30" fill="#0E2B33" stroke="{MINT}" stroke-opacity="0.35" stroke-width="2"/>'
+                 + ''.join(f'<rect x="36" y="{44 + k * 66}" width="408" height="46" rx="12" fill="#071419" stroke="{"#FF7A6B" if k == 4 else MINT}" '
+                           f'stroke-opacity="{0.9 if k == 4 else 0.15}"/><rect x="60" y="{61 + k * 66}" width="{120 + (k * 37) % 90}" height="12" rx="6" fill="{MIST}" fill-opacity="0.5"/>'
+                           f'<rect x="300" y="{61 + k * 66}" width="90" height="12" rx="6" fill="{MINT if k != 4 else "#FF7A6B"}" fill-opacity="0.7"/>' for k in range(7))
+                 + '</g>')
+        return frame(u, ''.join(b), glow=(450, 460))
+
+    def rewrite_history():
+        u = 'rh'
+        b = []
+        # thirty-six migrations
+        for i in range(36):
+            col, row = i % 4, i // 4
+            b.append(f'<rect x="{180 + col * 88}" y="{200 + row * 62}" width="76" height="44" rx="10" fill="#0E2B33" stroke="{MINT}" stroke-opacity="0.25"/>')
+        b.append(f'<path d="M560 480C620 480 620 480 680 480M640 440l40 40-40 40" fill="none" stroke="{MINT}" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>')
+        # one per table
+        for k in range(6):
+            b.append(f'<rect x="720" y="{230 + k * 92}" width="260" height="70" rx="16" fill="url(#{u}-tile)" fill-opacity="{1 - k * 0.08:.2f}"/>'
+                     f'<rect x="748" y="{259 + k * 92}" width="{150 - (k * 23) % 60}" height="12" rx="6" fill="{ABYSS}" fill-opacity="0.6"/>')
+        # schema before and after, equal
+        for j, x in enumerate((1060, 1270)):
+            b.append(f'<rect x="{x}" y="260" width="170" height="440" rx="20" fill="#0E2B33" stroke="{MINT}" stroke-opacity="0.3" stroke-width="2"/>')
+            b.append(bars(x + 24, 300, [110, 80, 120, 70, 100, 90, 60, 110, 80], gap=40, h=10, colors=[MIST]))
+        b.append(f'<path d="M1240 450h22M1240 474h22" stroke="{MINT}" stroke-width="8" stroke-linecap="round"/>')
+        return frame(u, ''.join(b), glow=(850, 480))
+
     return {
         'tide': tide,
         'earport': earport,
@@ -387,5 +471,9 @@ def arts(frame, window, bars):
         'posts/lock-screen': lock_screen,
         'posts/ai-agents': ai_agents,
         'posts/release-scripts': release_scripts,
+        'posts/own-website-test-suite': own_website_test_suite,
+        'posts/security-in-the-browser': security_in_the_browser,
+        'posts/strangers-can-upgrade': strangers_can_upgrade,
+        'posts/rewrite-history': rewrite_history,
         'posts/default': default_post,
     }

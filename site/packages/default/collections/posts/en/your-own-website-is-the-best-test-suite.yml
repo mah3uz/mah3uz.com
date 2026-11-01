@@ -1,0 +1,260 @@
+title: Your own website is the best test suite
+published_at: '2026-09-27T09:00:00Z'
+topics:
+- topics/engineering
+- topics/product
+excerpt: One evening of clicking around my own documentation produced seven patch releases of Nibble. Fixtures with three
+  files never find what real content finds — and some bugs only show up when you actually run the thing.
+art: /art/posts/own-website-test-suite.svg
+body:
+- type: paragraph
+  content:
+  - type: text
+    text: There is a stretch in Nibble's changelog where the version goes 0.14.1, 0.14.2, 0.14.3 and on to 0.14.7, all in
+      one night. I didn't plan it. It is what happened when Nibble's own documentation moved into a folder of Markdown files
+      and I spent an evening using it the way a reader would.
+- type: paragraph
+  content:
+  - type: text
+    text: 'I have written tests for most of my career, and I still believe in them. But that night was a good reminder of
+      what tests are: proof that the cases you thought of behave. The cases you didn''t think of are where software actually
+      breaks, and the quickest way I know to find them is to live on what I build.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: What three fixtures never touched
+- type: paragraph
+  content:
+  - type: text
+    text: 'Collections backed by a folder of files were a lovely idea with a tidy test suite. The fixtures had three files.
+      My documentation has dozens of pages in nested folders, and every corner the fixtures never reached got reached in an
+      hour:'
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Sorting.
+        marks:
+        - type: bold
+      - type: text
+        text: ' A collection ordered by a number sorted it as text, so page 10 came before page 2. Every test passed, because
+          no fixture had ten of anything.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Filtering.
+        marks:
+        - type: bold
+      - type: text
+        text: ' The '
+      - type: text
+        text: where
+        marks:
+        - type: code
+      - type: text
+        text: ' and '
+      - type: text
+        text: not
+        marks:
+        - type: code
+      - type: text
+        text: ' conditions in a view''s query didn''t narrow a folder-backed collection at all.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Counting.
+        marks:
+        - type: bold
+      - type: text
+        text: ' A blueprint didn''t count the pages that used it, because those pages weren''t rows in a database.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Writing.
+        marks:
+        - type: bold
+      - type: text
+        text: ' The Control Plane offered to edit pages that live in a file. Two sources of truth for the same page is a bug
+          waiting for a deadline, so those pages became read-only, with the file they come from named on the screen.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'And my favourite: Nibble ran on one fixed time zone, wherever in the world a site was, set in a file a site couldn''t
+      change. Scheduled publishing went by it. Nobody had asked for that time zone; it had simply never been noticed, because
+      my own clock happened to agree with it.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Bugs that only running finds
+- type: paragraph
+  content:
+  - type: text
+    text: Dogfooding isn't only about content. Some bugs live in the gaps between pieces that each pass their own tests, and
+      the only way to find them is to put the pieces together and run them.
+- type: paragraph
+  content:
+  - type: text
+    text: 'When I freed up the names '
+  - type: text
+    text: User
+    marks:
+    - type: code
+  - type: text
+    text: ', '
+  - type: text
+    text: Session
+    marks:
+    - type: code
+  - type: text
+    text: ' and '
+  - type: text
+    text: Current
+    marks:
+    - type: code
+  - type: text
+    text: ' so a site could run Rails'' own authentication generator, I didn''t just read through the code to check. I made
+      the install test '
+  - type: text
+    text: run the generator
+    marks:
+    - type: italic
+  - type: text
+    text: ' on a freshly installed site. The first run failed: Rails writes migrations called '
+  - type: text
+    text: CreateUsers
+    marks:
+    - type: code
+  - type: text
+    text: ' and '
+  - type: text
+    text: CreateSessions
+    marks:
+    - type: code
+  - type: text
+    text: ', Nibble had migrations with the same class names, and migration names have to be unique across every path. I would
+      never have found that by reading.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'Live Preview taught me the same lesson from the other direction. The first time I tried the new in-place updates
+      on this site, an update crashed halfway through patching the header. The page had been failing to hydrate all along
+      — a full reload had only ever shown it as a warning in the console. The cause was mine: I had regenerated the theme''s
+      types for a different theme while this site''s development server was running, and the post page had quietly lost two
+      of its props. The feature didn''t create the bug. Using it for real revealed one that had been there for days.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Seven releases is not chaos
+- type: paragraph
+  content:
+  - type: text
+    text: Seven releases in one night sounds like a fire. It felt like the opposite. Each fix was small and each shipped with
+      the test that would have caught it, so the suite now knows about ten pages, nested folders and time zones. And each
+      fix made the next bug easier to see, because there was less noise around it.
+- type: paragraph
+  content:
+  - type: text
+    text: 'One of the seven was about the release script itself. When it refused to cut a release because a check failed,
+      it left the version bumped and the changelog half-edited. Now a refusal puts every file back exactly as it found it.
+      A tool that says no shouldn''t leave work behind for you to clean up — I wrote more about that in '
+  - type: text
+    text: release scripts that refuse to half-ship
+    marks:
+    - type: link
+      attrs:
+        href: /blog/release-scripts-that-refuse-to-half-ship
+  - type: text
+    text: .
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: What I do now
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Run my own things first.
+        marks:
+        - type: bold
+      - type: text
+        text: ' This site runs on Nibble; Sysman watches my workstation; Insensical holds my terminals. If something is annoying,
+          I''m the first to be annoyed.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Use real content, not fixtures.
+        marks:
+        - type: bold
+      - type: text
+        text: ' Real content has ten of things, long titles, nested folders and dates near midnight.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Make the end-to-end path a test.
+        marks:
+        - type: bold
+      - type: text
+        text: ' If a feature promises that a generator, an installer or an upgrade will work, a test runs that generator,
+          installer or upgrade on a clean machine.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Read the console.
+        marks:
+        - type: bold
+      - type: text
+        text: ' A warning that a full reload hides is still a bug. It is just one that hasn''t found its moment yet.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'The longer versions of these stories are on the Nibble blog: '
+  - type: text
+    text: Seven patch releases in one night
+    marks:
+    - type: link
+      attrs:
+        href: https://nibble.ink/blog/seven-patch-releases-in-one-night
+  - type: text
+    text: ', '
+  - type: text
+    text: Giving Rails back to the app
+    marks:
+    - type: link
+      attrs:
+        href: https://nibble.ink/blog/giving-rails-back-to-the-app
+  - type: text
+    text: ' and '
+  - type: text
+    text: Live Preview stops blinking
+    marks:
+    - type: link
+      attrs:
+        href: https://nibble.ink/blog/live-preview-stops-blinking
+  - type: text
+    text: .

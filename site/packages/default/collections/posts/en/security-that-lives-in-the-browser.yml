@@ -1,0 +1,210 @@
+title: Security that lives in the browser is decoration
+published_at: '2026-10-03T09:00:00Z'
+topics:
+- topics/security
+- topics/operations
+excerpt: Nibble's Control Plane locked itself after fifteen idle minutes — and a page reload walked straight back in. Two
+  humbling fixes, and the sysadmin's rule behind them - enforce where the state lives.
+art: /art/posts/security-in-the-browser.svg
+body:
+- type: paragraph
+  content:
+  - type: text
+    text: This one was humbling, so I'll start with it.
+- type: paragraph
+  content:
+  - type: text
+    text: 'Nibble''s Control Plane had an idle lock. After fifteen quiet minutes it covered the screen and asked for your
+      password. It looked exactly like a security feature. It wasn''t one, because the whole thing lived in the browser. The
+      session on the server was still perfectly valid, so '
+  - type: text
+    text: reloading the page skipped the lock entirely
+    marks:
+    - type: bold
+  - type: text
+    text: .
+- type: paragraph
+  content:
+  - type: text
+    text: 'Anyone who has administered servers for long enough knows this shape of mistake, because it is everywhere: the
+      firewall rule on the wrong interface, the '
+  - type: text
+    text: sudo
+    marks:
+    - type: code
+  - type: text
+    text: ' restriction that a shell escape walks around, the hidden admin link that is only hidden. Enforcement has to happen
+      where the state lives. Anything else is a hint.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Expiry belongs to the session
+- type: paragraph
+  content:
+  - type: text
+    text: The fix was to make the server responsible. Every Control Plane request now records when the session was last active.
+      When a request arrives after too long a gap, the session is deleted on the server and its cookie with it, so a reload
+      lands on the sign-in page, as it always should have. The default is two hours, and a site can choose its own.
+- type: paragraph
+  content:
+  - type: text
+    text: 'Two details mattered more than the main idea:'
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Asking the time must not reset the clock.
+        marks:
+        - type: bold
+      - type: text
+        text: ' The browser still counts down so it can warn you a minute before. To stay in step, it asks the server how
+          long is left — and that question must not count as activity. Otherwise an open tab would keep its own session alive
+          forever by politely checking on it.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Losing a session shouldn't lose your work.
+        marks:
+        - type: bold
+      - type: text
+        text: ' If your session ends while you''re halfway through a page, a dialog asks for your password (and your two-factor
+          code, if you use one) and signs you back in right there, with everything you typed still on the page. Security that
+          punishes people teaches them to work around it.'
+- type: paragraph
+  content:
+  - type: text
+    text: And the test that mattered wasn't a unit test. I set the idle time to two minutes, signed in, waited for the warning,
+      waited for the dialog, and reloaded. Sign-in page. Then I did it again and signed in through the dialog, and checked
+      that the page was the one I'd left.
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: The endpoint that a cleanup almost opened
+- type: paragraph
+  content:
+  - type: text
+    text: 'The second story is about the opposite risk: removing something and discovering what it was quietly protecting.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'Rails ships a direct-upload endpoint at '
+  - type: text
+    text: /rails/active_storage/direct_uploads
+    marks:
+    - type: code
+  - type: text
+    text: ', and out of the box it accepts uploads from anyone. Nibble had drawn its own, authenticated route on that same
+      path, which happened to hide the Rails one. When I set out to hand every Rails default back to the application, giving
+      that path back would have opened anonymous uploads to the site''s storage.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'So the path now answers 404, and the Control Plane uploads through a route of its own that checks who is uploading.
+      The lesson I took: '
+  - type: text
+    text: when you remove a layer, ask what was standing behind it
+    marks:
+    - type: bold
+  - type: text
+    text: . An accidental protection is still a protection, right up until a well-meaning cleanup removes it.
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: The rule, written down
+- type: paragraph
+  content:
+  - type: text
+    text: 'From both stories, the rule I now apply to everything I build — and the one I''ve applied to servers for years:'
+- type: orderedList
+  attrs:
+    start: 1
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Decide where the truth lives
+        marks:
+        - type: bold
+      - type: text
+        text: ', then enforce there: the session on the server, permissions in the database, limits in the daemon. The interface
+          may '
+      - type: text
+        text: show
+        marks:
+        - type: italic
+      - type: text
+        text: ' the rule; it never '
+      - type: text
+        text: is
+        marks:
+        - type: italic
+      - type: text
+        text: ' the rule.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Distrust anything that is merely hidden.
+        marks:
+        - type: bold
+      - type: text
+        text: ' Unlinked pages, disabled buttons and overlays are presentation.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Test the bypass, not just the happy path.
+        marks:
+        - type: bold
+      - type: text
+        text: ' Reload the page. Call the endpoint directly. Copy the request with curl and change one thing.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Look behind what you remove.
+        marks:
+        - type: bold
+      - type: text
+        text: ' Before deleting a route, a rule or a proxy, find out what it was shadowing.'
+- type: paragraph
+  content:
+  - type: text
+    text: A security feature that only exists in the browser is a UI feature. That line is now in Nibble's blog, and it's
+      on a sticky note in my head.
+- type: paragraph
+  content:
+  - type: text
+    text: 'The full write-ups: '
+  - type: text
+    text: The lock screen a reload could skip
+    marks:
+    - type: link
+      attrs:
+        href: https://nibble.ink/blog/the-lock-screen-a-reload-could-skip
+  - type: text
+    text: ' and '
+  - type: text
+    text: Giving Rails back to the app
+    marks:
+    - type: link
+      attrs:
+        href: https://nibble.ink/blog/giving-rails-back-to-the-app
+  - type: text
+    text: .
