@@ -124,7 +124,7 @@ write('globals/seo/en.yml', {
     'title_template': '{title} · {site_name}',
     'default_description': 'Mahfuz Shaikh (mah3uz): software engineer and Linux systems administrator since 2009, '
                            'building products and running production infrastructure.',
-    'organization_name': 'mah3uz',
+    'organization_name': 'mah3uz – IT Consultancy',
     'default_share_image': 'brand/social-card.png',
     'organization_logo': 'brand/favicon.svg',
 })

@@ -33,8 +33,8 @@ milestones:
     url: https://github.com/mah3uz
   - year: "2014"
     tag: Consultancy
-    title: mah3uz IT Consultancy
-    text: After five years of freelancing, I set up a small IT consultancy of my own, which I ran until 2016, offering web development and systems work — its systems administrator and web developer, owning client projects from server to front end.
+    title: mah3uz – IT Consultancy
+    text: After five years of freelancing I founded my own company, mah3uz – IT Consultancy, which I still run today — software engineering and systems work for clients, owning each project from the server to the front end.
     url: https://github.com/mah3uz/mah3uz.github.io
   - year: "2015"
     tag: Automation
@@ -164,5 +164,5 @@ purpose, and I take security seriously by default rather than as a phase at the 
 
 ## Working together
 
-I take on a limited amount of client work alongside my own products — engineering, infrastructure, or the place where the
+Through my company, **mah3uz – IT Consultancy**, I take on a limited amount of client work alongside my own products — engineering, infrastructure, or the place where the
 two meet. If you have a platform that needs to be built carefully *and* run reliably, [tell me about it](#contact).
