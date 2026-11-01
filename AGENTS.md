@@ -62,4 +62,10 @@ stops Claude Code editing `vendor/nibble/`.
   `nibble.secrets.unsplash_access_key`, or `NIBBLE_SECRET_UNSPLASH_ACCESS_KEY`) — never in a file in git.
 - **Positioning:** I am both a software engineer and a Linux systems administrator, professionally since 2009, and on
   Linux since I first used computers. Copy should reflect both sides — never only "developer".
+- **Emails** are drawn in the site's design by `app/views/layouts/nibble/mailer.html.erb` (and `.text.erb`), which
+  Nibble uses for every email it sends; the mark is `public/mail/mark.png` because most mail clients don't show SVG.
+  Preview them at `/rails/mailers` in development (`test/mailers/previews/site_mail_preview.rb`). The contact form
+  (`site/themes/neat/schema/forms/contact.yml`) sends the visitor a confirmation that carries only my words and the
+  topic they picked — never their name or message, so the form can't be used to send anyone else's text. The headings
+  Nibble puts on form emails are set in `config/locales/en.yml`.
 - **Client work** stays factual and confidential: no staging URLs, no internal details the client hasn't published.

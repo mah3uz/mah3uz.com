@@ -1,0 +1,94 @@
+<%# Every email the site sends — the contact form, its confirmation, invitations, password resets, notifications —
+    is drawn in this layout, in the site's own design: the mint canvas, a white card under a teal edge, the bracketed
+    "m", ink headings and teal links. Email clients are not browsers, so it is tables, inline styles where they matter,
+    a PNG mark (not SVG), and font stacks that fall back cleanly where Manrope and Inter don't load. A dark version
+    applies in the clients that honour prefers-color-scheme. %>
+<% base = "#{Nibble.url_options[:protocol]}://#{Nibble.url_options[:host]}" %>
+<% sans = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" %>
+<% display = "Manrope, Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="supported-color-schemes" content="light dark">
+    <title><%= message.subject %></title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+      body { margin: 0; padding: 0; background: #F3FCFA; -webkit-text-size-adjust: 100%; }
+      .content h1 { margin: 0 0 18px; font-family: <%= display %>; font-size: 26px; line-height: 1.25; font-weight: 800; letter-spacing: -0.02em; color: #043040; }
+      .content p { margin: 0 0 16px; }
+      .content a { color: #1388A6; text-decoration: underline; text-underline-offset: 3px; }
+      .content strong { color: #043040; }
+      .content blockquote { margin: 0 0 18px; padding: 14px 18px; border-left: 3px solid #21BDB0; border-radius: 0 14px 14px 0; background: #EEFAF7; color: #2B5561; }
+      .content table { width: 100%; margin: 4px 0 18px; border-collapse: collapse; }
+      .content th, .content td { padding: 12px 0; border-bottom: 1px solid #D5ECE8; text-align: left; vertical-align: top; }
+      .content th { width: 34%; padding-right: 16px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5C8A93; }
+      .content td { white-space: pre-wrap; color: #043040; }
+      .content .button { display: inline-block; padding: 13px 24px; border-radius: 999px; background: #043040; color: #F3FCFA !important; font-weight: 600; text-decoration: none; }
+      .content .note { margin-top: 24px; font-size: 13px; line-height: 1.6; color: #5C8A93; }
+      .content > :last-child { margin-bottom: 0; }
+      .footer a { color: #1388A6; text-decoration: none; }
+
+      @media (prefers-color-scheme: dark) {
+        body, .canvas { background: #0A1A20 !important; }
+        .card { background: #0F262D !important; border-color: #1C3B43 !important; color: #A6D3D6 !important; }
+        .brand, .content h1, .content strong, .content td { color: #E9F7F7 !important; }
+        .content a, .footer a { color: #62EDD4 !important; }
+        .content th { color: #7FAFB5 !important; }
+        .content th, .content td { border-bottom-color: #1C3B43 !important; }
+        .content blockquote { background: #12313A !important; color: #C6E6E6 !important; }
+        .content .button { background: #62EDD4 !important; color: #043040 !important; }
+        .content .note, .footer { color: #7FAFB5 !important; }
+      }
+      @media (max-width: 600px) {
+        .card { padding: 28px 22px !important; }
+        .content h1 { font-size: 23px; }
+      }
+    </style>
+  </head>
+
+  <body style="margin: 0; padding: 0; background: #F3FCFA;">
+    <table role="presentation" class="canvas" width="100%" cellpadding="0" cellspacing="0" style="background: #F3FCFA;">
+      <tr>
+        <td align="center" style="padding: 40px 16px 48px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 580px;">
+            <%# The mark and the name, as in the site's header. %>
+            <tr>
+              <td style="padding: 0 4px 20px;">
+                <a href="<%= base %>" style="text-decoration: none;">
+                  <table role="presentation" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td style="vertical-align: middle;">
+                        <img src="<%= base %>/mail/mark.png" width="36" height="36" alt="" style="display: block; border: 0; border-radius: 10px;">
+                      </td>
+                      <td class="brand" style="padding-left: 10px; vertical-align: middle; font-family: <%= display %>; font-size: 19px; font-weight: 800; letter-spacing: -0.02em; color: #043040;">
+                        <%= site_name %>
+                      </td>
+                    </tr>
+                  </table>
+                </a>
+              </td>
+            </tr>
+            <%# The card: a teal edge along its top, the way the site's hairline does it. %>
+            <tr>
+              <td style="height: 4px; line-height: 4px; font-size: 0; border-radius: 22px 22px 0 0; background: #21BDB0; background-image: linear-gradient(90deg, #62EDD4, #21BDB0 55%, #1388A6);">&nbsp;</td>
+            </tr>
+            <tr>
+              <td class="card content" style="padding: 36px 36px 32px; background: #FFFFFF; border: 1px solid #D5ECE8; border-top: 0; border-radius: 0 0 22px 22px; font-family: <%= sans %>; font-size: 15px; line-height: 1.65; color: #2B5561;">
+                <%= yield %>
+              </td>
+            </tr>
+            <tr>
+              <td class="footer" style="padding: 20px 4px 0; font-family: <%= sans %>; font-size: 12px; line-height: 1.7; color: #5C8A93;">
+                <%= site_name %> · Software engineer and Linux systems administrator<br>
+                <a href="<%= base %>"><%= Nibble.url_options[:host] %></a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

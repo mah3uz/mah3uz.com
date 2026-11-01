@@ -1,5 +1,18 @@
 title: Contact
 cp_notify: true
+# A confirmation to the person who wrote. It carries only my words and the topic they picked (one of four fixed
+# options): never their name or message, because it goes to whatever address was typed into the form, and echoing
+# what was typed would let anyone send their own text to a stranger through this site's mail.
+notify:
+  - to: "{field.email}"
+    subject: Thanks for getting in touch
+    message: |-
+      Thanks for writing — your message has reached me, and I read every one myself.
+
+      I usually reply within a few days. If it's about a project, it helps to know what you're building, what it runs on today and when you'd like to start; just reply to this email to add anything.
+
+      — Mahfuz Shaikh
+    fields: [topic]
 spam:
   min_seconds: 3
   max_links: 2

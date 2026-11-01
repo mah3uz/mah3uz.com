@@ -29,3 +29,10 @@
 
 en:
   hello: "Hello world"
+  # The words Nibble puts around a form's emails (see vendor/nibble/docs/modelling/form-translation.md).
+  nibble:
+    forms:
+      mail:
+        submission:
+          visitor_heading: "Thanks — I've got your message"
+          staff_heading: "A new message through the site"
