@@ -1,0 +1,6 @@
+# The Unsplash API, for the two Photography tasks. The access key is the secret unsplash_access_key.
+base_url: https://api.unsplash.com
+headers:
+  Authorization: "Client-ID {secret.unsplash_access_key}"
+  Accept-Version: v1
+timeout: 15

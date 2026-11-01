@@ -2,10 +2,8 @@ title: Photos from Unsplash
 description: My 30 most-viewed photographs on unsplash.com/@mah3uz, with their statistics, for the Photography page.
 schedule: every 12 hours
 fetch:
-  url: https://api.unsplash.com/users/mah3uz/photos?per_page=30&order_by=views&stats=true
-  headers:
-    Authorization: "Client-ID {secret.unsplash_access_key}"
-    Accept-Version: v1
+  use: unsplash
+  path: /users/mah3uz/photos?per_page=30&order_by=views&stats=true
   into:
     collection: photos
     items: "{response}"
@@ -22,6 +20,7 @@ fetch:
       width: "{item.width}"
       height: "{item.height}"
       color: "{item.color}"
+      blur_hash: "{item.blur_hash}"
       likes: "{item.likes}"
       views: "{item.statistics.views.total}"
       downloads: "{item.statistics.downloads.total}"

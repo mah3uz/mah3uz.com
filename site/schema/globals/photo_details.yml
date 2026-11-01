@@ -1,0 +1,41 @@
+schema: 1
+title: Photo details
+blueprint:
+  title: Photo details
+  tabs:
+    main:
+      display: Details
+      sections:
+        - instructions: >-
+            Camera settings, place and tags for each photo on the Photography page, filled in from Unsplash by the
+            Unsplash photo details task. The list endpoint the photos come from has none of this, so the task asks
+            for each photo in turn. Changes made here are replaced on its next run.
+          fields:
+            - handle: photos
+              field:
+                type: grid
+                mode: stacked
+                add_row: Add photo
+                fields:
+                  - handle: unsplash_id
+                    field: { type: text, required: true, width: 25 }
+                  - handle: camera
+                    field: { type: text, width: 50 }
+                  - handle: fetched
+                    field: { type: text, width: 25, instructions: 'When the task last read this photo.' }
+                  - handle: aperture
+                    field: { type: text, width: 25 }
+                  - handle: exposure
+                    field: { type: text, width: 25 }
+                  - handle: focal_length
+                    field: { type: text, width: 25 }
+                  - handle: iso
+                    field: { type: text, width: 25 }
+                  - handle: location
+                    field: { type: text, width: 50 }
+                  - handle: latitude
+                    field: { type: text, width: 25 }
+                  - handle: longitude
+                    field: { type: text, width: 25 }
+                  - handle: tags
+                    field: { type: text, instructions: 'Comma-separated.' }

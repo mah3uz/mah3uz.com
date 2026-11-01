@@ -28,6 +28,8 @@ tabs:
             field: { type: integer, width: 25 }
           - handle: color
             field: { type: text, width: 50, instructions: "The photo's dominant colour, shown while it loads." }
+          - handle: blur_hash
+            field: { type: text, width: 50, instructions: "A BlurHash of the photo, drawn as a blurred preview while it loads." }
           - handle: views
             field: { type: integer, width: 33, listable: true }
           - handle: downloads

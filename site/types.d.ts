@@ -50,6 +50,7 @@ export interface PhotosPhoto extends RecordBase {
   width: number | null
   height: number | null
   color: string | null
+  blur_hash: string | null
   views: number | null
   downloads: number | null
   likes: number | null
@@ -106,6 +107,10 @@ export interface TopicsTopic extends RecordBase {
 
 export type TopicsTerm = TopicsTopic
 
+export interface PhotoDetailsGlobals {
+  photos: Array<Record<string, unknown> & { id: string }>
+}
+
 export interface SeoGlobals {
   title_template: string | null
   default_description: string | null
@@ -161,7 +166,7 @@ export interface ViewProps {
     projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'kind' | 'logo' | 'monogram' | 'accent' | 'stage' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'photography/index': {
-    photos: Pick<(PhotosPhoto), 'title' | 'description' | 'page_url' | 'image' | 'image_raw' | 'width' | 'height' | 'color' | 'views' | 'downloads' | 'likes' | 'id' | 'type' | 'uri' | 'url'>[]
+    photos: Pick<(PhotosPhoto), 'title' | 'description' | 'page_url' | 'image' | 'image_raw' | 'width' | 'height' | 'color' | 'blur_hash' | 'unsplash_id' | 'views' | 'downloads' | 'likes' | 'id' | 'type' | 'uri' | 'url'>[]
   }
   'posts/index': {
     posts: Paginated<Pick<(PostsPost), 'excerpt' | 'published_at' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>>

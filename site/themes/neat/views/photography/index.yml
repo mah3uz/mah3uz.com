@@ -1,4 +1,19 @@
 photos:
   from: entries:photos
   sort: views:desc
-  fields: [title, description, page_url, image, image_raw, width, height, color, views, downloads, likes]
+  fields:
+    [
+      title,
+      description,
+      page_url,
+      image,
+      image_raw,
+      width,
+      height,
+      color,
+      blur_hash,
+      unsplash_id,
+      views,
+      downloads,
+      likes,
+    ]

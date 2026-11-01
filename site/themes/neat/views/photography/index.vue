@@ -7,9 +7,16 @@ import type { ViewProps } from '@site/types'
 import Corners from '../../components/Corners.vue'
 import PageHeading from '../../components/PageHeading.vue'
 import { vReveal } from '../../lib/motion'
-import { compact, PROFILE, sized, srcset } from '../../lib/unsplash'
+import { useGlobals } from '@nibble'
+import type { PhotoDetailsGlobals } from '@site/types'
+import UnsplashImage from '../../components/UnsplashImage.vue'
+import { compact, detailsFor, exposureSettings, PROFILE } from '../../lib/unsplash'
 
 const props = defineProps<ViewProps['photography/index']>()
+
+const details = useGlobals<PhotoDetailsGlobals>('photo_details')
+const settings = (id: string | null | undefined) =>
+  exposureSettings(detailsFor(details.value.photos, id)).map((setting) => setting.value)
 
 const totals = computed(() => ({
   views: props.photos.reduce((sum, photo) => sum + (photo.views ?? 0), 0),
@@ -46,21 +53,17 @@ const totals = computed(() => ({
 
     <div v-if="photos.length" class="columns-1 gap-5 sm:columns-2 lg:columns-3">
       <div v-for="(photo, index) in photos" :key="photo.id" v-reveal="(index % 3) * 90" class="mb-5 break-inside-avoid">
-        <Link
-          :href="photo.uri ?? '#'"
-          class="group border-line relative block overflow-hidden rounded-[1.5rem] border"
-          :style="{ backgroundColor: photo.color ?? '#0D2A31' }"
-        >
-          <img
-            :src="sized(photo.image_raw ?? photo.image, 800)"
-            :srcset="srcset(photo.image_raw)"
-            sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 50vw, 100vw"
-            :width="photo.width ?? undefined"
-            :height="photo.height ?? undefined"
+        <Link :href="photo.uri ?? '#'" class="group border-line relative block overflow-hidden rounded-[1.5rem] border">
+          <UnsplashImage
+            :raw="photo.image_raw"
+            :image="photo.image"
+            :width="photo.width"
+            :height="photo.height"
+            :color="photo.color"
+            :blur-hash="photo.blur_hash"
             :alt="photo.title || photo.description || 'A photograph by Mahfuz Shaikh'"
-            loading="lazy"
-            decoding="async"
-            class="h-auto w-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+            sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 50vw, 100vw"
+            img-class="h-auto w-full group-hover:scale-[1.03]"
           />
           <div
             class="absolute inset-x-0 bottom-0 translate-y-2 bg-[linear-gradient(180deg,transparent,rgba(10,26,32,0.9))] p-5 pt-16 text-white opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100"
@@ -70,6 +73,9 @@ const totals = computed(() => ({
             </p>
             <p class="text-mist mt-1 font-mono text-xs">
               {{ compact(photo.views) }} views · {{ compact(photo.downloads) }} downloads
+            </p>
+            <p v-if="settings(photo.unsplash_id).length" class="text-mist mt-1 font-mono text-[0.7rem] opacity-80">
+              {{ settings(photo.unsplash_id).join(' · ') }}
             </p>
           </div>
         </Link>

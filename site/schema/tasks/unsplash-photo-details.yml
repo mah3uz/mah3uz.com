@@ -1,0 +1,6 @@
+title: Photo details from Unsplash
+description: >-
+  The camera, exposure, place and tags of each photo on the Photography page. Unsplash gives these only one photo at a
+  time, so each run reads the photos not seen yet, then the longest unread, a batch at a time.
+schedule: every 2 hours
+handler: unsplash_photo_details
