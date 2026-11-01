@@ -97,12 +97,17 @@ const headline = computed(() => {
       aria-label="Tools I work with"
       class="border-line relative -mx-5 overflow-hidden border-y [mask-image:linear-gradient(90deg,transparent,black_12%,black_88%,transparent)] py-5 sm:-mx-8"
     >
-      <div class="animate-marquee flex w-max gap-10 hover:[animation-play-state:paused]">
+      <!-- Paced by its length, about four seconds a tool, so a longer list doesn't scroll faster. Each item carries its
+           own space after it, so half the row is exactly one copy and the loop has no seam. -->
+      <div
+        class="animate-marquee flex w-max hover:[animation-play-state:paused]"
+        :style="{ animationDuration: `${Math.max(40, stack.length * 4)}s` }"
+      >
         <template v-for="copy in 2" :key="copy">
           <span
             v-for="item in stack"
             :key="`${copy}-${item}`"
-            class="font-display flex items-center gap-10 text-xl font-bold whitespace-nowrap text-muted sm:text-2xl"
+            class="font-display flex items-center gap-10 pr-10 text-xl font-bold whitespace-nowrap text-muted sm:text-2xl"
             :aria-hidden="copy === 2 ? 'true' : undefined"
           >
             {{ item }} <span class="text-accent" aria-hidden="true">✦</span>
