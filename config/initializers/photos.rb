@@ -22,7 +22,7 @@ end
 # calls, every two hours, well inside the 50 an hour an Unsplash app is allowed before it is approved for production.
 module UnsplashPhotoDetails
   USER = "mah3uz".freeze
-  BATCH = 15
+  BATCH = 30
   STALE = 7.days
 
   module_function

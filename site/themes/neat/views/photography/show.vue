@@ -31,6 +31,15 @@ const map = computed(() => {
 })
 const hasExif = computed(() => Boolean(details.value?.camera || settings.value.length))
 
+// The photo's box, sized from its stored dimensions before it loads, so the colour and blurred preview fill the
+// space the photo will take and nothing moves when it arrives: as wide as the page allows, no taller than 82% of the
+// window.
+const frame = computed(() => {
+  const { width, height } = props.page
+  if (!width || !height) return { maxHeight: '82vh' }
+  return { aspectRatio: `${width} / ${height}`, width: `min(100%, calc(82vh * ${width} / ${height}))` }
+})
+
 const alt = computed(() => props.page.title || props.page.description || 'A photograph by Mahfuz Shaikh')
 
 // Lucide-style strokes, one per setting.
@@ -77,8 +86,9 @@ const icons: Record<string, string> = {
         :base="1600"
         eager
         sizes="(min-width: 72rem) 72rem, 100vw"
-        class="mx-auto w-fit max-w-full"
-        img-class="block max-h-[82vh] w-auto max-w-full"
+        class="mx-auto"
+        :style="frame"
+        img-class="block size-full"
       />
     </figure>
 
