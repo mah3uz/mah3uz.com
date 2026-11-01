@@ -383,8 +383,8 @@ the `mah3uz-storage` volume, so they survive every deploy.
   ```
 
   The `unsplash-photos` scheduled task imports the photos every 12 hours; to fill the page straight after a deploy,
-  run it from **Utilities → Scheduled tasks → Run now**. A photo with no description on Unsplash has no title, so
-  it is skipped, and the run names it.
+  run it from **Utilities → Scheduled tasks → Run now**. A photo with no alt text on Unsplash is still imported,
+  at `/photography/photo-<id>`, and shown as "Untitled".
 
 ### First deploy
 
