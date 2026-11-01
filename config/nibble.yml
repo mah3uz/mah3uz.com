@@ -11,6 +11,12 @@ default: &default
     - code: en
       default: true
       url_prefix: ""
+  # Calls the site makes on its own. The Photography page is imported from the Unsplash API by a scheduled task
+  # (site/schema/tasks/unsplash-photos.yml); the access key is a secret, set as NIBBLE_SECRET_UNSPLASH_ACCESS_KEY
+  # or in credentials under nibble.secrets.unsplash_access_key — never in this file.
+  outbound:
+    allowed_hosts: [api.unsplash.com]
+    secrets: [unsplash_access_key]
 
 development:
   <<: *default

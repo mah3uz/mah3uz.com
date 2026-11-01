@@ -1,15 +1,14 @@
 schema: 1
-title: Photography
+title: Photos
 icon: folder-photos
 route: /photography/{slug}
-structure:
-  max_depth: 2
-blueprints: [photo]
+index_route: /photography
 template: photography/show
-sort: position:asc
+index_template: photography/index
+blueprints: [photo]
+sort: views:desc
 search: site
 sitemap:
   enabled: true
   priority: 0.5
-  changefreq: monthly
-files: photography
+  changefreq: weekly

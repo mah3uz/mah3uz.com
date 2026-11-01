@@ -46,7 +46,7 @@
 | **Now** `/now` | What has my attention this season |
 | **Uses** `/uses` | The tools behind the work, laid out as a keyboard |
 | **About** `/about` | Who I am, principles, a career timeline and a contact form |
-| **Photography** `/photography` | My own photographs, also published on Unsplash |
+| **Photography** `/photography` | My own photographs, imported from my Unsplash profile with their views and downloads |
 | **Writing** `/blog` | Posts, topics (`/topics`) and an Atom feed (`/feed-posts.xml`) |
 | **Search** `/search` | Every page, post and project |
 
@@ -362,7 +362,7 @@ the `mah3uz-storage` volume, so they survive every deploy.
   RAILS_MASTER_KEY=$(cat config/master.key)
   ```
 
-- [ ] **Registry:** export a Docker Hub access token for `mahfuz322` (a token, not the account password):
+- [ ] **Registry:** export a Docker Hub access token for `mahfuz332` (a token, not the account password):
 
   ```bash
   export KAMAL_REGISTRY_PASSWORD=…
@@ -372,6 +372,19 @@ the `mah3uz-storage` volume, so they survive every deploy.
       safe.
 - [ ] **Mail and storage credentials**, if you use them, go in `bin/rails credentials:edit`
       (`smtp.username`, `smtp.password`, and `aws.*` for an uploads bucket or offsite backups).
+- [ ] **Unsplash access key**, for the Photography page: create an app at
+      [unsplash.com/oauth/applications](https://unsplash.com/oauth/applications) and add its *Access Key* to
+      `bin/rails credentials:edit`:
+
+  ```yaml
+  nibble:
+    secrets:
+      unsplash_access_key: …
+  ```
+
+  The `unsplash-photos` scheduled task imports the photos every 12 hours; to fill the page straight after a deploy,
+  run it from **Utilities → Scheduled tasks → Run now**. A photo with no description on Unsplash has no title, so
+  it is skipped, and the run names it.
 
 ### First deploy
 

@@ -39,20 +39,25 @@ export interface PagesPage extends RecordBase {
 
 export type PagesEntry = PagesPage
 
-export interface PhotographyPhoto extends RecordBase {
-  collection: 'photography'
+export interface PhotosPhoto extends RecordBase {
+  collection: 'photos'
   title: string | null
   description: string | null
-  body: string | null
-  location: string | null
-  taken: string | null
-  camera: string | null
-  unsplash: string | null
-  tags: string[]
+  unsplash_id: string | null
+  page_url: string | null
+  image: string | null
+  image_raw: string | null
+  width: number | null
+  height: number | null
+  color: string | null
+  views: number | null
+  downloads: number | null
+  likes: number | null
+  uploaded: string | null
   seo: { title: string | null; exact_title: boolean; description: string | null; canonical: string | null; og_image: AssetValue | null; noindex: boolean; nositemap: boolean; schema_type: string | null; json_ld_overrides: Record<string, unknown> | null }
 }
 
-export type PhotographyEntry = PhotographyPhoto
+export type PhotosEntry = PhotosPhoto
 
 export interface PostsPost extends RecordBase {
   collection: 'posts'
@@ -156,7 +161,7 @@ export interface ViewProps {
     projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'kind' | 'logo' | 'monogram' | 'accent' | 'stage' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'photography/index': {
-    photos: Pick<(PhotographyPhoto), 'title' | 'description' | 'body' | 'location' | 'taken' | 'camera' | 'unsplash' | 'tags' | 'id' | 'type' | 'uri' | 'url'>[]
+    photos: Pick<(PhotosPhoto), 'title' | 'description' | 'page_url' | 'image' | 'image_raw' | 'width' | 'height' | 'color' | 'views' | 'downloads' | 'likes' | 'id' | 'type' | 'uri' | 'url'>[]
   }
   'posts/index': {
     posts: Paginated<Pick<(PostsPost), 'excerpt' | 'published_at' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>>
@@ -172,7 +177,7 @@ export interface ViewProps {
     siblings: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'logo' | 'monogram' | 'accent' | 'stage' | 'kind' | 'cover' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'search': {
-    results: Paginated<(PagesPage | PhotographyPhoto | PostsPost | ProjectsProject)>
+    results: Paginated<(PagesPage | PhotosPhoto | PostsPost | ProjectsProject)>
   }
   'sets/latest_posts': {
     posts: Pick<(PostsPost), 'excerpt' | 'published_at' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]

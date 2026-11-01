@@ -1,0 +1,43 @@
+schema: 1
+title: Photo
+tabs:
+  main:
+    display: Photo
+    sections:
+      - instructions: "Imported from unsplash.com/@mah3uz every 12 hours by the Unsplash photos task; changes made here are replaced on the next run."
+        fields:
+          - handle: title
+            field: { type: text, required: true, listable: true }
+          - handle: description
+            field: { type: textarea }
+          - handle: unsplash_id
+            field: { type: text, listable: true, width: 50 }
+          - handle: page_url
+            field: { type: text, input_type: url, width: 50, instructions: "The photo's page on Unsplash." }
+          - handle: image
+            field: { type: text, input_type: url, instructions: "The image on images.unsplash.com, hot-linked as Unsplash requires." }
+          - handle: image_raw
+            field: { type: text, input_type: url, instructions: "The raw image address, which takes size parameters for responsive images." }
+  details:
+    display: Details
+    sections:
+      - fields:
+          - handle: width
+            field: { type: integer, width: 25 }
+          - handle: height
+            field: { type: integer, width: 25 }
+          - handle: color
+            field: { type: text, width: 50, instructions: "The photo's dominant colour, shown while it loads." }
+          - handle: views
+            field: { type: integer, width: 33, listable: true }
+          - handle: downloads
+            field: { type: integer, width: 33 }
+          - handle: likes
+            field: { type: integer, width: 33 }
+          - handle: uploaded
+            field: { type: text, instructions: "When it was published on Unsplash." }
+  seo:
+    display: SEO
+    sections:
+      - fields:
+          - import: nibble::seo

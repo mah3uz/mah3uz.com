@@ -49,8 +49,12 @@ stops Claude Code editing `vendor/nibble/`.
 - **Artwork, not stock photos.** Every page, post and project has generated artwork (`ArtBanner.vue`, the `art` field).
   Project covers are drawn in `site/art/generate.py`; pages, posts and newer projects in `site/art/more.py`. There are no
   Unsplash or stock images anywhere.
-- **Photography** is my own: `site/content/photography/` — one Markdown file per photo with the image file beside it
-  (`![What it shows](photo.jpg)` as the body), plus `unsplash:` linking to it on unsplash.com/@mah3uz.
+- **Photography** is my own, from unsplash.com/@mah3uz. The `unsplash-photos` scheduled task
+  (`site/schema/tasks/unsplash-photos.yml`) imports my 30 most-viewed photos with their statistics into the `photos`
+  collection every 12 hours; nothing is stored locally. Images are hotlinked from `images.unsplash.com` (sized by
+  `lib/unsplash.ts`) and every link back to Unsplash carries the `utm_source=mah3uz&utm_medium=referral` attribution
+  Unsplash's API guidelines require. The access key is the secret `unsplash_access_key` (credentials
+  `nibble.secrets.unsplash_access_key`, or `NIBBLE_SECRET_UNSPLASH_ACCESS_KEY`) — never in a file in git.
 - **Positioning:** I am both a software engineer and a Linux systems administrator, professionally since 2009, and on
   Linux since I first used computers. Copy should reflect both sides — never only "developer".
 - **Client work** stays factual and confidential: no staging URLs, no internal details the client hasn't published.

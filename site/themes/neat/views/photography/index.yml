@@ -1,3 +1,4 @@
 photos:
-  from: entries:photography
-  fields: [title, description, body, location, taken, camera, unsplash, tags]
+  from: entries:photos
+  sort: views:desc
+  fields: [title, description, page_url, image, image_raw, width, height, color, views, downloads, likes]
