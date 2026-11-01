@@ -38,11 +38,18 @@ tools:
   - { group: Servers & ops, name: systemd, note: "Services, timers, sandboxing and the journal — far more capable than it gets credit for." }
   - { group: Servers & ops, name: Ansible, note: "Configuration as code for fleets of servers." }
   - { group: Servers & ops, name: OpenSSH, note: "Keys, jump hosts and tunnels — the most important tool on every server." }
-  - { group: Homelab, name: Proxmox VE, note: "Virtualisation on bare metal — the base of my homelab, and of the dedicated servers I run.", url: "https://www.proxmox.com" }
-  - { group: Homelab, name: WireGuard, note: "One private network across the homelab, my servers and my laptop.", url: "https://www.wireguard.com" }
-  - { group: Homelab, name: umbrelOS app store, note: "A community app store I publish for umbrelOS home servers.", url: "/projects/umbrel-apps", mine: true }
-  - { group: Homelab, name: Matrix, note: "Self-hosted chat, with its sticker tooling.", url: "https://matrix.org" }
-  - { group: Homelab, name: Umami, note: "Analytics without tracking, on my own hardware.", url: "https://umami.is" }
+  - { group: Servers & ops, name: Matrix, note: "Self-hosted chat, with its sticker tooling.", url: "https://matrix.org" }
+  - { group: Servers & ops, name: Umami, note: "Analytics without tracking, self-hosted.", url: "https://umami.is" }
+  - { group: Homelab, name: Proxmox VE, key: "PX", note: "One node runs the whole lab as LXC containers and virtual machines, new ones cloned from an Ubuntu 24.04 template.", url: "https://www.proxmox.com" }
+  - { group: Homelab, name: AdGuard Home, key: "AG", note: "DNS for the whole network, with ads and trackers filtered out before they reach a device.", url: "https://adguard.com/adguard-home/overview.html" }
+  - { group: Homelab, name: NPMplus, key: "NP", note: "The reverse proxy in front of every service, terminating TLS.", url: "https://github.com/ZoeyVid/NPMplus" }
+  - { group: Homelab, name: Authentik, key: "AU", note: "Single sign-on for the lab: one identity, one login, every service behind it.", url: "https://goauthentik.io" }
+  - { group: Homelab, name: Gitea, key: "GT", note: "My own Git server, for what doesn't belong on GitHub.", url: "https://about.gitea.com" }
+  - { group: Homelab, name: SearXNG, key: "SX", note: "Private metasearch: results from many engines, with nothing about me sent to any of them.", url: "https://docs.searxng.org" }
+  - { group: Homelab, name: Pangolin and Headscale, key: "PH", note: "Reaching the lab from outside without opening a port — tunnelled through Pangolin and Newt, or over a self-hosted Tailscale network.", url: "https://github.com/fosrl/pangolin" }
+  - { group: Homelab, name: WireGuard, key: "WG", note: "One private network across the homelab, my servers and my laptop.", url: "https://www.wireguard.com" }
+  - { group: Homelab, name: umbrelOS, key: "UM", note: "A home-server OS in a VM of its own, with the community app store I publish for it.", url: "/projects/umbrel-apps", mine: true }
+  - { group: Homelab, name: An agents VM, key: "AI", note: "Coding agents get a virtual machine of their own, kept apart from everything else on the lab." }
   - { group: Data, name: PostgreSQL, note: "When many writers need one database." }
   - { group: Data, name: SQLite, note: "For far more than people expect — this site, Nibble and Sysman all run on it." }
   - { group: Data, name: MySQL & MariaDB, note: "Still behind a great deal of the web I look after." }
