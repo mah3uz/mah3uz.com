@@ -311,35 +311,50 @@ ARTS = {
 }
 
 
-# ---------------------------------------------------------------- TourHub: routes, stops and an itinerary
+# ---------------------------------------------------------------- TourHub: a lit stage, the crew behind it, paid up front
 def tourhub():
     u = 'th'
     b = []
-    # a map card
-    b.append(window(150, 170, 820, 660, u, fill='#0B2229'))
-    for i in range(9):
-        y = 260 + i * 64
-        b.append(f'<path d="M190 {y}C380 {y - 30} 560 {y + 30} 930 {y - 10}" fill="none" stroke="#62EDD4" stroke-opacity="0.06" stroke-width="2"/>')
-    route = 'M240 720C330 600 300 520 420 470S600 520 650 400 780 260 880 300'
-    b.append(f'<path d="{route}" fill="none" stroke="#043040" stroke-opacity="0.6" stroke-width="22" stroke-linecap="round"/>')
-    b.append(f'<path d="{route}" fill="none" stroke="url(#th-tile)" stroke-width="10" stroke-linecap="round" stroke-dasharray="2 22"/>')
-    for i, (x, y) in enumerate([(240, 720), (420, 470), (650, 400), (880, 300)]):
-        big = i in (0, 3)
-        r = 26 if big else 18
-        b.append(f'<circle cx="{x}" cy="{y}" r="{r + 16}" fill="#21BDB0" fill-opacity="0.15"/>')
-        b.append(f'<path d="M{x} {y + r * 1.9}C{x - r * 1.3} {y + r * 0.6} {x - r} {y - r * 1.2} {x} {y - r * 1.2}S{x + r * 1.3} {y + r * 0.6} {x} {y + r * 1.9}Z" transform="translate(0 {-r * 1.4})" fill="url(#th-tile)"/>')
-        b.append(f'<circle cx="{x}" cy="{y - r * 1.5}" r="{r * 0.42}" fill="#0B2229"/>')
-    # itinerary cards
-    for i, (w, accent) in enumerate([(300, '#62EDD4'), (260, '#21BDB0'), (330, '#1388A6'), (240, '#A6D3D6')]):
-        y = 220 + i * 150
-        x = 1030 + (i % 2) * 40
-        b.append(f'<rect x="{x}" y="{y + 12}" width="420" height="118" rx="24" fill="#000" fill-opacity="0.35" filter="url(#th-soft)"/>')
-        b.append(f'<rect x="{x}" y="{y}" width="420" height="118" rx="24" fill="#0E2B33" stroke="#62EDD4" stroke-opacity="0.18" stroke-width="2"/>')
-        b.append(f'<rect x="{x + 24}" y="{y + 24}" width="70" height="70" rx="18" fill="{accent}" fill-opacity="0.9"/>')
-        b.append(f'<text x="{x + 59}" y="{y + 72}" text-anchor="middle" font-family="ui-sans-serif,system-ui" font-size="30" font-weight="800" fill="#043040">{i + 1}</text>')
-        b.append(f'<rect x="{x + 118}" y="{y + 34}" width="{w - 60}" height="16" rx="8" fill="#E9F7F7" fill-opacity="0.85"/>')
-        b.append(f'<rect x="{x + 118}" y="{y + 66}" width="{w - 120}" height="12" rx="6" fill="#A6D3D6" fill-opacity="0.4"/>')
-    return frame(u, ''.join(b), glow=(560, 480))
+    # the stage: a truss with lamps throwing beams onto the deck, speaker stacks either side
+    b.append('<rect x="150" y="180" width="760" height="22" rx="11" fill="#0E2B33" stroke="#62EDD4" stroke-opacity="0.25" stroke-width="2"/>')
+    for k in range(12):
+        x = 170 + k * 62
+        b.append(f'<path d="M{x} 182L{x + 31} 200L{x + 62} 182" fill="none" stroke="#62EDD4" stroke-opacity="0.18" stroke-width="2"/>')
+    for i, (x, tint) in enumerate([(250, '#62EDD4'), (420, '#21BDB0'), (640, '#62EDD4'), (810, '#1388A6')]):
+        b.append(f'<path d="M{x - 14} 212L{x - 120 + i * 40} 720H{x + 130 - i * 30}L{x + 14} 212Z" fill="{tint}" fill-opacity="0.09"/>')
+        b.append(f'<rect x="{x - 18}" y="200" width="36" height="30" rx="8" fill="url(#th-tile)"/>')
+    b.append('<path d="M150 720H910" stroke="#62EDD4" stroke-opacity="0.35" stroke-width="4" stroke-linecap="round"/>')
+    b.append('<rect x="150" y="724" width="760" height="70" rx="10" fill="#0E2B33"/>')
+    for x in (150, 830):
+        b.append(f'<rect x="{x}" y="470" width="80" height="250" rx="12" fill="#0B2229" stroke="#62EDD4" stroke-opacity="0.2" stroke-width="2"/>')
+        for k, r in enumerate((22, 30, 22)):
+            cy = 515 + k * 78
+            b.append(f'<circle cx="{x + 40}" cy="{cy}" r="{r}" fill="none" stroke="#21BDB0" stroke-opacity="0.55" stroke-width="5"/><circle cx="{x + 40}" cy="{cy}" r="{r * 0.35:.0f}" fill="#21BDB0" fill-opacity="0.6"/>')
+    # a mixing desk front of house
+    b.append('<rect x="380" y="610" width="300" height="90" rx="14" fill="#0B2229" stroke="#62EDD4" stroke-opacity="0.25" stroke-width="2"/>')
+    for k in range(10):
+        x = 404 + k * 26
+        h = 18 + (k * 7) % 30
+        b.append(f'<rect x="{x}" y="{682 - h}" width="10" height="{h}" rx="5" fill="#62EDD4" fill-opacity="{0.35 + (k % 3) * 0.2}"/>')
+    # crew cards: avatar, name, discipline, the tier earned on the road
+    tiers = [('#A6D3D6', 1), ('#21BDB0', 2), ('#62EDD4', 3), ('#62EDD4', 4)]
+    for i, (accent, level) in enumerate(tiers[1:]):
+        y = 190 + i * 162
+        x = 1000 + (i % 2) * 36
+        b.append(f'<rect x="{x}" y="{y + 12}" width="440" height="132" rx="26" fill="#000" fill-opacity="0.35" filter="url(#th-soft)"/>')
+        b.append(f'<rect x="{x}" y="{y}" width="440" height="132" rx="26" fill="#0E2B33" stroke="#62EDD4" stroke-opacity="0.18" stroke-width="2"/>')
+        b.append(f'<circle cx="{x + 66}" cy="{y + 66}" r="38" fill="url(#th-tile)"/><circle cx="{x + 66}" cy="{y + 56}" r="13" fill="#0B2229" fill-opacity="0.55"/><path d="M{x + 42} {y + 92}C{x + 48} {y + 74} {x + 84} {y + 74} {x + 90} {y + 92}" fill="#0B2229" fill-opacity="0.55"/>')
+        b.append(f'<path d="M{x + 92} {y + 34}l9 4v9c0 6-4 10-9 12-5-2-9-6-9-12v-9Z" fill="#62EDD4"/>')
+        b.append(f'<rect x="{x + 128}" y="{y + 36}" width="{190 - i * 24}" height="16" rx="8" fill="#E9F7F7" fill-opacity="0.85"/>')
+        b.append(f'<rect x="{x + 128}" y="{y + 66}" width="{130 + i * 18}" height="12" rx="6" fill="#A6D3D6" fill-opacity="0.4"/>')
+        for k in range(4):
+            on = k <= level - 1
+            b.append(f'<rect x="{x + 128 + k * 44}" y="{y + 94}" width="36" height="10" rx="5" fill="{accent}" fill-opacity="{0.95 if on else 0.15}"/>')
+    # payment secured before the show
+    b.append('<rect x="1060" y="690" width="380" height="104" rx="26" fill="url(#th-tile)"/>')
+    b.append('<path d="M1112 716l24 10v22c0 15-10 25-24 30-14-5-24-15-24-30v-22Z" fill="#043040" fill-opacity="0.85"/><path d="M1101 744l8 8 15-16" fill="none" stroke="#62EDD4" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>')
+    b.append('<rect x="1162" y="722" width="170" height="16" rx="8" fill="#043040" fill-opacity="0.8"/><rect x="1162" y="752" width="230" height="12" rx="6" fill="#043040" fill-opacity="0.45"/>')
+    return frame(u, ''.join(b), glow=(520, 420))
 
 
 # ---------------------------------------------------------------- TLC: a production web platform
