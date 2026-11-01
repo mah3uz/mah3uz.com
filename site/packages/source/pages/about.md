@@ -44,16 +44,6 @@ milestones:
     tag: Employment
     title: System engineer at Jacos
     text: From 2016 to 2018 I worked as a system engineer for Jacos, a Japanese software company, on both sides of the work — developing its software, and building, deploying to and maintaining the servers it ran on.
-  - year: "2018"
-    tag: Engineering
-    title: Python, Django and test-driven development
-    text: Building Django applications test-first, and integrating rich-text editing into Django with Basecamp's Trix editor.
-    url: https://github.com/mah3uz/todo-lists
-  - year: "2019"
-    tag: Engineering
-    title: REST APIs with Django
-    text: Designing and building a REST API in Python with Django — resources, serialisation and the conventions that make an API predictable for its clients.
-    url: https://github.com/mah3uz/recipe-app-api
   - year: "2020"
     tag: Infrastructure
     title: Self-hosted private networking
@@ -63,21 +53,6 @@ milestones:
     title: TLC — a lending CRM and its broker API
     text: The start of a long engagement with TLC, an Australian lender of medical, dental and lifestyle payment plans — building its CRM in Laravel, designing the API partners use to submit loan applications, and running the servers underneath.
     url: /projects/tlc
-  - year: "2022"
-    tag: Front end
-    title: Modern front ends with Next.js and React
-    text: Building with Next.js and React, and adopting server-rendered, component-driven front ends alongside server-side work.
-    url: https://github.com/mah3uz/nextjs-blog
-  - year: "2023"
-    tag: Front end
-    title: React in depth, analytics without tracking
-    text: A deep study of React — components, state and accessible UI patterns — and running Umami, a privacy-respecting, self-hosted alternative to Google Analytics.
-    url: https://github.com/mah3uz/toast-component
-  - year: "2024"
-    tag: Tools
-    title: Neovim, configured for a polyglot day
-    text: My editor configuration, built on AstroNvim, with language support for Ansible, Bash, Docker, Go, PHP and Laravel, Python, Ruby, Rust, SQL, TypeScript, Vue and YAML — a fair map of a working week.
-    url: https://github.com/mah3uz/nvim-astro
   - year: "2025"
     tag: Infrastructure
     title: Bare metal, home servers and Matrix
