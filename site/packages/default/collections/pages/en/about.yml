@@ -56,7 +56,8 @@ milestones:
 - year: '2016'
   tag: Employment
   title: System engineer at Jacos
-  text: From 2016 to 2018 I worked as a system engineer for Jacos, a Japanese software company.
+  text: From 2016 to 2018 I worked as a system engineer for Jacos, a Japanese software company, on both sides of the work
+    — developing its software, and building, deploying to and maintaining the servers it ran on.
 - year: '2018'
   tag: Engineering
   title: Python, Django and test-driven development
