@@ -30,7 +30,7 @@ const columns = computed(() => [
       <div
         v-for="(column, columnIndex) in columns"
         :key="columnIndex"
-        class="neat-reel-track flex flex-col gap-4"
+        class="neat-reel-track flex flex-col"
         :class="columnIndex === 1 ? 'neat-reel-reverse -mt-24' : ''"
       >
         <!-- The column is drawn twice so the loop is seamless; the copy is hidden from assistive technology. -->
@@ -41,7 +41,7 @@ const columns = computed(() => [
             :href="project.uri ?? '#'"
             :tabindex="copy === 2 ? -1 : undefined"
             :aria-hidden="copy === 2 ? 'true' : undefined"
-            class="group/card relative block shrink-0 overflow-hidden rounded-[1.4rem] shadow-[0_24px_50px_-28px_rgba(4,48,64,0.6)]"
+            class="group/card relative mb-4 block shrink-0 overflow-hidden rounded-[1.4rem] shadow-[0_24px_50px_-28px_rgba(4,48,64,0.6)]"
           >
             <img
               :src="project.cover ?? ''"
@@ -119,9 +119,10 @@ const columns = computed(() => [
   from {
     transform: translate3d(0, 0, 0);
   }
-  /* Each column is drawn twice, so moving by half its height (plus half a gap) lands exactly on the start. */
+  /* Each column is drawn twice, every card with its space below it, so half the column is exactly one copy and
+     moving by it lands on the start. */
   to {
-    transform: translate3d(0, calc(-50% - 0.5rem), 0);
+    transform: translate3d(0, -50%, 0);
   }
 }
 @media (prefers-reduced-motion: reduce) {

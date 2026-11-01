@@ -38,8 +38,10 @@ stops Claude Code editing `vendor/nibble/`.
 - **Brand mark:** the site's logo is the bracketed tile — the teal gradient tile with three corner brackets and a
   peeled corner, holding an "m" (`components/BrandMark.vue`; favicon and social card in `site/packages/default`).
 - **Project logos** are each product's own logo, copied from its repository into `public/logos/` and named in the
-  project's `logo:` frontmatter. Nibble CLI's is Nibble's mark with a terminal badge. A project without a logo
-  (client work) falls back to the bracketed tile with its monogram (`components/ProjectTile.vue`).
+  project's `logo:` frontmatter, and kept still: strip any `<animate>`/`<animateTransform>`/`<set>` from a copied SVG,
+  because an animated SVG in an `<img>` makes the browser lay out and repaint the whole page every frame, forever
+  (Quarry's mascot once kept the home page busy at a third of a core). Nibble CLI's is Nibble's mark with a terminal
+  badge. A project without a logo falls back to the bracketed tile with its monogram (`components/ProjectTile.vue`).
 - **Cover art** is generated SVG in `public/art/`, from `site/art/generate.py`
   (`python3 site/art/generate.py public/art`). Add a function there for a new project rather than drawing by hand.
 - **Pages, posts, menus and site settings** come from the content package `site/packages/default`, which
