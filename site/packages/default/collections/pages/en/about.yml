@@ -53,6 +53,10 @@ milestones:
   title: Agents that act on your behalf
   text: Working with Huginn, a self-hosted Ruby system for building agents that watch the web and act on events — an early
     taste of automation as infrastructure.
+- year: '2016'
+  tag: Employment
+  title: System engineer at Jacos
+  text: From 2016 to 2018 I worked as a system engineer for Jacos, a Japanese software company.
 - year: '2018'
   tag: Engineering
   title: Python, Django and test-driven development
