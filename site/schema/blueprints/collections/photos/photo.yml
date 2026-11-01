@@ -7,7 +7,7 @@ tabs:
       - instructions: "Imported from unsplash.com/@mah3uz every 12 hours by the Unsplash photos task; changes made here are replaced on the next run."
         fields:
           - handle: title
-            field: { type: text, required: true, listable: true }
+            field: { type: text, listable: true, instructions: "The alt text from Unsplash. Not every photo has one; a photo without it is still shown." }
           - handle: description
             field: { type: textarea }
           - handle: unsplash_id

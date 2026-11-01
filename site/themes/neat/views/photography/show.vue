@@ -25,14 +25,14 @@ const formatDate = useFormatDate()
         sizes="(min-width: 72rem) 72rem, 100vw"
         :width="page.width ?? undefined"
         :height="page.height ?? undefined"
-        :alt="page.title ?? ''"
+        :alt="page.title || page.description || 'A photograph by Mahfuz Shaikh'"
         class="mx-auto max-h-[82vh] w-auto"
       />
     </figure>
     <div class="mt-10 grid gap-8 lg:grid-cols-[1fr_20rem]">
       <header>
         <h1 class="font-display text-3xl font-extrabold tracking-[-0.03em] first-letter:uppercase sm:text-4xl">
-          {{ page.title }}
+          {{ page.title || 'Untitled' }}
         </h1>
         <p v-if="page.description" class="mt-4 max-w-[60ch] text-lg leading-8 text-muted">{{ page.description }}</p>
         <p class="text-faint mt-6 text-sm">

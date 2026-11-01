@@ -57,7 +57,7 @@ const totals = computed(() => ({
             sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 50vw, 100vw"
             :width="photo.width ?? undefined"
             :height="photo.height ?? undefined"
-            :alt="photo.title ?? ''"
+            :alt="photo.title || photo.description || 'A photograph by Mahfuz Shaikh'"
             loading="lazy"
             decoding="async"
             class="h-auto w-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
@@ -65,7 +65,9 @@ const totals = computed(() => ({
           <div
             class="absolute inset-x-0 bottom-0 translate-y-2 bg-[linear-gradient(180deg,transparent,rgba(10,26,32,0.9))] p-5 pt-16 text-white opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100"
           >
-            <p class="font-display line-clamp-2 font-bold first-letter:uppercase">{{ photo.title }}</p>
+            <p v-if="photo.title" class="font-display line-clamp-2 font-bold first-letter:uppercase">
+              {{ photo.title }}
+            </p>
             <p class="text-mist mt-1 font-mono text-xs">
               {{ compact(photo.views) }} views · {{ compact(photo.downloads) }} downloads
             </p>
