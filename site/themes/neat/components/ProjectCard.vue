@@ -65,6 +65,13 @@ const status = computed(() => statusOf(props.project))
         <p class="text-muted" :class="large ? 'text-lg leading-8' : 'leading-7'">
           {{ project.tagline ?? project.description }}
         </p>
+        <!-- A small card shares its row with a large one and stretches to its height; the description fills that room. -->
+        <p
+          v-if="!large && project.tagline && project.description"
+          class="line-clamp-6 text-[0.95rem] leading-7 text-muted"
+        >
+          {{ project.description }}
+        </p>
         <ul v-if="project.stack?.length" class="mt-auto flex flex-wrap gap-2 pt-2" role="list" aria-label="Built with">
           <li
             v-for="item in project.stack.slice(0, large ? 6 : 4)"
