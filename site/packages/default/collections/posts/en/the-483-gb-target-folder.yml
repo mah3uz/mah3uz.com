@@ -1,0 +1,2068 @@
+title: The 483 GB target folder
+published_at: '2026-11-11T06:00:00Z'
+topics:
+- topics/rust
+- topics/operations
+- topics/engineering
+excerpt: 'A postmortem of build storage and test time across seven Rust workspaces: a 483 GB target folder that stalled a
+  32-core desktop on disk I/O, a release that ran another checkout''s tests, a /tmp full of test leftovers, and the changes
+  that fixed each one, with the numbers.'
+art: /art/posts/target-folder.svg
+body:
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Summary
+- type: paragraph
+  content:
+  - type: text
+    text: 'In early November my workstation began to stall during Rust builds and test runs: slow redraws, input lag, dropped
+      audio. The cause was disk I/O, not CPU. One workspace''s '
+  - type: text
+    text: target/debug
+    marks:
+    - type: code
+  - type: text
+    text: ' had reached '
+  - type: text
+    text: 483 GB
+    marks:
+    - type: bold
+  - type: text
+    text: ', and relinking its test binaries was writing about 1.3 GB to disk every two seconds.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'Looking into it turned up a set of related problems across seven Rust workspaces, all of them consequences of Cargo''s
+      defaults meeting an unusual workload. The main causes were:'
+- type: orderedList
+  attrs:
+    start: 1
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Full debug information for every dependency, in every test binary.
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: One test binary per integration-test file.
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Build outputs that Cargo never removes.
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: A shared target folder that let one checkout run another's tests.
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Tests that ran one binary at a time, in an order that left the slowest for last.
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: 'Tests that left their files in a memory-backed '
+      - type: text
+        text: /tmp
+        marks:
+        - type: code
+      - type: text
+        text: .
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Parallel builds competing with each other, and with the desktop, for CPU and memory.
+- type: paragraph
+  content:
+  - type: text
+    text: 'Each has a fix, and most of the fixes are a few lines of configuration. Together they took the largest '
+  - type: text
+    text: target/
+    marks:
+    - type: code
+  - type: text
+    text: ' from 483 GB to tens of gigabytes, halved the debug builds of the smaller projects, cut one slow test from 58 seconds
+      to 5, and took a test suite from 254 seconds to about 90. Two of the fixes were wrong for some projects, and those are
+      the most useful parts of this report.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Impact
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Desktop stalls.
+        marks:
+        - type: bold
+      - type: text
+        text: ' Disk pressure stall information ('
+      - type: text
+        text: /proc/pressure/io
+        marks:
+        - type: code
+      - type: text
+        text: ) showed every process that needed the disk waiting for 21 to 27 percent of the time during builds. CPU and
+          memory pressure were close to zero.
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Disk.
+        marks:
+        - type: bold
+      - type: text
+        text: ' easyshot''s '
+      - type: text
+        text: target/debug
+        marks:
+        - type: code
+      - type: text
+        text: ' reached 483 GB; Insensical''s '
+      - type: text
+        text: target/
+        marks:
+        - type: code
+      - type: text
+        text: ' passed 100 GB; Sysman''s was 22 GB.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: A failed release.
+        marks:
+        - type: bold
+      - type: text
+        text: ' Darwan''s release script stopped when 14 tests failed in 0.00 seconds. They were another checkout''s test
+          binaries.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Failed test runs.
+        marks:
+        - type: bold
+      - type: text
+        text: ' One Insensical run had 94 failures with '
+      - type: text
+        text: '"Disk quota exceeded"'
+        marks:
+        - type: italic
+      - type: text
+        text: ' when '
+      - type: text
+        text: /tmp
+        marks:
+        - type: code
+      - type: text
+        text: ', a 63 GB tmpfs, reached 50 GB.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Slow feedback.
+        marks:
+        - type: bold
+      - type: text
+        text: ' Insensical''s Rust suite took 254 seconds; one window test alone took 58.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Memory risk.
+        marks:
+        - type: bold
+      - type: text
+        text: ' Five parallel builds on 32 threads could start around 128 '
+      - type: text
+        text: rustc
+        marks:
+        - type: code
+      - type: text
+        text: ' processes on a 124 GB machine.'
+- type: image
+  attrs:
+    src: /art/posts/the-483-gb-target-folder/io-pressure.svg
+    alt: 'It wasn''t the CPU: disk pressure at 21 to 27 percent while CPU and memory pressure sat near zero'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Environment
+- type: paragraph
+  content:
+  - type: text
+    text: 'Seven Rust workspaces built over about two months, among them a terminal multiplexer (Insensical), a screenshot
+      tool (easyshot), a system monitor (Sysman), a SQL client (Quarry) and a lock-screen manager (Darwan). Three are GPU
+      applications on GPUI, with wgpu underneath. Much of the building and testing ran in AI coding agents working in parallel,
+      each in its own git worktree, all on one workstation: 32 hardware threads, 124 GB of memory, an NVMe drive, btrfs with
+      zstd compression and regular snapshots, Rust 1.98.'
+- type: paragraph
+  content:
+  - type: text
+    text: That workload is the context for everything below. Cargo's defaults are tuned for one person editing one crate in
+      one checkout. This was many checkouts, many builds at once, and some very large dependency graphs.
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: How it was investigated
+- type: paragraph
+  content:
+  - type: text
+    text: 'Every change below was measured before it was made, usually by building the same project twice from clean, once
+      with a '
+  - type: text
+    text: --config
+    marks:
+    - type: code
+  - type: text
+    text: ' override. Four commands did most of the diagnosis:'
+- type: codeBlock
+  attrs:
+    language: null
+  content:
+  - type: text
+    text: "du -sh target/*/ target/debug/*/ | sort -h | tail        # where the space is\nsize -A target/debug/deps/<big-binary>\
+      \ \\\n  | awk '/^\\.debug/{d+=$2}{t+=$2}END{print d/t}'          # share of a binary that is debug info\ncat /proc/pressure/io\
+      \                                     # is the disk stalling everything else?\ncargo tree -i <crate> -e normal     \
+      \                      # who pulls in this dependency?"
+- type: paragraph
+  content:
+  - type: text
+    text: The first, on easyshot's folder, gave the shape of the problem straight away.
+- type: image
+  attrs:
+    src: /art/posts/the-483-gb-target-folder/where-it-went.svg
+    alt: 'Where 483 GB went: 376 GB in deps, 65 GB in examples and 43 GB of incremental state'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Findings
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: 1. Half of every test binary was debug information
+- type: paragraph
+  content:
+  - type: text
+    text: Symptom.
+    marks:
+    - type: bold
+  - type: text
+    text: ' easyshot had 136 test binaries, each 1 to 1.7 GB. A change to a low-level crate relinked most of them, and each
+      relink wrote its full size to disk.'
+- type: paragraph
+  content:
+  - type: text
+    text: Cause.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Cargo''s '
+  - type: text
+    text: dev
+    marks:
+    - type: code
+  - type: text
+    text: ' profile, used by '
+  - type: text
+    text: cargo build
+    marks:
+    - type: code
+  - type: text
+    text: ' and '
+  - type: text
+    text: cargo test
+    marks:
+    - type: code
+  - type: text
+    text: ', compiles every crate with full debug information, dependencies included. A test binary that links GPUI carries
+      the debug information of a GPU stack, a text shaper and a few hundred other crates. In easyshot about half of each binary
+      was '
+  - type: text
+    text: .debug
+    marks:
+    - type: code
+  - type: text
+    text: ' sections; in Darwan, 42 to 49 percent.'
+- type: paragraph
+  content:
+  - type: text
+    text: Fix.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Line tables for the workspace''s own code, which is enough for a panic''s backtrace to name the file and line,
+      and no debug information for dependencies:'
+- type: codeBlock
+  attrs:
+    language: toml
+  content:
+  - type: text
+    text: '[profile.dev]
+
+      debug = "line-tables-only"
+
+
+      [profile.dev.package."*"]
+
+      debug = false'
+- type: paragraph
+  content:
+  - type: text
+    text: Result.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Darwan''s debug test build went from 4.1 GB to 1.9 GB, and the bytes written to link all its test binaries from
+      about 1.2 GB to 0.3 GB. Sysman''s application binary went from 540–640 MB to 44 MB, and its '
+  - type: text
+    text: target/debug
+    marks:
+    - type: code
+  - type: text
+    text: ' from 22 GB to 3 GB. Quarry went from 3.7 GB to 1.7 GB.'
+- type: image
+  attrs:
+    src: /art/posts/the-483-gb-target-folder/binary-anatomy.svg
+    alt: 'Half of every test binary was debug info: Sysman''s binary from 540 to 640 MB down to 44 MB, Darwan''s largest test
+      binary from 283 to 91 MB, Quarry''s from 262 to 67 MB'
+- type: image
+  attrs:
+    src: /art/posts/the-483-gb-target-folder/before-after.svg
+    alt: target/ before and after the profile change, on a log scale
+- type: paragraph
+  content:
+  - type: text
+    text: Trade-off.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Variables can''t be inspected in a debugger. easyshot and Sysman keep a profile that restores everything for the
+      occasion, and '
+  - type: text
+    text: CARGO_PROFILE_DEV_DEBUG=full
+    marks:
+    - type: code
+  - type: text
+    text: ' does the same for a single command:'
+- type: codeBlock
+  attrs:
+    language: toml
+  content:
+  - type: text
+    text: '[profile.dbg]
+
+      inherits = "dev"
+
+      debug = "full"
+
+
+      [profile.dbg.package."*"]
+
+      debug = "full"'
+- type: paragraph
+  content:
+  - type: text
+    text: Note.
+    marks:
+    - type: bold
+  - type: text
+    text: ' The first assessment for Darwan recommended no change, because its '
+  - type: text
+    text: just
+    marks:
+    - type: code
+  - type: text
+    text: ' recipes test in release mode. The session history showed otherwise: plain '
+  - type: text
+    text: cargo test -q --workspace
+    marks:
+    - type: code
+  - type: text
+    text: ' had been run 36 times and '
+  - type: text
+    text: cargo build -q -p darwan-gui
+    marks:
+    - type: code
+  - type: text
+    text: ' 40 times, all in debug. Decide from what is actually run, not from what the scripts say.'
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: 2. Every file in tests/ was a separate binary
+- type: paragraph
+  content:
+  - type: text
+    text: Symptom.
+    marks:
+    - type: bold
+  - type: text
+    text: ' The 136 test binaries in finding 1; easyshot''s editor crate alone had 27.'
+- type: paragraph
+  content:
+  - type: text
+    text: Cause.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Each file directly under '
+  - type: text
+    text: tests/
+    marks:
+    - type: code
+  - type: text
+    text: ' is compiled and linked as its own executable, and each links every dependency of the crate.'
+- type: paragraph
+  content:
+  - type: text
+    text: Fix.
+    marks:
+    - type: bold
+  - type: text
+    text: ' One integration-test binary per crate, as matklad describes in '
+  - type: text
+    text: Delete Cargo Integration Tests
+    marks:
+    - type: italic
+  - type: text
+    text: ': '
+  - type: text
+    text: tests/it/main.rs
+    marks:
+    - type: code
+  - type: text
+    text: ' declares a module per former file, and the files move into '
+  - type: text
+    text: tests/it/
+    marks:
+    - type: code
+  - type: text
+    text: . easyshot made the change across the workspace in one commit; a low-level change now relinks roughly one test binary
+      per crate instead of 136.
+- type: paragraph
+  content:
+  - type: text
+    text: Where it doesn't apply.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Darwan has two test files and Quarry three. Merging them was assessed and rejected: it "gains almost nothing"
+      and makes single files harder to run alone. It pays off with many test files per crate and a heavy dependency graph.'
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: 3. Unoptimised dependencies made tests slow
+- type: paragraph
+  content:
+  - type: text
+    text: Symptom.
+    marks:
+    - type: bold
+  - type: text
+    text: ' One Insensical window test took 58 seconds.'
+- type: paragraph
+  content:
+  - type: text
+    text: Cause.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Window tests draw real frames through GPUI, off screen. In a debug build GPUI itself is unoptimised, and the test
+      spent its time there, not in Insensical''s code.'
+- type: paragraph
+  content:
+  - type: text
+    text: Fix.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Optimise dependencies, and leave the workspace''s own crates at '
+  - type: text
+    text: opt-level = 0
+    marks:
+    - type: code
+  - type: text
+    text: ' so they still compile quickly and incrementally:'
+- type: codeBlock
+  attrs:
+    language: toml
+  content:
+  - type: text
+    text: '[profile.dev.package."*"]
+
+      opt-level = 2
+
+      debug = false'
+- type: paragraph
+  content:
+  - type: text
+    text: Result.
+    marks:
+    - type: bold
+  - type: text
+    text: ' The same test takes 5 seconds. Dependencies compile once, optimised, and are reused. easyshot and Sysman carry
+      the same setting, commented '
+  - type: text
+    text: '"gpui is too slow to use unoptimised."'
+    marks:
+    - type: italic
+- type: image
+  attrs:
+    src: /art/posts/the-483-gb-target-folder/deps-opt.svg
+    alt: 'Optimise the dependencies, not your code: one window test took 58 seconds with dependencies unoptimised and 5 with
+      opt-level 2'
+- type: paragraph
+  content:
+  - type: text
+    text: Applies when
+    marks:
+    - type: bold
+  - type: text
+    text: ' tests spend their time inside a heavy dependency: a renderer, a codec, a parser, a database engine.'
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: 4. Cargo never removes old build outputs
+- type: paragraph
+  content:
+  - type: text
+    text: Symptom.
+    marks:
+    - type: bold
+  - type: text
+    text: ' A week after finding 1 was fixed, easyshot''s '
+  - type: text
+    text: target/
+    marks:
+    - type: code
+  - type: text
+    text: ' was back to 68 GB.'
+- type: paragraph
+  content:
+  - type: text
+    text: Cause.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Cargo names each build output by a hash of its inputs: sources, dependency versions, enabled features, toolchain.
+      Any change produces a new file, and the old one stays. easyshot''s test gate runs nextest with three different feature
+      sets, so many test binaries exist three times over before any code changes. After a week the folder held 49 hashed copies
+      of each of 13 example programs, about 193 MB each, plus 171 old copies of one test binary and 162 of another.'
+- type: image
+  attrs:
+    src: /art/posts/the-483-gb-target-folder/stale-copies.svg
+    alt: 'Cargo never throws anything away: 13 examples times 49 hashed copies is about 22 GB, and 171 plus 162 stale test
+      binaries are about 35 GB more'
+- type: paragraph
+  content:
+  - type: text
+    text: Fix.
+    marks:
+    - type: bold
+  - type: text
+    text: ' A size-capped clean. easyshot''s '
+  - type: text
+    text: just sweep
+    marks:
+    - type: code
+  - type: text
+    text: ' runs '
+  - type: text
+    text: cargo clean --profile dev
+    marks:
+    - type: code
+  - type: text
+    text: ' when '
+  - type: text
+    text: target/debug
+    marks:
+    - type: code
+  - type: text
+    text: ' exceeds a limit, 80 GB by default. The next build is a full one. Tools such as '
+  - type: text
+    text: cargo-sweep
+    marks:
+    - type: code
+  - type: text
+    text: ', which remove only old files, are an alternative I haven''t evaluated.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'Two operational issues in the cleanup itself:'
+    marks:
+    - type: bold
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: btrfs snapshots retain deleted files.
+        marks:
+        - type: bold
+      - type: text
+        text: ' After '
+      - type: text
+        text: cargo clean
+        marks:
+        - type: code
+      - type: text
+        text: ' removed 585 GiB, free space barely changed, most likely because snapshots still referenced the build output.
+          Lower snapshot retention for the folder, or keep build output out of snapshotted subvolumes.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Mass deletion causes its own stall.
+        marks:
+        - type: bold
+      - type: text
+        text: ' Deleting hundreds of gigabytes at once on a filesystem mounted with '
+      - type: text
+        text: discard=async
+        marks:
+        - type: code
+      - type: text
+        text: ' sends a burst of TRIM commands to the SSD and stalls the desktop again. Delete in batches.'
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: 5. A shared target folder ran another checkout's tests
+- type: paragraph
+  content:
+  - type: text
+    text: Symptom.
+    marks:
+    - type: bold
+  - type: text
+    text: ' A Darwan release stopped when 14 tests failed in 0.00 seconds.'
+- type: paragraph
+  content:
+  - type: text
+    text: Cause.
+    marks:
+    - type: bold
+  - type: text
+    text: ' A dry run of the release script in a scratch clone had pointed '
+  - type: text
+    text: CARGO_TARGET_DIR
+    marks:
+    - type: code
+  - type: text
+    text: ' at the real checkout''s '
+  - type: text
+    text: target/
+    marks:
+    - type: code
+  - type: text
+    text: . As far as I can tell from the Cargo issues about it, Cargo leaves the workspace path out of what it hashes, for
+      reproducible builds, so both checkouts produced the same artifact names. The real release found the clone's test binaries,
+      treated them as up to date, and ran them, with the deleted clone's path compiled in.
+- type: paragraph
+  content:
+  - type: text
+    text: Fix.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Never share a target folder between checkouts. Darwan''s release recipe now runs '
+  - type: text
+    text: cargo clean --release --workspace
+    marks:
+    - type: code
+  - type: text
+    text: ' before testing; dependencies stay in sccache, so it costs seconds. The comment above it:'
+- type: blockquote
+  content:
+  - type: paragraph
+    content:
+    - type: text
+      text: Artifacts left by another checkout sharing target/ can look up to date and test the wrong sources.
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: 6. Every worktree built cold, and incremental output couldn't be shared
+- type: paragraph
+  content:
+  - type: text
+    text: Symptom.
+    marks:
+    - type: bold
+  - type: text
+    text: ' In one round of parallel work in Insensical, twelve builder worktrees each had about 15 GB of '
+  - type: text
+    text: target/
+    marks:
+    - type: code
+  - type: text
+    text: ', all compiling the same dependencies.'
+- type: paragraph
+  content:
+  - type: text
+    text: Cause.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Separate target folders (finding 5) mean separate builds. And easyshot''s 43 GB of incremental state was never
+      shared between worktrees at all.'
+- type: paragraph
+  content:
+  - type: text
+    text: Fix.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Two parts. First, sccache shared by every checkout, configured per machine in a git-ignored file that the project''s
+      config includes when it exists:'
+- type: codeBlock
+  attrs:
+    language: toml
+  content:
+  - type: text
+    text: '# .cargo/config.toml (in git)
+
+      include = [{ path = "local.toml", optional = true }]
+
+
+      # .cargo/local.toml (ignored, this machine only)
+
+      [build]
+
+      rustc-wrapper = "sccache"
+
+      incremental = false
+
+
+      [env]
+
+      SCCACHE_CACHE_SIZE = "40G"'
+- type: paragraph
+  content:
+  - type: text
+    text: 'sccache can''t cache a crate built incrementally, so the workspace''s own crates would never hit the cache with
+      incremental on. Second, worktrees are removed as soon as their branch is merged, which removes their '
+  - type: text
+    text: target/
+    marks:
+    - type: code
+  - type: text
+    text: ' with them. A session-start hook removes any agent worktree that is clean, merged and idle for a day, and nothing
+      else.'
+- type: paragraph
+  content:
+  - type: text
+    text: Where it doesn't apply.
+    marks:
+    - type: bold
+  - type: text
+    text: ' '
+  - type: text
+    text: incremental = false
+    marks:
+    - type: code
+  - type: text
+    text: ' was right for easyshot and wrong for Sysman. Measured in Sysman, rebuilding after an edit took 10 seconds with
+      incremental off against 5 with it on, and a fresh worktree 88 seconds against 67. Sysman keeps incremental on, and its
+      notes say not to revisit it without new numbers. The answer depends on crate size, link cost and how many checkouts
+      build at once. Measure it per project.'
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: 7. Tests ran one binary at a time
+- type: paragraph
+  content:
+  - type: text
+    text: Symptom.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Insensical''s Rust suite took 254 seconds, 131 of them in one binary whose tests mostly wait on real timers.'
+- type: paragraph
+  content:
+  - type: text
+    text: Cause.
+    marks:
+    - type: bold
+  - type: text
+    text: ' '
+  - type: text
+    text: cargo test --workspace
+    marks:
+    - type: code
+  - type: text
+    text: ' runs test binaries sequentially. Tests run in parallel only within one binary.'
+- type: paragraph
+  content:
+  - type: text
+    text: Fix.
+    marks:
+    - type: bold
+  - type: text
+    text: ' '
+  - type: text
+    text: cargo-nextest
+    marks:
+    - type: link
+      attrs:
+        href: https://nexte.st
+  - type: text
+    text: ', which runs every test as its own process across all binaries at once. On 32 cores the same suite takes about
+      a minute and a half. Process-per-test also brings isolation: a hang can be ended on its own, and global state, environment
+      and ports belong to one test. Every test that starts a daemon gives it its own socket, state directory and config directory,
+      so a test can never reach the copy in daily use.'
+- type: image
+  attrs:
+    src: /art/posts/the-483-gb-target-folder/suite-time.svg
+    alt: 'The same 1,878 tests: 254 seconds with cargo test, 161.7 with nextest in name order on 12 threads, and 134.0 with
+      the slowest tests started first'
+- type: codeBlock
+  attrs:
+    language: toml
+  content:
+  - type: text
+    text: '# .config/nextest.toml
+
+      [profile.default]
+
+      fail-fast = false
+
+      retries = 1
+
+      slow-timeout = { period = "60s", terminate-after = 3 }
+
+
+      [test-groups]
+
+      sway-seat = { max-threads = 1 }
+
+
+      [[profile.default.overrides]]
+
+      filter = "test(/(^|::)platform_/)"
+
+      test-group = "sway-seat"'
+- type: paragraph
+  content:
+  - type: text
+    text: 'The retry and the three-minute limit address a known fault: a GPUI window test hangs at the very end, in the toolkit''s
+      off-screen scheduler, in about one run in twelve. nextest ends that one test and runs it again; without it, the only
+      remedy is a time limit on the whole run. The test group serialises tests that share one resource, a single sway seat,
+      while everything else runs in parallel.'
+- type: paragraph
+  content:
+  - type: text
+    text: Caveats.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Process-per-test has a cost. The first nextest run of the window tests had five past 60 seconds, each paying GPUI''s
+      start-up; splitting the window tests into modules and finding 8 resolved it. For small CPU-only tests, process overhead
+      can make nextest slower than '
+  - type: text
+    text: cargo test
+    marks:
+    - type: code
+  - type: text
+    text: '. nextest also doesn''t run doctests, so every gate runs '
+  - type: text
+    text: cargo test --workspace --doc
+    marks:
+    - type: code
+  - type: text
+    text: ' as well.'
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: 8. The slowest tests started last
+- type: paragraph
+  content:
+  - type: text
+    text: Symptom.
+    marks:
+    - type: bold
+  - type: text
+    text: ' With nextest in name order, two web tests of 46 and 33 seconds started when most others had finished, and the
+      run waited on them: 161.7 seconds for 1,584 seconds of tests on 12 threads.'
+- type: paragraph
+  content:
+  - type: text
+    text: Fix.
+    marks:
+    - type: bold
+  - type: text
+    text: ' A priority override for the twenty slowest tests, so they start first and short tests fill in around them.'
+- type: paragraph
+  content:
+  - type: text
+    text: Result.
+    marks:
+    - type: bold
+  - type: text
+    text: ' 134.0 seconds, 17 percent faster.'
+- type: image
+  attrs:
+    src: /art/posts/the-483-gb-target-folder/slowest-first.svg
+    alt: 'Start the long ones first: in name order the long tests start late and stick out; started first, the short tests
+      pack around them'
+- type: paragraph
+  content:
+  - type: text
+    text: Caveat.
+    marks:
+    - type: bold
+  - type: text
+    text: ' One test that takes 13 seconds alone took 165 seconds on a Mac when it started together with the other heavy tests,
+      all competing for the same resources. It was removed from the list. Priority reorders work; it doesn''t add capacity.
+      Check it on every platform.'
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: 9. Timing tests ran in the everyday suite
+- type: paragraph
+  content:
+  - type: text
+    text: Cause.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Quarry has performance tests: rendering 100,000 rows of ten coloured columns, listing a schema of 3,000 tables.
+      They''re only meaningful in release mode and slow to set up.'
+- type: paragraph
+  content:
+  - type: text
+    text: Fix.
+    marks:
+    - type: bold
+  - type: text
+    text: ' They''re ignored by default and run by a separate '
+  - type: text
+    text: just test-slow
+    marks:
+    - type: code
+  - type: text
+    text: ' recipe:'
+- type: codeBlock
+  attrs:
+    language: rust
+  content:
+  - type: text
+    text: '#[test]
+
+      #[ignore = "timing; run with --release -- --ignored"]
+
+      fn render_100k_rows_fast() { /* ... */ }'
+- type: paragraph
+  content:
+  - type: text
+    text: Result.
+    marks:
+    - type: bold
+  - type: text
+    text: ' The everyday suite is 327 tests in 0.24 seconds. Tests that need a real PostgreSQL or MySQL read its address from
+      an environment variable and skip when it isn''t set.'
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: 10. Tests filled /tmp
+- type: paragraph
+  content:
+  - type: text
+    text: Symptom.
+    marks:
+    - type: bold
+  - type: text
+    text: ' 94 test failures with '
+  - type: text
+    text: '"Disk quota exceeded"'
+    marks:
+    - type: italic
+  - type: text
+    text: ' in one Insensical run.'
+- type: paragraph
+  content:
+  - type: text
+    text: Cause.
+    marks:
+    - type: bold
+  - type: text
+    text: ' '
+  - type: text
+    text: /tmp
+    marks:
+    - type: code
+  - type: text
+    text: ' is a tmpfs, held in memory, and it was 50 GB full out of 63: about 16,000 leftover directories from one kind of
+      test and 13,000 from another. One test, which checks that '
+  - type: text
+    text: isc
+    marks:
+    - type: code
+  - type: text
+    text: ' can replace itself, copied the binary each time and left 260 to 400 MB behind per run.'
+- type: paragraph
+  content:
+  - type: text
+    text: Fix.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Every test removes the directories it creates when it ends, pass or fail, and the self-replacement test removes
+      its copies. A leak into a memory-backed '
+  - type: text
+    text: /tmp
+    marks:
+    - type: code
+  - type: text
+    text: ' is a memory leak. Check '
+  - type: text
+    text: du -sh /tmp
+    marks:
+    - type: code
+  - type: text
+    text: ', not only '
+  - type: text
+    text: target/
+    marks:
+    - type: code
+  - type: text
+    text: .
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: 11. One release profile served every purpose
+- type: paragraph
+  content:
+  - type: text
+    text: Symptom.
+    marks:
+    - type: bold
+  - type: text
+    text: ' In Insensical, an optimised build for local installs and browser tests took most of a minute after every change.'
+- type: paragraph
+  content:
+  - type: text
+    text: Cause.
+    marks:
+    - type: bold
+  - type: text
+    text: ' The release profile uses thin LTO and a single codegen unit, which shipped builds need: the grid calls into the
+      toolkit once a glyph and the codec once a frame, across crate boundaries that only link-time optimisation can see through.
+      Local installs don''t need it.'
+- type: paragraph
+  content:
+  - type: text
+    text: Fix.
+    marks:
+    - type: bold
+  - type: text
+    text: ' A second profile for fast optimised builds:'
+- type: codeBlock
+  attrs:
+    language: toml
+  content:
+  - type: text
+    text: '[profile.page]
+
+      inherits = "release"
+
+      lto = "off"
+
+      codegen-units = 16'
+- type: paragraph
+  content:
+  - type: text
+    text: Result.
+    marks:
+    - type: bold
+  - type: text
+    text: ' After a change to the protocol crate, a '
+  - type: text
+    text: page
+    marks:
+    - type: code
+  - type: text
+    text: ' build took 36 seconds against 126 for release on Linux, and 32 against 89 on a Mac.'
+- type: image
+  attrs:
+    src: /art/posts/the-483-gb-target-folder/profiles.svg
+    alt: 'One profile per job: dev, dbg, page and release, each with its own settings'
+- type: paragraph
+  content:
+  - type: text
+    text: Caveat.
+    marks:
+    - type: bold
+  - type: text
+    text: ' easyshot''s equivalent, '
+  - type: text
+    text: fast
+    marks:
+    - type: code
+  - type: text
+    text: ', made its image benchmarks three to seven times slower than a shipped build, because its SIMD wrappers were no
+      longer inlined across 16 codegen units. Those few crates are overridden back to one codegen unit and '
+  - type: text
+    text: opt-level = 3
+    marks:
+    - type: code
+  - type: text
+    text: . A faster build profile is fine for installing; benchmark only with a profile you've checked against release.
+- type: paragraph
+  content:
+  - type: text
+    text: 'Release builds also strip symbols. In Insensical they were a fifth of each binary: the app went from 70 MB to 50
+      and '
+  - type: text
+    text: isc
+    marks:
+    - type: code
+  - type: text
+    text: ' from 37 MB to 28, at the cost of addresses instead of names in a panic''s backtrace.'
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: 12. A default feature pulled in an unused crate family
+- type: paragraph
+  content:
+  - type: text
+    text: Cause.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Quarry uses '
+  - type: text
+    text: arboard
+    marks:
+    - type: code
+  - type: text
+    text: ' for text on the clipboard. Its default '
+  - type: text
+    text: image-data
+    marks:
+    - type: code
+  - type: text
+    text: ' feature brings in the whole '
+  - type: text
+    text: image
+    marks:
+    - type: code
+  - type: text
+    text: ' crate family, which Quarry never uses. '
+  - type: text
+    text: cargo tree -i image -e normal
+    marks:
+    - type: code
+  - type: text
+    text: ' showed the path.'
+- type: paragraph
+  content:
+  - type: text
+    text: Fix.
+    marks:
+    - type: bold
+  - type: text
+    text: ' '
+  - type: text
+    text: default-features = false
+    marks:
+    - type: code
+  - type: text
+    text: ' with only the feature Quarry needs. 157 lines left '
+  - type: text
+    text: Cargo.lock
+    marks:
+    - type: code
+  - type: text
+    text: ', and '
+  - type: text
+    text: cargo test --no-run
+    marks:
+    - type: code
+  - type: text
+    text: ' went from 25 seconds to 13 in a single measurement on a busy machine, so that figure is indicative only.'
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: 13. Parallel builds competed with each other and with the desktop
+- type: paragraph
+  content:
+  - type: text
+    text: Symptom.
+    marks:
+    - type: bold
+  - type: text
+    text: ' With several builds running, the desktop stuttered, and five builds could start around 128 '
+  - type: text
+    text: rustc
+    marks:
+    - type: code
+  - type: text
+    text: ' processes, each wanting a few gigabytes, on a 124 GB machine.'
+- type: paragraph
+  content:
+  - type: text
+    text: Cause.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Each Cargo sizes itself to the whole machine. On 32 threads, one build starts 32 jobs, and so does each of the
+      other four. Nothing ranks a build below the desktop.'
+- type: paragraph
+  content:
+  - type: text
+    text: What was tried first.
+    marks:
+    - type: bold
+  - type: text
+    text: ' A cap: twelve jobs per build and four test threads. It kept the machine stable and left most of it idle whenever
+      a single build was running.'
+- type: paragraph
+  content:
+  - type: text
+    text: Fix.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Three small pieces of machine configuration, so that a single build uses every core, parallel builds share the
+      cores, and the desktop always wins:'
+- type: image
+  attrs:
+    src: /art/posts/the-483-gb-target-folder/build-slice.svg
+    alt: 'Builds below the desktop: every cargo runs in build.slice and takes its jobs from one shared pool of tokens'
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: A systemd slice for builds.
+        marks:
+        - type: bold
+      - type: text
+        text: ' '
+      - type: text
+        text: CPUWeight=10
+        marks:
+        - type: code
+      - type: text
+        text: ', against the default of 100, gives the desktop ten times the share when both want the CPU; when the desktop
+          is idle the build gets everything, because a weight isn''t a limit. '
+      - type: text
+        text: MemoryHigh
+        marks:
+        - type: code
+      - type: text
+        text: ' is a soft ceiling: past it, the kernel reclaims memory from builds and slows them before applications start
+          to swap.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: A wrapper named `cargo`,
+        marks:
+        - type: bold
+      - type: text
+        text: ' ahead of the real one on the '
+      - type: text
+        text: PATH
+        marks:
+        - type: code
+      - type: text
+        text: ', that runs every Cargo as a transient scope inside that slice. A scope rather than a service, so the build
+          stays attached to the terminal, with its output and Ctrl-C as usual. Everything Cargo starts lands in the slice: '
+      - type: text
+        text: rustc
+        marks:
+        - type: code
+      - type: text
+        text: ', the linker, build scripts, nextest, the test binaries and the sccache server.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: A shared jobserver.
+        marks:
+        - type: bold
+      - type: text
+        text: ' Cargo and '
+      - type: text
+        text: rustc
+        marks:
+        - type: code
+      - type: text
+        text: ' speak GNU make''s jobserver protocol: a pipe holds one token per job slot, and a process takes a token before
+          starting a job and returns it afterwards. Normally each Cargo makes its own pool. The wrapper points every Cargo
+          at one shared pool through '
+      - type: text
+        text: CARGO_MAKEFLAGS
+        marks:
+        - type: code
+      - type: text
+        text: ', kept by a small user service. On 32 threads it holds 31 tokens, plus the one slot each Cargo holds by itself,
+          so a build on its own uses all 32 and five builds share them.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'No I/O weight is set. A user''s systemd manager doesn''t get the I/O controller by default, and on an NVMe drive
+      using the '
+  - type: text
+    text: none
+    marks:
+    - type: code
+  - type: text
+    text: ' scheduler it would have no effect. The disk stalls were fixed by writing less (findings 1 and 2), not by priority.'
+- type: paragraph
+  content:
+  - type: text
+    text: What it takes.
+    marks:
+    - type: bold
+  - type: text
+    text: ' All of it lives in your home directory: two systemd user units, two small scripts, and nothing that needs root.
+      It works on any Linux desktop with systemd and cgroups v2, which is every mainstream distribution today ('
+  - type: text
+    text: stat -fc %T /sys/fs/cgroup
+    marks:
+    - type: code
+  - type: text
+    text: ' prints '
+  - type: text
+    text: cgroup2fs
+    marks:
+    - type: code
+  - type: text
+    text: '). The jobserver needs Python 3, and Cargo needs to be recent enough to accept a '
+  - type: text
+    text: 'fifo:'
+    marks:
+    - type: code
+  - type: text
+    text: ' jobserver; I''m on 1.98.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'The slice goes in '
+  - type: text
+    text: ~/.config/systemd/user/build.slice
+    marks:
+    - type: code
+  - type: text
+    text: '. Set '
+  - type: text
+    text: MemoryHigh
+    marks:
+    - type: code
+  - type: text
+    text: ' to about 70 percent of your RAM; mine is 90 GB of 124.'
+- type: codeBlock
+  attrs:
+    language: ini
+  content:
+  - type: text
+    text: '[Unit]
+
+      Description=Cargo builds, below the desktop in CPU and memory
+
+
+      [Slice]
+
+      CPUWeight=10
+
+      MemoryHigh=90G'
+- type: paragraph
+  content:
+  - type: text
+    text: 'The jobserver is a script in '
+  - type: text
+    text: ~/.local/bin/cargo-jobserver
+    marks:
+    - type: code
+  - type: text
+    text: ', made executable. It creates a named pipe in your runtime directory that only you can open and fills it with one
+      token per hardware thread, minus one. The loop at the end matters: a build killed while it holds tokens never gives
+      them back, and without a refill the pool would slowly shrink. Every 30 seconds, if nothing is compiling, it empties
+      the pipe and fills it again. Because it only refills when nothing is building, it can never hand out more tokens than
+      exist.'
+- type: codeBlock
+  attrs:
+    language: python
+  content:
+  - type: text
+    text: "#!/usr/bin/env python3\nimport errno\nimport os\nimport signal\nimport subprocess\nimport sys\nimport time\n\n\
+      PATH = os.path.join(os.environ.get(\"XDG_RUNTIME_DIR\", f\"/run/user/{os.getuid()}\"), \"cargo-jobserver\")\n# Each\
+      \ cargo also holds one implicit slot of its own.\nTOKENS = max(1, (os.cpu_count() or 1) - 1)\n\n\ndef building():\n\
+      \    return subprocess.run([\"pgrep\", \"-u\", str(os.getuid()), \"-x\", \"cargo|rustc\"], capture_output=True).returncode\
+      \ == 0\n\n\ndef refill(fd):\n    while True:\n        try:\n            if not os.read(fd, 4096):\n                break\n\
+      \        except OSError as e:\n            if e.errno == errno.EAGAIN:\n                break\n            raise\n \
+      \   os.write(fd, b\"+\" * TOKENS)\n\n\ndef main():\n    try:\n        os.unlink(PATH)\n    except FileNotFoundError:\n\
+      \        pass\n    os.mkfifo(PATH, 0o600)\n    fd = os.open(PATH, os.O_RDWR | os.O_NONBLOCK)\n\n    def stop(*_):\n\
+      \        try:\n            os.unlink(PATH)\n        finally:\n            sys.exit(0)\n\n    signal.signal(signal.SIGTERM,\
+      \ stop)\n    signal.signal(signal.SIGINT, stop)\n    refill(fd)\n    while True:\n        time.sleep(30)\n        #\
+      \ A build killed while holding slots never returns them; reset only when nothing builds.\n        if not building():\n\
+      \            refill(fd)\n\n\nif __name__ == \"__main__\":\n    main()"
+- type: paragraph
+  content:
+  - type: text
+    text: 'A user service keeps it running, inside the build slice too, and restarts it if it ever dies. It goes in '
+  - type: text
+    text: ~/.config/systemd/user/cargo-jobserver.service
+    marks:
+    - type: code
+  - type: text
+    text: ':'
+- type: codeBlock
+  attrs:
+    language: ini
+  content:
+  - type: text
+    text: '[Unit]
+
+      Description=Shared build-slot pool for every cargo build
+
+
+      [Service]
+
+      Slice=build.slice
+
+      ExecStart=%h/.local/bin/cargo-jobserver
+
+      Restart=always
+
+      RestartSec=2
+
+
+      [Install]
+
+      WantedBy=default.target'
+- type: paragraph
+  content:
+  - type: text
+    text: 'The wrapper is '
+  - type: text
+    text: ~/.local/bin/cargo
+    marks:
+    - type: code
+  - type: text
+    text: ', also executable. It looks for the real '
+  - type: text
+    text: cargo
+    marks:
+    - type: code
+  - type: text
+    text: ' further down your '
+  - type: text
+    text: PATH
+    marks:
+    - type: code
+  - type: text
+    text: ', skipping itself, so it works the same with rustup or a distribution package. If the pool exists, it points Cargo
+      at it, and then it runs Cargo as a scope inside the slice. Two checks keep it out of trouble: when it''s already inside
+      the slice (Cargo calling Cargo from a build script, say) it doesn''t nest another scope, and when there''s no user bus,
+      as in a bare SSH session, it simply runs Cargo as it is.'
+- type: codeBlock
+  attrs:
+    language: sh
+  content:
+  - type: text
+    text: "#!/bin/sh\n# Every cargo runs in build.slice, below the desktop, and draws its jobs from the shared pool.\nself=$(readlink\
+      \ -f \"$0\")\nreal=\nIFS=:\nfor dir in $PATH; do\n  if [ -x \"$dir/cargo\" ] && [ \"$(readlink -f \"$dir/cargo\")\"\
+      \ != \"$self\" ]; then real=\"$dir/cargo\"; break; fi\ndone\nunset IFS\n[ -n \"$real\" ] || { echo \"cargo: no cargo\
+      \ on PATH besides $self\" >&2; exit 127; }\nrun=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}\n[ -p \"$run/cargo-jobserver\"\
+      \ ] && export CARGO_MAKEFLAGS=\"-j --jobserver-auth=fifo:$run/cargo-jobserver\"\nif grep -q '/build\\.slice/' /proc/self/cgroup\
+      \ || [ ! -S \"$run/bus\" ]; then\n  exec \"$real\" \"$@\"\nfi\nexec systemd-run --user --scope --quiet --collect --slice=build.slice\
+      \ -- \"$real\" \"$@\""
+- type: paragraph
+  content:
+  - type: text
+    text: 'The one thing that''s easy to get wrong is the order of your '
+  - type: text
+    text: PATH
+    marks:
+    - type: code
+  - type: text
+    text: '. '
+  - type: text
+    text: ~/.local/bin
+    marks:
+    - type: code
+  - type: text
+    text: ' has to come before the directory holding the real Cargo, or the wrapper never runs. '
+  - type: text
+    text: type -a cargo
+    marks:
+    - type: code
+  - type: text
+    text: ' tells you: the wrapper should be listed first. After that, '
+  - type: text
+    text: systemctl --user daemon-reload
+    marks:
+    - type: code
+  - type: text
+    text: ' and '
+  - type: text
+    text: systemctl --user enable --now cargo-jobserver.service
+    marks:
+    - type: code
+  - type: text
+    text: ' bring it up, and the pool appears as a pipe in your runtime directory:'
+- type: codeBlock
+  attrs:
+    language: sh
+  content:
+  - type: text
+    text: '$ type -a cargo
+
+      cargo is /home/you/.local/bin/cargo
+
+      cargo is /usr/bin/cargo
+
+      $ ls -l "$XDG_RUNTIME_DIR/cargo-jobserver"
+
+      prw------- 1 you you 0 Nov 11 13:21 /run/user/1000/cargo-jobserver'
+- type: paragraph
+  content:
+  - type: text
+    text: 'You can watch it work. Start a build, and in another terminal '
+  - type: text
+    text: systemctl --user status build.slice
+    marks:
+    - type: code
+  - type: text
+    text: ' shows the jobserver and a '
+  - type: text
+    text: run-…scope
+    marks:
+    - type: code
+  - type: text
+    text: ' holding '
+  - type: text
+    text: cargo
+    marks:
+    - type: code
+  - type: text
+    text: ' and its '
+  - type: text
+    text: rustc
+    marks:
+    - type: code
+  - type: text
+    text: ' processes, with the memory ceiling in the header. Start a second build in another checkout while the first is
+      running, and '
+  - type: text
+    text: pgrep -c rustc
+    marks:
+    - type: code
+  - type: text
+    text: ' stays close to your number of cores instead of doubling. Mid-build, the slice looks something like this:'
+- type: codeBlock
+  attrs:
+    language: null
+  content:
+  - type: text
+    text: "● build.slice - Cargo builds, below the desktop in CPU and memory\n     Memory: 6.1G (high: 90G, available: 83.9G)\n\
+      \     CGroup: /user.slice/user-1000.slice/user@1000.service/build.slice\n             ├─cargo-jobserver.service\n  \
+      \           │ └─1165 python3 /home/you/.local/bin/cargo-jobserver\n             └─run-p51283-i51284.scope\n        \
+      \       ├─51290 /usr/bin/cargo build\n               ├─51402 rustc --crate-name serde ..."
+- type: paragraph
+  content:
+  - type: text
+    text: 'Once the pool is there, remove whatever you added before to keep builds in check: '
+  - type: text
+    text: jobs =
+    marks:
+    - type: code
+  - type: text
+    text: ' in a '
+  - type: text
+    text: .cargo/config.toml
+    marks:
+    - type: code
+  - type: text
+    text: ', '
+  - type: text
+    text: CARGO_BUILD_JOBS
+    marks:
+    - type: code
+  - type: text
+    text: ', '
+  - type: text
+    text: -j
+    marks:
+    - type: code
+  - type: text
+    text: ', '
+  - type: text
+    text: --test-threads
+    marks:
+    - type: code
+  - type: text
+    text: ', '
+  - type: text
+    text: RAYON_NUM_THREADS
+    marks:
+    - type: code
+  - type: text
+    text: ', '
+  - type: text
+    text: nice
+    marks:
+    - type: code
+  - type: text
+    text: ', '
+  - type: text
+    text: taskset
+    marks:
+    - type: code
+  - type: text
+    text: . Each of them either bypasses the pool or shrinks it a second time. Keep only the limits a test needs to be correct,
+      like the nextest test group earlier. And if you ever want it gone, disabling the service and deleting the four files
+      puts everything back as it was.
+- type: paragraph
+  content:
+  - type: text
+    text: Limits.
+    marks:
+    - type: bold
+  - type: text
+    text: ' The wrapper covers '
+  - type: text
+    text: cargo
+    marks:
+    - type: code
+  - type: text
+    text: ' run by name only. A tool that calls '
+  - type: text
+    text: /usr/bin/cargo
+    marks:
+    - type: code
+  - type: text
+    text: ' by its full path or runs '
+  - type: text
+    text: rustc
+    marks:
+    - type: code
+  - type: text
+    text: ' itself bypasses it, as does a build inside a container. Agents are instructed to run '
+  - type: text
+    text: cargo
+    marks:
+    - type: code
+  - type: text
+    text: ' by name and never to set '
+  - type: text
+    text: CARGO_MAKEFLAGS
+    marks:
+    - type: code
+  - type: text
+    text: . None of this makes one build faster; it makes several builds share the machine fairly and keeps the desktop usable
+      while they do. The four files live in one stow package in my dotfiles, as machine configuration, outside every repository.
+- type: heading
+  attrs:
+    level: 3
+  content:
+  - type: text
+    text: 14. Every change ran every test
+- type: paragraph
+  content:
+  - type: text
+    text: Symptom.
+    marks:
+    - type: bold
+  - type: text
+    text: ' A small change to a device icon took hours across three agent jobs.'
+- type: paragraph
+  content:
+  - type: text
+    text: Cause.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Each job''s brief said it was done when the browser test suite passed, so every job ran a six-minute browser suite
+      regardless of what it touched.'
+- type: paragraph
+  content:
+  - type: text
+    text: Fix.
+    marks:
+    - type: bold
+  - type: text
+    text: ' A '
+  - type: text
+    text: just test-changed
+    marks:
+    - type: code
+  - type: text
+    text: ' recipe runs nextest only for crates affected by a change, using nextest''s '
+  - type: text
+    text: rdeps()
+    marks:
+    - type: code
+  - type: text
+    text: ' filter, and falls back to everything when '
+  - type: text
+    text: Cargo.toml
+    marks:
+    - type: code
+  - type: text
+    text: ', the lock file or the toolchain changes. The standing rule is to run the tests of the part that changed during
+      the work, and the whole suite once, when the parts are put together.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: What was considered and not adopted
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: '`split-debuginfo = "unpacked"`.'
+        marks:
+        - type: bold
+      - type: text
+        text: ' Moves debug information out of binaries; not adopted because its interaction with sccache wasn''t verified.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: A faster linker (mold, wild).
+        marks:
+        - type: bold
+      - type: text
+        text: ' Faster links, same output size. '
+      - type: text
+        text: rust-lld
+        marks:
+        - type: code
+      - type: text
+        text: ' is already the default on x86-64 Linux since Rust 1.90, and the problem was bytes written, not link time.
+          Darwan uses '
+      - type: text
+        text: lld
+        marks:
+        - type: code
+      - type: text
+        text: ', but for correctness: Qt binaries fail to link with GNU '
+      - type: text
+        text: ld.bfd
+        marks:
+        - type: code
+      - type: text
+        text: .
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: A shared target folder, or a global `build.build-dir`.
+        marks:
+        - type: bold
+      - type: text
+        text: ' The first is finding 5. The second works on Cargo 1.98 but was declined in favour of lower snapshot retention.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Throttling build I/O.
+        marks:
+        - type: bold
+      - type: text
+        text: ' Not effective with the NVMe '
+      - type: text
+        text: none
+        marks:
+        - type: code
+      - type: text
+        text: ' scheduler, and unnecessary once builds wrote less.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Per-project job caps.
+        marks:
+        - type: bold
+      - type: text
+        text: ' Replaced by the shared jobserver in finding 13.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Where things stand
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: 'easyshot: 56 GB in '
+      - type: text
+        text: target/debug
+        marks:
+        - type: code
+      - type: text
+        text: ' after a week of feature-set and example copies, with the sweep capping it at 80 GB.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: 'Insensical: 31 GB. Sysman: about 3 GB in debug. Darwan and Quarry: about 4 to 5 GB each, debug and release
+          builds together.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: 'Insensical''s Rust suite: about a minute and a half on 32 cores, down from 254 seconds.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'Two items remain open. Quarry''s '
+  - type: text
+    text: target/
+    marks:
+    - type: code
+  - type: text
+    text: ' has grown back above its post-fix 1.7 GB through the same accumulation as finding 4, and the window-test hang
+      rate hasn''t been re-measured since the move to nextest.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Recommendations
+- type: paragraph
+  content:
+  - type: text
+    text: 'For a Rust workspace with a large dependency graph, this is the block I''d start from:'
+- type: codeBlock
+  attrs:
+    language: toml
+  content:
+  - type: text
+    text: '[profile.dev]
+
+      debug = "line-tables-only"
+
+
+      [profile.dev.package."*"]
+
+      opt-level = 2
+
+      debug = false
+
+
+      [profile.dbg]
+
+      inherits = "dev"
+
+      debug = "full"'
+- type: paragraph
+  content:
+  - type: text
+    text: 'And then:'
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: 'Measure first:'
+        marks:
+        - type: bold
+      - type: text
+        text: ' '
+      - type: text
+        text: du
+        marks:
+        - type: code
+      - type: text
+        text: ', '
+      - type: text
+        text: size -A
+        marks:
+        - type: code
+      - type: text
+        text: ', '
+      - type: text
+        text: /proc/pressure/io
+        marks:
+        - type: code
+      - type: text
+        text: ', '
+      - type: text
+        text: cargo tree -i
+        marks:
+        - type: code
+      - type: text
+        text: .
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Use one integration-test binary per crate
+        marks:
+        - type: bold
+      - type: text
+        text: ' when there are many test files.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Clean `target/` on a schedule,
+        marks:
+        - type: bold
+      - type: text
+        text: ' and account for snapshots and TRIM when you do.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Never share a target folder
+        marks:
+        - type: bold
+      - type: text
+        text: ' between checkouts; share sccache instead.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Measure `incremental = false`
+        marks:
+        - type: bold
+      - type: text
+        text: ' for your project before adopting it.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: 'Run tests with nextest:'
+        marks:
+        - type: bold
+      - type: text
+        text: ' a per-test timeout, a retry for known hangs, test groups for shared resources, and the slowest tests first.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Keep timing tests out of the everyday run.
+        marks:
+        - type: bold
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Make tests clean up after themselves,
+        marks:
+        - type: bold
+      - type: text
+        text: ' particularly in a memory-backed '
+      - type: text
+        text: /tmp
+        marks:
+        - type: code
+      - type: text
+        text: .
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Keep a build profile per purpose.
+        marks:
+        - type: bold
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Put builds below the desktop,
+        marks:
+        - type: bold
+      - type: text
+        text: ' and run only the tests a change can affect.'
+- type: paragraph
+  content:
+  - type: text
+    text: None of these are novel. Most are what I'd check on any server running out of disk. With Rust, the build is what
+      fills it.

@@ -60,9 +60,20 @@ def list_items(block, marker):
     return items
 
 
+def blocks(markdown):
+    """Blocks are separated by blank lines, except inside a ``` fence, which may hold blank lines of its own."""
+    found = []
+    for part in re.split(r'(^```.*?^```[ \t]*$)', markdown.strip(), flags=re.M | re.S):
+        if part.startswith('```'):
+            found.append(part)
+        else:
+            found.extend(b for b in re.split(r'\n\s*\n', part) if b.strip())
+    return found
+
+
 def rich(markdown):
     doc = []
-    for block in re.split(r'\n\s*\n', markdown.strip()):
+    for block in blocks(markdown):
         block = block.strip('\n')
         if block.startswith('```'):
             lines = block.split('\n')

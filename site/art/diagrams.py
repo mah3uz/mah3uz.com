@@ -386,7 +386,282 @@ def diagrams(frame, window, bars):
             b.append(text(rx + 24, y + 42, c, fill=MIST))
         return frame('dg-pt', ''.join(b), glow=(400, 520))
 
+    # ------------------------------------------------------------ the-483-gb-target-folder
+    def bar(x, y, w, h, color, op=0.85, rx=12):
+        return f'<rect x="{x:.0f}" y="{y:.0f}" width="{max(w, 2):.0f}" height="{h}" rx="{min(rx, w / 2):.0f}" fill="{color}" fill-opacity="{op}"/>'
+
+    def range_bar(x, y, w, h, color):
+        return (f'<rect x="{x:.0f}" y="{y:.0f}" width="{w:.0f}" height="{h}" rx="12" fill="none" '
+                f'stroke="{color}" stroke-width="2" stroke-dasharray="10 8"/>')
+
+    def where_it_went():
+        b = [title('Where 483 GB went')]
+        x0, x1, y, h = 110, 1490, 360, 140
+        s = (x1 - x0) / 483
+        b.append(text(x0, y - 30, 'target/debug', mono=True, weight=700))
+        b.append(text(x1, y - 30, '483 GB', mono=True, weight=700, fill=CORAL, anchor='end'))
+        x = x0
+        for name, gb, color, ink in [('deps', 376, CORAL, ABYSS), ('examples', 65, TEAL, ABYSS),
+                                     ('incremental', 43, SEA, FOAM)]:
+            w = gb * s
+            b.append(bar(x, y, w - 4, h, color, op=0.9))
+            b.append(text(round(x + w / 2), y + h / 2 + 11, f'{gb} GB', mono=True, weight=700, fill=ink, anchor='middle'))
+            if name == 'incremental':
+                b.append(text(x1, y + h + 92, name, size=32, weight=600, fill=MIST, anchor='end'))
+            else:
+                b.append(text(round(x), y + h + 48, name, size=32, weight=600, fill=MIST))
+            x += w
+        b.append(text(x0, 690, '136 integration-test binaries, each 1–1.7 GB,', size=32, fill=FOAM))
+        b.append(text(x0, 736, 'about half of it debug info', fill=MIST))
+        return frame('dg-ww', ''.join(b), glow=(500, 420))
+
+    def before_after():
+        b = [title('target/ before and after the profile change')]
+        data = [('easyshot', 483, '483 GB', 'before', 56, '56 GB', 'a week later'),
+                ('Insensical', 100, '100+ GB', '', 31, '31 GB', ''),
+                ('Sysman', 22, '22 GB', '', 3, '3 GB', ''),
+                ('Darwan', 4.1, '4.1 GB', '', 1.9, '1.9 GB', ''),
+                ('Quarry', 3.7, '3.7 GB', '', 1.7, '1.7 GB', '')]
+        x0, x1 = 330, 1240
+        px = lambda gb: x0 + (x1 - x0) * math.log10(gb) / 3
+        top, pitch, h, gap = 214, 116, 38, 8
+        axis = top + 4 * pitch + 2 * h + gap + 28
+        for gb in (1, 10, 100, 1000):
+            b.append(f'<path d="M{px(gb):.0f} {top - 16}V{axis}" stroke="{MINT}" stroke-opacity="0.12" stroke-width="2"/>')
+            b.append(text(round(px(gb)), axis + 42, f'{gb} GB', mono=True, fill=MIST, anchor='middle'))
+        b.append(f'<path d="M{x0} {axis}H{x1}" stroke="{MIST}" stroke-opacity="0.6" stroke-width="2"/>')
+        for i, (name, before, bl, bnote, after, al, anote) in enumerate(data):
+            y = top + i * pitch
+            b.append(text(290, y + h + gap // 2 + 11, name, size=32, weight=600, anchor='end'))
+            for yy, gb, label, note, color in [(y, before, bl, bnote, CORAL), (y + h + gap, after, al, anote, MINT)]:
+                end = px(gb)
+                b.append(bar(x0, yy, end - x0, h, color, rx=10))
+                if label.endswith('+ GB'):
+                    end = px(gb * 1.5)
+                    b.append(range_bar(px(gb) + 4, yy, end - px(gb) - 4, h, color))
+                b.append(text(round(end) + 16, yy + h / 2 + 11, label, mono=True, weight=700, fill=color))
+                if note:
+                    b.append(text(round(end) + 16 + len(label) * 18 + 16, yy + h / 2 + 11, note, fill=MIST))
+        return frame('dg-ba', ''.join(b), glow=(700, 420))
+
+    def binary_anatomy():
+        b = [title('Half of every test binary was debug info')]
+        x0 = 110
+        s = (1250 - x0) / 640
+        h = 50
+        groups = [('Sysman · app binary', 540, 640, '540–640 MB', None, 44),
+                  ('Darwan · largest test binary', 283, 283, '283 MB', 0.49, 91),
+                  ('Quarry · largest binary', 262, 262, '262 MB', None, 67)]
+        for i, (name, lo, hi, label, debug, after) in enumerate(groups):
+            y = 236 + i * 190
+            b.append(text(x0, y, name, size=32, weight=600))
+            by = y + 22
+            if debug:
+                code = lo * (1 - debug)
+                b.append(bar(x0, by, code * s - 4, h, MIST, op=0.75))
+                b.append(text(x0 + 20, by + h / 2 + 11, 'code', fill=ABYSS, weight=600))
+                b.append(bar(x0 + code * s, by, lo * debug * s, h, CORAL, op=0.9))
+                b.append(text(round(x0 + code * s) + 20, by + h / 2 + 11, f'debug info {debug:.0%}', fill=ABYSS, weight=600))
+            else:
+                b.append(bar(x0, by, lo * s, h, CORAL, op=0.9))
+            if hi > lo:
+                b.append(range_bar(x0 + lo * s + 4, by, (hi - lo) * s - 4, h, CORAL))
+            b.append(text(round(x0 + hi * s) + 16, by + h / 2 + 11, label, mono=True, weight=700, fill=CORAL))
+            ay = by + h + 10
+            b.append(bar(x0, ay, after * s, h, MINT, op=0.9))
+            b.append(text(round(x0 + after * s) + 16, ay + h / 2 + 11, f'{after} MB', mono=True, weight=700, fill=MINT))
+        b.append(text(x0, 846, 'debug = "line-tables-only"', mono=True, fill=MIST))
+        b.append(text(x0, 890, '[profile.dev.package."*"] debug = false', mono=True, fill=MIST))
+        return frame('dg-an', ''.join(b), glow=(600, 460))
+
+    def stale_copies():
+        b = [title('Cargo never throws anything away')]
+        x0, y0 = 110, 214
+        for c in range(13):
+            for r in range(49):
+                b.append(bar(x0 + c * 50, y0 + r * 12.5, 40, 9, MINT if r == 0 else MIST, op=0.95 if r == 0 else 0.2, rx=3))
+        b.append(text(772, y0 + 12, 'newest', fill=MINT, weight=600))
+        x = 880
+        b.append(text(x, 300, '13 examples × 49 hashed copies', size=32, weight=600))
+        b.append(text(x, 356, '≈ 22 GB', mono=True, size=40, weight=700, fill=CORAL))
+        for k, (n, cols) in enumerate([(171, 19), (162, 18)]):
+            gx = x + k * (19 * 15 + 40)
+            for j in range(n):
+                b.append(bar(gx + (j % cols) * 15, 470 + (j // cols) * 13, 11, 8, MIST, op=0.35, rx=2))
+            b.append(text(gx, 640, str(n), mono=True, weight=700, fill=FOAM))
+        b.append(text(x, 712, '171 + 162 stale test binaries', size=32, weight=600))
+        b.append(text(x, 768, '≈ 35 GB', mono=True, size=40, weight=700, fill=CORAL))
+        return frame('dg-sc', ''.join(b), glow=(450, 520))
+
+    def suite_time():
+        b = [title('The same 1,878 tests')]
+        x0 = 110
+        s = (1300 - x0) / 254
+        rows = [('cargo test, binaries one after another', 254, '254 s', CORAL),
+                ('nextest, 12 threads, name order', 161.7, '161.7 s', TEAL),
+                ('nextest, slowest first', 134.0, '134.0 s', MINT)]
+        axis = 690
+        for v in range(0, 241, 60):
+            b.append(f'<path d="M{x0 + v * s:.0f} 214V{axis}" stroke="{MINT}" stroke-opacity="0.12" stroke-width="2"/>')
+            b.append(text(round(x0 + v * s), axis + 42, f'{v} s', mono=True, fill=MIST, anchor='middle'))
+        b.append(f'<path d="M{x0} {axis}H1320" stroke="{MIST}" stroke-opacity="0.6" stroke-width="2"/>')
+        for i, (label, sec, value, color) in enumerate(rows):
+            y = 240 + i * 156
+            b.append(text(x0, y, label, size=32, weight=600))
+            b.append(bar(x0, y + 22, sec * s, 64, color, op=0.85))
+            b.append(text(round(x0 + sec * s) + 18, y + 66, value, mono=True, weight=700, fill=FOAM if color == TEAL else color))
+        b.append(text(x0, 846, '1,584 s of test time in total', fill=MIST))
+        return frame('dg-su', ''.join(b), glow=(600, 420))
+
+    def slowest_first():
+        b = [title('Start the long ones first')]
+        # Tenths of a second, in name order; four threads dispatched greedily reproduce both measured end times.
+        jobs = [196, 77, 144, 195, 186, 192, 164, 197, 157, 219, 122, 216, 125, 140, 122, 96, 144, 220, 101, 172, 93, 88,
+                190, 186, 215, 330, 130, 162, 178, 460, 129]
+
+        def schedule(order):
+            free, out = [0] * 4, []
+            for d in order:
+                lane = min(range(4), key=lambda k: (free[k], k))
+                out.append((lane, free[lane], d))
+                free[lane] += d
+            return out, max(free)
+
+        w = 630
+        s = w / 1700
+        for x, heading, order, color in [(110, 'name order', jobs, CORAL),
+                                         (860, 'slowest first', sorted(jobs, reverse=True), MINT)]:
+            b.append(text(x, 236, heading, size=34, weight=700, fill=MINT if color == MINT else FOAM))
+            placed, end = schedule(order)
+            for lane in range(4):
+                b.append(bar(x, 290 + lane * 76, w, 62, MIST, op=0.05, rx=10))
+            for lane, start, d in placed:
+                long = d >= 330
+                bx, by = x + start * s, 290 + lane * 76
+                b.append(bar(bx + 1.5, by, d * s - 3, 62, TEAL if long else MIST, op=0.9 if long else 0.32, rx=8))
+                if long:
+                    b.append(text(round(bx + d * s / 2), by + 42, f'{d // 10} s', mono=True, weight=700, fill=ABYSS,
+                                  anchor='middle'))
+            ex = x + end * s
+            b.append(f'<path d="M{ex:.0f} 270V612" stroke="{color}" stroke-width="4" stroke-linecap="round"/>')
+            b.append(text(round(ex), 656, f'{end / 10:.1f} s', mono=True, weight=700, fill=color, anchor='middle'))
+        b.append(text(110, 770, 'Each row is a thread: four drawn here, twelve in the measured runs.', fill=MIST))
+        return frame('dg-sf', ''.join(b), glow=(800, 420))
+
+    def deps_opt():
+        b = [title('Optimise the dependencies, not your code')]
+        x0 = 110
+        s = (1300 - x0) / 60
+        axis = 580
+        for v in range(0, 61, 10):
+            b.append(f'<path d="M{x0 + v * s:.0f} 214V{axis}" stroke="{MINT}" stroke-opacity="0.12" stroke-width="2"/>')
+            b.append(text(round(x0 + v * s), axis + 42, f'{v} s', mono=True, fill=MIST, anchor='middle'))
+        b.append(f'<path d="M{x0} {axis}H1320" stroke="{MIST}" stroke-opacity="0.6" stroke-width="2"/>')
+        for i, (label, sec, color) in enumerate([('one window test, dependencies at opt-level 0', 58, CORAL),
+                                                 ('opt-level 2', 5, MINT)]):
+            y = 250 + i * 170
+            b.append(text(x0, y, label, size=32, weight=600))
+            b.append(bar(x0, y + 22, sec * s, 70, color, op=0.85))
+            b.append(text(round(x0 + sec * s) + 18, y + 69, f'{sec} s', mono=True, weight=700, fill=color))
+        b.append(text(x0, 730, '[profile.dev.package."*"] opt-level = 2', mono=True, fill=MIST))
+        return frame('dg-do', ''.join(b), glow=(500, 420))
+
+    def profiles():
+        b = [title('One profile per job')]
+        cards = [('dev', ['line tables only', 'deps: opt-level 2', 'deps: no debug info']),
+                 ('dbg', ['inherits dev', 'full debug info,', 'when you need', 'a debugger']),
+                 ('page/fast', ['inherits release', 'no LTO', '16 codegen units', '=36 s vs 126 s']),
+                 ('release', ['thin LTO', '1 codegen unit', 'stripped', '=70 → 50 MB'])]
+        w, gap, y = 324, 28, 240
+        for i, (name, lines) in enumerate(cards):
+            x = 110 + i * (w + gap)
+            b.append(rect(x, y, w, 370, so=0.35, rx=22))
+            b.append(text(x + 28, y + 64, name, mono=True, size=36, weight=700, fill=MINT))
+            b.append(f'<path d="M{x} {y + 96}H{x + w}" stroke="{MINT}" stroke-opacity="0.2" stroke-width="2"/>')
+            for k, line in enumerate(lines):
+                if line.startswith('='):
+                    b.append(text(x + 28, y + 156 + k * 52, line[1:], mono=True, weight=700, fill=FOAM))
+                else:
+                    b.append(text(x + 28, y + 156 + k * 52, line, fill=FOAM if k == 0 else MIST))
+        return frame('dg-pf', ''.join(b), glow=(800, 460))
+
+    def io_pressure():
+        b = [title("It wasn't the CPU")]
+        base, py = 760, 12.5
+        for v in range(0, 41, 10):
+            y = base - v * py
+            b.append(f'<path d="M260 {y}H1080" stroke="{MINT}" stroke-opacity="{0.6 if v == 0 else 0.12}" stroke-width="2"/>')
+            b.append(text(236, y + 11, f'{v}%', mono=True, fill=MIST, anchor='end'))
+        b.append(text(110, 216, 'pressure stall, "full", during a build', fill=MIST))
+        for i, (name, lo, hi, label, color) in enumerate([('io', 21, 27, '21–27%', CORAL), ('cpu', 0, 0, '≈ 0', MIST),
+                                                          ('memory', 0, 0, '≈ 0', MIST)]):
+            x = 320 + i * 280
+            if hi:
+                b.append(bar(x, base - lo * py, 180, lo * py, color, op=0.85, rx=10))
+                b.append(range_bar(x, base - hi * py, 180, (hi - lo) * py - 4, color))
+            else:
+                b.append(bar(x, base - 6, 180, 6, color, op=0.7, rx=3))
+            b.append(text(x + 90, base - max(hi, 0) * py - 22, label, mono=True, size=32, weight=700, fill=color,
+                          anchor='middle'))
+            b.append(text(x + 90, base + 48, name, mono=True, size=32, weight=700, anchor='middle'))
+        b.append(text(1150, 330, '"full": the share of time', fill=FOAM))
+        b.append(text(1150, 372, 'every non-idle task', fill=MIST))
+        b.append(text(1150, 414, 'was stalled at once', fill=MIST))
+        b.append(text(110, 890, 'links wrote ~1.3 GB every 2 s', fill=MIST))
+        b.append(text(510, 890, '· /proc/pressure/io', mono=True, fill=MIST))
+        return frame('dg-io', ''.join(b), glow=(500, 520))
+
+    def build_slice():
+        b = [title('Builds below the desktop')]
+
+        def chip(x, y, label, mono=False):
+            w = len(label) * (18 if mono else 15) + 40
+            b.append(rect(x, y, w, 52, so=0.3, rx=14))
+            b.append(text(x + w / 2, y + 37, label, mono=mono, fill=MIST if mono else FOAM, anchor='middle'))
+            return x + w + 12
+
+        b.append(rect(110, 220, 350, 400, so=0.35, rx=22))
+        b.append(text(140, 272, 'desktop.slice /', mono=True, weight=700))
+        b.append(text(140, 312, 'app.slice', mono=True, weight=700))
+        b.append(text(140, 360, 'CPUWeight=100', mono=True, fill=MINT))
+        b.append(f'<path d="M110 386H460" stroke="{MINT}" stroke-opacity="0.2" stroke-width="2"/>')
+        for k, app in enumerate(['browser', 'terminal', 'editor']):
+            chip(140, 412 + k * 64, app)
+        b.append(rect(540, 220, 950, 410, so=0.6, rx=22))
+        b.append(text(570, 272, 'build.slice', mono=True, size=34, weight=700))
+        b.append(text(1460, 272, 'CPUWeight=10 · MemoryHigh=90G', mono=True, fill=MINT, anchor='end'))
+        tools = [['rustc', 'rustc', 'linker'], ['rustc', 'nextest'], ['rustc', 'linker']]
+        tube_y = 700
+        for k, chips in enumerate(tools):
+            y = 300 + k * 108
+            b.append(rect(640, y, 820, 92, so=0.3, rx=16))
+            b.append(text(670, y + 40, 'cargo (scope)', mono=True, weight=700))
+            b.append(text(670, y + 78, f'worktree {k + 1}', fill=MIST))
+            x = 920
+            for c in chips:
+                x = chip(x, y + 20, c, mono=True)
+            lane = 572 + k * 20
+            b.append(arrow([(640, y + 46), (lane, y + 46), (lane, tube_y)], color=TEAL, width=3, head=14))
+        b.append(text(640, 676, 'CARGO_MAKEFLAGS', mono=True, fill=MIST))
+        b.append(f'<rect x="540" y="{tube_y}" width="760" height="76" rx="38" fill="{BOX}" stroke="{TEAL}" stroke-opacity="0.7" '
+                 f'stroke-width="3"/><ellipse cx="1262" cy="{tube_y + 38}" rx="16" ry="34" fill="none" stroke="{TEAL}" '
+                 f'stroke-opacity="0.5" stroke-width="3"/>')
+        b.append(''.join(f'<circle cx="{588 + i * 21.5:.0f}" cy="{tube_y + 38}" r="8" fill="{MINT}"/>' for i in range(31)))
+        b.append(text(540, tube_y + 122, 'cargo-jobserver · 31 tokens', mono=True, weight=700))
+        b.append(text(110, 890, 'a lone build uses all 32; five builds share them', mono=True, fill=MIST))
+        return frame('dg-bs', ''.join(b), glow=(1000, 460))
+
     return {
+        'posts/the-483-gb-target-folder/where-it-went': where_it_went,
+        'posts/the-483-gb-target-folder/before-after': before_after,
+        'posts/the-483-gb-target-folder/binary-anatomy': binary_anatomy,
+        'posts/the-483-gb-target-folder/stale-copies': stale_copies,
+        'posts/the-483-gb-target-folder/suite-time': suite_time,
+        'posts/the-483-gb-target-folder/slowest-first': slowest_first,
+        'posts/the-483-gb-target-folder/deps-opt': deps_opt,
+        'posts/the-483-gb-target-folder/profiles': profiles,
+        'posts/the-483-gb-target-folder/io-pressure': io_pressure,
+        'posts/the-483-gb-target-folder/build-slice': build_slice,
         'posts/recording-a-window-you-cannot-see/pipeline': pipeline,
         'posts/recording-a-window-you-cannot-see/supervision': supervision,
         'posts/the-compositor-is-still-drawing-it/settle': settle,

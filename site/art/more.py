@@ -670,6 +670,78 @@ def arts(frame, window, bars):
                          f'<rect x="1060" y="{460 + k * 34}" width="{[250, 140, 200][k]}" height="14" rx="7" fill="{[MINT, TEAL, SEA][k]}"/>' for k in range(3)))
         return frame(u, ''.join(b), glow=(800, 560))
 
+    def target_folder():
+        u = 'tf'
+        b = []
+        random.seed(483)
+        fills = [MIST, SEA, TEAL, MIST, DEEP, MINT]
+
+        def slab(x, y, w, angle=0, op=1.0, k=0):
+            bits = ''.join(f'<rect x="{18 + i * 26}" y="7" width="{14 if (i * 7 + k) % 3 else 4}" height="7" rx="2" '
+                           f'fill="{ABYSS}" fill-opacity="0.55"/>' for i in range(int((w - 36) / 26)))
+            return (f'<g transform="translate({x:.0f} {y:.0f}) rotate({angle:.1f} {w / 2:.0f} 11)" opacity="{op:.2f}">'
+                    f'<rect width="{w:.0f}" height="22" rx="6" fill="{fills[k % len(fills)]}" fill-opacity="0.85"/>{bits}</g>')
+
+        # the folder's back, with its tab
+        b.append(f'<path d="M230 330V318Q230 290 258 290H446Q462 290 472 304L488 330H822Q850 330 850 358V772Q850 800 822 800H258'
+                 f'Q230 800 230 772Z" fill="#0E2B33" stroke="{MINT}" stroke-opacity="0.35" stroke-width="2"/>')
+        # dozens of build artefacts, heaped past the rim
+        for r in range(24):
+            y = 772 - r * 26
+            lean = max(0, r - 14)
+            w = random.randint(430, 540)
+            x = 540 - w / 2 + random.uniform(-14, 14) + lean * 6
+            b.append(slab(x, y, w, angle=random.uniform(-1, 1) * (0.6 + lean * 0.9), k=r))
+        # spilling over the right edge and down to the floor
+        for x, y, w, a in [(790, 226, 240, 16), (880, 330, 170, 34), (920, 460, 150, 56), (940, 600, 140, 24)]:
+            b.append(slab(x, y, w, angle=a, k=int(a)))
+        for i, (x, y, w, a) in enumerate([(870, 776, 220, -3), (900, 750, 190, 4), (930, 724, 150, -6)]):
+            b.append(slab(x, y, w, angle=a, k=i + 2))
+        # the folder's front
+        b.append(f'<path d="M262 510H880Q902 510 896 532L852 778Q848 800 826 800H254Q232 800 236 778L240 532Q242 510 262 510Z" '
+                 f'fill="url(#{u}-tile)"/>')
+        b.append(f'<text x="290" y="600" font-family="ui-monospace,Menlo,monospace" font-size="48" font-weight="700" '
+                 f'fill="{ABYSS}">target/</text>')
+        b.append(f'<rect x="292" y="740" width="300" height="16" rx="8" fill="{ABYSS}" fill-opacity="0.45"/>')
+        # the disk, nearly full
+        cx, cy, r = 1210, 420, 170
+
+        def at(v, rad=r):
+            t = math.pi * (1 - v)
+            return cx + rad * math.cos(t), cy - rad * math.sin(t)
+
+        b.append(f'<defs><linearGradient id="{u}-g" x1="{cx - r}" y1="0" x2="{cx + r}" y2="0" gradientUnits="userSpaceOnUse">'
+                 f'<stop offset="0" stop-color="{MINT}"/><stop offset="0.6" stop-color="{TEAL}"/><stop offset="0.85" stop-color="#FF7A6B"/>'
+                 f'</linearGradient></defs>')
+        b.append(f'<path d="M{cx - r} {cy}A{r} {r} 0 0 1 {cx + r} {cy}" fill="none" stroke="{MIST}" stroke-opacity="0.14" '
+                 f'stroke-width="34" stroke-linecap="round"/>')
+        ex, ey = at(0.94)
+        b.append(f'<path d="M{cx - r} {cy}A{r} {r} 0 0 1 {ex:.0f} {ey:.0f}" fill="none" stroke="url(#{u}-g)" stroke-width="34" '
+                 f'stroke-linecap="round"/>')
+        for i in range(11):
+            (x1, y1), (x2, y2) = at(i / 10, r + 30), at(i / 10, r + 46)
+            b.append(f'<path d="M{x1:.0f} {y1:.0f}L{x2:.0f} {y2:.0f}" stroke="{"#FF7A6B" if i >= 9 else MIST}" '
+                     f'stroke-opacity="{0.9 if i >= 9 else 0.4}" stroke-width="5" stroke-linecap="round"/>')
+        nx, ny = at(0.96, r - 40)
+        b.append(f'<path d="M{cx} {cy}L{nx:.0f} {ny:.0f}" stroke="{FOAM}" stroke-width="9" stroke-linecap="round"/>'
+                 f'<circle cx="{cx}" cy="{cy}" r="22" fill="{FOAM}"/><circle cx="{cx}" cy="{cy}" r="9" fill="{ABYSS}"/>')
+        b.append(f'<rect x="{cx - 130}" y="{cy + 50}" width="260" height="64" rx="16" fill="#0E2B33" stroke="{MINT}" '
+                 f'stroke-opacity="0.35" stroke-width="2"/><rect x="{cx - 104}" y="{cy + 76}" width="140" height="12" rx="6" '
+                 f'fill="{MIST}" fill-opacity="0.4"/><circle cx="{cx + 94}" cy="{cy + 82}" r="10" fill="#FF7A6B"/>')
+        # a broom sweeping a few of them away
+        b.append(f'<path d="M1010 850Q1150 860 1250 720" fill="none" stroke="{MINT}" stroke-opacity="0.6" stroke-width="6" '
+                 f'stroke-linecap="round" stroke-dasharray="2 16"/>')
+        for i, (x, y, op) in enumerate([(1150, 724, 0.45), (1200, 664, 0.25), (1240, 606, 0.1)]):
+            b.append(slab(x, y, 100, angle=-24 - i * 8, op=op, k=i + 1))
+        ex, ey, dx, dy = 1110, 736, -0.632, 0.775
+        corner = lambda t, s: f'{ex + t * dx + s * dy:.0f} {ey + t * dy - s * dx:.0f}'
+        b.append(f'<path d="M1255 558L{ex} {ey}" stroke="{FOAM}" stroke-width="12" stroke-linecap="round"/>')
+        b.append(f'<path d="M{corner(-6, -32)}L{corner(-6, 32)}L{corner(84, 58)}L{corner(84, -58)}Z" fill="url(#{u}-tile)" '
+                 f'stroke-linejoin="round"/>'
+                 + ''.join(f'<path d="M{corner(40, s)}L{corner(78, s * 1.5)}" stroke="{ABYSS}" stroke-opacity="0.45" '
+                           f'stroke-width="4" stroke-linecap="round"/>' for s in (-30, -10, 10, 30)))
+        return frame(u, ''.join(b), glow=(620, 480))
+
     return {
         'tide': tide,
         'earport': earport,
@@ -694,5 +766,6 @@ def arts(frame, window, bars):
         'posts/terminal-engine': terminal_engine,
         'posts/daemon-alive': daemon_alive,
         'posts/gpui-three-apps': gpui_three_apps,
+        'posts/target-folder': target_folder,
         'posts/default': default_post,
     }
