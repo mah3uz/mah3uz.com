@@ -43,7 +43,7 @@ tabs:
           - handle: year
             field: { type: text, width: 50 }
           - handle: logo
-            field: { type: text, instructions: "The product's own logo, such as /logos/quarry.svg. Without one, the monogram is drawn instead." }
+            field: { type: assets, max_files: 1, folder: logos, instructions: "The product's own logo. Without one, the monogram is drawn instead." }
           - handle: monogram
             field: { type: text, width: 50, instructions: "One or two characters drawn on the project's tile." }
           - handle: accent
@@ -55,7 +55,7 @@ tabs:
           - handle: highlights
             field: { type: list, instructions: "Three or four short facts shown beside the write-up." }
           - handle: cover
-            field: { type: text, instructions: "The cover art's address, such as /art/quarry.svg." }
+            field: { type: assets, max_files: 1, folder: art, instructions: "The cover art." }
           - handle: website
             field: { type: text, input_type: url }
           - handle: repository

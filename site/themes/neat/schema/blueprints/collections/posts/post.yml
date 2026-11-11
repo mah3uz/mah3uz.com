@@ -13,10 +13,6 @@ tabs:
           - handle: topics
             field: { type: terms, taxonomies: [topics], listable: true }
           - import: nibble::featured_image
-          - handle: art
-            field:
-              type: text
-              instructions: 'The post banner artwork, such as /art/posts/sqlite-is-enough.svg.'
   seo:
     display: SEO
     sections:

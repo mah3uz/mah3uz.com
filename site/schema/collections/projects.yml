@@ -12,4 +12,3 @@ sitemap:
   enabled: true
   priority: 0.8
   changefreq: monthly
-files: projects

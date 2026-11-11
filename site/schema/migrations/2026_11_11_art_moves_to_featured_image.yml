@@ -1,0 +1,5 @@
+# Banner artwork is now a library asset in Nibble's featured_image field, set by the content package. The old `art`
+# paths go; re-import the package with --mode=update to link every page and post to its asset.
+operations:
+  - remove_field: { collection: pages, field: art }
+  - remove_field: { collection: posts, field: art }

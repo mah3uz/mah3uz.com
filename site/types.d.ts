@@ -31,7 +31,7 @@ export interface PagesPage extends RecordBase {
   content: string | null
   blocks: Array<{ id: string; type: string } & Record<string, unknown>>
   cards: Array<Record<string, unknown> & { id: string }>
-  art: string | null
+  featured_image: AssetValue | null
   tools: Array<Record<string, unknown> & { id: string }>
   milestones: Array<Record<string, unknown> & { id: string }>
   seo: { title: string | null; exact_title: boolean; description: string | null; canonical: string | null; og_image: AssetValue | null; noindex: boolean; nositemap: boolean; schema_type: string | null; json_ld_overrides: Record<string, unknown> | null }
@@ -67,7 +67,6 @@ export interface PostsPost extends RecordBase {
   body: string | null
   topics: TermSummary[]
   featured_image: AssetValue | null
-  art: string | null
   seo: { title: string | null; exact_title: boolean; description: string | null; canonical: string | null; og_image: AssetValue | null; noindex: boolean; nositemap: boolean; schema_type: string | null; json_ld_overrides: Record<string, unknown> | null }
 }
 
@@ -85,13 +84,13 @@ export interface ProjectsProject extends RecordBase {
   stage: { value: string | null; label: string | null }
   kind: string | null
   year: string | null
-  logo: string | null
+  logo: AssetValue | null
   monogram: string | null
   accent: string | null
   featured: boolean
   stack: string[]
   highlights: string[]
-  cover: string | null
+  cover: AssetValue | null
   website: string | null
   repository: string | null
   seo: { title: string | null; exact_title: boolean; description: string | null; canonical: string | null; og_image: AssetValue | null; noindex: boolean; nositemap: boolean; schema_type: string | null; json_ld_overrides: Record<string, unknown> | null }
@@ -160,7 +159,7 @@ export interface ViewProps {
   }
   'home': {
     projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'description' | 'stage' | 'kind' | 'year' | 'logo' | 'monogram' | 'accent' | 'featured' | 'stack' | 'cover' | 'website' | 'repository' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
-    posts: Pick<(PostsPost), 'excerpt' | 'published_at' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+    posts: Pick<(PostsPost), 'excerpt' | 'published_at' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'now': {
     projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'kind' | 'logo' | 'monogram' | 'accent' | 'stage' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
@@ -169,11 +168,11 @@ export interface ViewProps {
     photos: Pick<(PhotosPhoto), 'title' | 'description' | 'page_url' | 'image' | 'image_raw' | 'width' | 'height' | 'color' | 'blur_hash' | 'unsplash_id' | 'views' | 'downloads' | 'likes' | 'id' | 'type' | 'uri' | 'url'>[]
   }
   'posts/index': {
-    posts: Paginated<Pick<(PostsPost), 'excerpt' | 'published_at' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>>
+    posts: Paginated<Pick<(PostsPost), 'excerpt' | 'published_at' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>>
     topics: ((TopicsTopic) & { entries_count: number })[]
   }
   'posts/show': {
-    related: Pick<(PostsPost), 'excerpt' | 'published_at' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+    related: Pick<(PostsPost), 'excerpt' | 'published_at' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'projects/index': {
     projects: Pick<(ProjectsProject), 'category' | 'client' | 'role' | 'tagline' | 'description' | 'stage' | 'kind' | 'year' | 'logo' | 'monogram' | 'accent' | 'featured' | 'stack' | 'cover' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
@@ -185,13 +184,13 @@ export interface ViewProps {
     results: Paginated<(PagesPage | PhotosPhoto | PostsPost | ProjectsProject)>
   }
   'sets/latest_posts': {
-    posts: Pick<(PostsPost), 'excerpt' | 'published_at' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
+    posts: Pick<(PostsPost), 'excerpt' | 'published_at' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>[]
   }
   'topics/index': {
     topics: ((TopicsTopic) & { entries_count: number })[]
   }
   'topics/show': {
-    posts: Paginated<Pick<(PostsPost), 'excerpt' | 'published_at' | 'art' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>>
+    posts: Paginated<Pick<(PostsPost), 'excerpt' | 'published_at' | 'featured_image' | 'topics' | 'id' | 'type' | 'title' | 'uri' | 'url'>>
   }
 }
 

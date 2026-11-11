@@ -49,8 +49,7 @@ tabs:
                   field: { type: textarea, required: true }
       - display: Artwork
         fields:
-          - handle: art
-            field: { type: text, instructions: "The page's banner artwork, such as /art/pages/about.svg." }
+          - import: nibble::featured_image
       - display: Tools
         instructions: For Uses — every tool, grouped. Shown as a desk of tiles.
         fields:
@@ -99,8 +98,9 @@ tabs:
                 - handle: logo
                   field:
                     {
-                      type: text,
-                      instructions: 'A picture for the card: a project logo in /logos, or a mark in /art/marks, e.g. /art/marks/linux.svg.',
+                      type: assets,
+                      max_files: 1,
+                      instructions: 'A picture for the card: a project logo from the logos folder, or a mark from art/marks.',
                     }
                 - handle: url
                   field: { type: text, instructions: 'A web address, or a path on this site such as /projects/quarry.' }
