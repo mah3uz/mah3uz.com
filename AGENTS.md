@@ -32,6 +32,9 @@ stops Claude Code editing `vendor/nibble/`.
 - **Motifs:** three viewfinder corners (`Corners.vue`) and a peeled bottom-right corner (`Peel.vue`). Motion is CSS
   (`animate-rise`, `animate-drift`…) plus the `v-reveal`, `v-spotlight` and `v-tilt` directives in `lib/motion.ts`;
   all of it respects `prefers-reduced-motion`. Browser-only code goes in `onMounted` — server rendering has no window.
+  The corners and the peel are CSS only: no artwork, cover or figure draws them, because the theme lays them on
+  (`ArtBanner.vue`, the post banner, `ProjectCard`, `PostCard`, the project page) and drawn into the image as well they
+  show twice. `build.py` refuses an image that draws them. The one exception is the brand mark, which they make up.
 - **Projects** are entries in the content package, written as Markdown in `site/packages/source/projects/` (schema in
   `site/schema/`); `order` sets their position. `category: client` marks client work, shown separately from my own
   products. `stage` is building / shipped / experiment / archived. `/projects` is the page `source/pages/projects.md`.
@@ -39,11 +42,13 @@ stops Claude Code editing `vendor/nibble/`.
   package's `site/packages/default/assets/` (listed in `assets.yml`, which `build.py` writes) and is referenced by its
   library path, without a leading slash: `featured_image: art/posts/sqlite-is-enough.svg`, `logo: logos/quarry.svg`,
   and `![alt](art/posts/<slug>/figure.svg)` in a post body. The import uploads a file only when the library has none at
-  that path, so a redrawn image reaches the live site through **Replace** on that asset in the Control Plane.
+  that path, so a redrawn image reaches the live site through `bin/rails site:assets:refresh` (`lib/tasks/site.rake`):
+  after a deploy, `bin/kamal app exec 'bin/rails site:assets:refresh'` replaces every library asset whose file differs
+  from the package's, keeping its path and every reference to it. `site:assets:changed` lists them without writing.
 - **Brand mark:** the site's logo is the bracketed tile — the teal gradient tile with three corner brackets and a
   peeled corner, holding an "m" (`assets/brand/favicon.svg`, set as the site settings' `logo`; `BrandMark.vue` draws
-  the same mark inline for About). The header and footer show the site settings' logo, and the site name only when no
-  logo is set.
+  the same mark inline for About). The header and footer show the site settings' logo with the site name beside it, set in
+  Lexend ExtraBold (`font-brand`).
 - **Project logos** are each product's own logo, copied from its repository into `site/packages/default/assets/logos/`
   and named in the project's `logo:`, and kept still: strip any `<animate>`/`<animateTransform>`/`<set>` from a copied SVG,
   because an animated SVG in an `<img>` makes the browser lay out and repaint the whole page every frame, forever
