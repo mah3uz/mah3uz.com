@@ -84,8 +84,8 @@
 }
 .ns-sound-lamp {
   position: absolute;
-  right: 0.7rem;
-  bottom: 0.6rem;
+  left: calc(50% + 0.75rem);
+  top: calc(1.55rem + 1px);
   width: 0.38rem;
   height: 0.38rem;
   border-radius: 50%;
