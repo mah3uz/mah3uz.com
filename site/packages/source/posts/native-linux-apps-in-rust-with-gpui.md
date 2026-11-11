@@ -1,6 +1,6 @@
 ---
 title: Native Linux apps in Rust with GPUI
-published_at: 2026-10-26T09:00:00Z
+published_at: 2026-10-26T09:00:00+06:00
 topics: [rust, linux]
 excerpt: Building Sysman's desktop app on GPUI, the GPU-accelerated framework behind the Zed editor — why I chose it, the charts I had to write myself, and what it takes to ship a native Linux binary that installs cleanly everywhere.
 art: /art/posts/gpui.svg

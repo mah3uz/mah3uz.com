@@ -1,6 +1,6 @@
 ---
 title: SQLite is enough (for most of us)
-published_at: 2026-09-24T09:00:00Z
+published_at: 2026-09-24T09:00:00+06:00
 topics: [engineering, operations]
 excerpt: For most of my career, "which database?" meant "which database server?" Today my default is a file. Here is how to run SQLite in production properly — WAL, backups, honest limits — and when to move on.
 art: /art/posts/sqlite-is-enough.svg

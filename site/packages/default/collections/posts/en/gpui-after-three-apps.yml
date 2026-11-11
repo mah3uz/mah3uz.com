@@ -1,0 +1,888 @@
+title: GPUI, after three apps
+published_at: '2026-11-08T03:00:00Z'
+topics:
+- topics/rust
+- topics/linux
+- topics/engineering
+excerpt: 'I''ve now shipped three native apps on GPUI, the UI framework behind the Zed editor: a system monitor, a terminal
+  multiplexer and a screenshot tool. Each one pushed it somewhere different. This is what I know now about pinning it, patching
+  it, budgeting it, and where it still runs out.'
+art: /art/posts/gpui-three-apps.svg
+body:
+- type: paragraph
+  content:
+  - type: text
+    text: 'A few weeks ago I wrote about '
+  - type: text
+    text: building Sysman's interface on GPUI
+    marks:
+    - type: link
+      attrs:
+        href: /blog/native-linux-apps-in-rust-with-gpui
+  - type: text
+    text: ', and mostly about the charts I had to write and what it took to ship a native binary on Linux. Since then I''ve
+      built two more applications on it, and they couldn''t be more different from a system monitor or from each other.'
+- type: paragraph
+  content:
+  - type: text
+    text: Insensical
+    marks:
+    - type: link
+      attrs:
+        href: /projects/insensical
+  - type: text
+    text: ' is a terminal multiplexer whose window draws dozens of live terminals at once, each one a grid of styled cells
+      that can change thousands of times a second. '
+  - type: text
+    text: easyshot
+    marks:
+    - type: link
+      attrs:
+        href: /projects/easyshot
+  - type: text
+    text: ' is a screenshot and recording tool whose interface is mostly '
+  - type: text
+    text: not
+    marks:
+    - type: italic
+  - type: text
+    text: ' windows: full-screen overlays, floating toasts, preview cards stacked in a corner, a control bar that follows
+      you across monitors, all of them Wayland layer-shell surfaces.'
+- type: paragraph
+  content:
+  - type: text
+    text: Three apps, three different kinds of stress. GPUI handled all of them, and each one found a different edge. This
+      is the longer version of what I'd tell anyone thinking of using it.
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: What GPUI is
+- type: paragraph
+  content:
+  - type: text
+    text: 'GPUI is the UI framework the Zed team built for their editor. It''s written in Rust from top to bottom and draws
+      everything on the GPU: Metal on macOS, and on Linux through wgpu (Vulkan, or GL where Vulkan isn''t available). Text
+      goes through CoreText on a Mac and cosmic-text on Linux.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'The programming model is a hybrid that takes a day to get used to. Your application''s state lives in '
+  - type: text
+    text: entities
+    marks:
+    - type: italic
+  - type: text
+    text: ', owned by the app and reached through handles. A '
+  - type: text
+    text: view
+    marks:
+    - type: italic
+  - type: text
+    text: ' is an entity that knows how to render: each frame it builds a tree of '
+  - type: text
+    text: elements
+    marks:
+    - type: italic
+  - type: text
+    text: ' (divs with flexbox-style layout, text, images, or your own elements that paint directly). Elements are cheap and
+      rebuilt; entities persist. When an entity changes, you tell GPUI it has, and the views that depend on it render again.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'What you can actually '
+  - type: text
+    text: paint
+    marks:
+    - type: italic
+  - type: text
+    text: ' is a short list. The Insensical architecture document puts it precisely:'
+- type: blockquote
+  content:
+  - type: paragraph
+    content:
+    - type: text
+      text: gpui exposes a fixed set of primitives (quads, paths, shaped text, glyphs, images). It has no API for a custom
+        shader, pipeline or texture.
+- type: paragraph
+  content:
+  - type: text
+    text: That sentence decided more of the design of all three apps than any other fact about GPUI. Everything you see in
+      them is rectangles with rounded corners and borders, vector paths, glyphs and bitmaps. There's no escape hatch to your
+      own GPU code. If you need something else, you build it out of those, or you draw it on the CPU and hand GPUI an image.
+- type: image
+  attrs:
+    src: /art/posts/gpui-after-three-apps/primitives.svg
+    alt: 'What GPUI gives you, and what you build: five primitives at the bottom, and each app''s own layer on top'
+- type: paragraph
+  content:
+  - type: text
+    text: 'I''ve come to see that limit as healthy. Every pane, overlay and card in my apps is an ordinary element, so they
+      compose: a terminal can sit inside a floating window inside an overview, with a thumbnail of it somewhere else, and
+      nothing special is needed for any of it. I explicitly rejected drawing Insensical''s terminals with a platform-specific
+      renderer in a child surface, because it '
+  - type: text
+    text: '"would break the rule that a pane is an ordinary element, which is what lets floats, overlays and thumbnails compose
+      for free."'
+    marks:
+    - type: italic
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Getting it at all
+- type: paragraph
+  content:
+  - type: text
+    text: The first surprise for most people is that there's no "GPUI 1.0" on crates.io from its authors. Zed develops GPUI
+      inside its own repository, for its own needs, and the public API moves when Zed needs it to.
+- type: paragraph
+  content:
+  - type: text
+    text: 'Insensical and easyshot both use '
+  - type: text
+    text: gpui-pre
+    marks:
+    - type: code
+  - type: text
+    text: ', a crates.io snapshot of a specific Zed commit published by the GPUI-Kit project, with '
+  - type: text
+    text: gpui-component
+    marks:
+    - type: code
+  - type: text
+    text: ' from the same project on top for buttons, inputs, menus and the like. Both are pinned with '
+  - type: text
+    text: '='
+    marks:
+    - type: code
+  - type: text
+    text: ':'
+- type: codeBlock
+  attrs:
+    language: toml
+  content:
+  - type: text
+    text: 'gpui = { package = "gpui-pre", version = "=0.3.10" }
+
+      gpui_platform = { package = "gpui-pre-platform", version = "=0.3.10", features = ["font-kit", "wayland", "x11", "runtime_shaders"]
+      }
+
+      gpui-component = "=0.8.1"'
+- type: paragraph
+  content:
+  - type: text
+    text: 'I''d have preferred Zed''s git source at a pinned revision, and recorded why I didn''t use it: the component library
+      requires '
+  - type: text
+    text: gpui-pre
+    marks:
+    - type: code
+  - type: text
+    text: ', and any other source would put '
+  - type: text
+    text: two
+    marks:
+    - type: italic
+  - type: text
+    text: ' copies of GPUI in the dependency graph. That''s the failure I warned about in the Sysman post. It compiles, it
+      links, and then types that look identical aren''t, or two copies fight over the same window. easyshot''s build has a
+      check, '
+  - type: text
+    text: cargo tree -d
+    marks:
+    - type: code
+  - type: text
+    text: ' filtered for GPUI and zbus, that fails if a second copy ever appears, like the one I described for Sysman.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Two ways to live with a young toolkit
+- type: paragraph
+  content:
+  - type: text
+    text: Here the two newer apps went in opposite directions, and I think both were right.
+- type: image
+  attrs:
+    src: /art/posts/gpui-after-three-apps/patches.svg
+    alt: 'Two ways to live with a young toolkit: easyshot carries ten patches as commits on a vendored copy, Insensical uses
+      GPUI unpatched'
+- type: paragraph
+  content:
+  - type: text
+    text: easyshot patches GPUI.
+    marks:
+    - type: bold
+  - type: text
+    text: ' The vendored copy is GPUI exactly as published on crates.io, and the patches are ordinary git commits on top of
+      it. The decisions log describes it: '
+  - type: text
+    text: '"copied as-is from crates.io and our patches are git commits on top, so the patch set is the diff."'
+    marks:
+    - type: italic
+  - type: text
+    text: ' No patch files, no scripts that apply them. '
+  - type: text
+    text: git log -- vendor/
+    marks:
+    - type: code
+  - type: text
+    text: ' is the list, and moving to a new GPUI version means replaying those commits.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'There are ten of them, and nearly all are about Wayland:'
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: P1
+        marks:
+        - type: bold
+      - type: text
+        text: ' adds a margin API for layer surfaces, so a pinned screenshot can be positioned and moved.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: P5
+        marks:
+        - type: bold
+      - type: text
+        text: ' and '
+      - type: text
+        text: P8
+        marks:
+        - type: bold
+      - type: text
+        text: ' add custom cursors (a crosshair with a size readout, a pen, a text cursor per tool) through GPUI''s normal
+          cursor path. A side channel would have been simpler, and '
+      - type: text
+        text: '"would be overwritten by that cache."'
+        marks:
+        - type: italic
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: P6
+        marks:
+        - type: bold
+      - type: text
+        text: ' gives a drag a picture, so dragging a preview card out to a chat shows its thumbnail.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: P7
+        marks:
+        - type: bold
+      - type: text
+        text: ' has layer surfaces report server-side decorations, which removes padding GPUI reserved for window borders
+          that layer surfaces don''t have.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: P10
+        marks:
+        - type: bold
+      - type: text
+        text: ' offers file drags as Copy only.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: P11
+        marks:
+        - type: bold
+      - type: text
+        text: ' and '
+      - type: text
+        text: P14
+        marks:
+        - type: bold
+      - type: text
+        text: ' give tooltips an app-wide delay and make them hide by themselves after a reading time.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: P12
+        marks:
+        - type: bold
+      - type: text
+        text: ' makes element opacity public, so a custom element can fade an image it paints.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: P13
+        marks:
+        - type: bold
+      - type: text
+        text: ' clears hover when the pointer leaves a window. More on that one below.'
+- type: paragraph
+  content:
+  - type: text
+    text: Insensical doesn't patch GPUI at all.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Its architecture document says it''s used unpatched, notes the two patches that would be worth having (activating
+      a window with a token received from elsewhere, and possibly a sprite-sorting fix), and says that any patch would be
+      kept as a short documented series and offered upstream. Instead it works around what it meets:'
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: 'GPUI''s '
+      - type: text
+        text: baseline_offset
+        marks:
+        - type: code
+      - type: text
+        text: ' adds a font''s descent as if it were positive, while its text systems report it as negative, so text sits
+          a descent too low. Insensical''s grid works out the baseline from the ascent and descent itself.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: On Linux GPUI learns the desktop's light or dark appearance only after the first frame, and says "light" until
+          then, so a dark desktop can get a flash of the light theme. Insensical asks the settings portal before its window
+          opens.
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: 'GPUI has no way to activate a window with an activation token from another process, so clicking a notification
+          can''t focus the window on every compositor. On Hyprland it works with '
+      - type: text
+        text: focus_on_activate
+        marks:
+        - type: code
+      - type: text
+        text: ; elsewhere the window is marked urgent. The limit is documented, not hidden.
+- type: paragraph
+  content:
+  - type: text
+    text: 'The difference comes down to '
+  - type: text
+    text: where the gap is
+    marks:
+    - type: italic
+  - type: text
+    text: '. easyshot''s needs were in GPUI''s platform layer: what a layer surface can do, how a cursor is set. There''s
+      no way to reach those from outside the framework. Insensical''s needs were inside the element tree, where you control
+      what''s drawn. My rule now: patch when the gap is in the platform layer you can''t reach; work around when the gap is
+      in what you draw, and keep the workaround next to a test.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Set a budget before you write the code
+- type: paragraph
+  content:
+  - type: text
+    text: 'Before Insensical''s grid existed, its decisions log already had this row:'
+- type: blockquote
+  content:
+  - type: paragraph
+    content:
+    - type: text
+      text: gpui for the interface, at most 4 ms of UI-thread CPU per worst-case 200×60 frame.
+- type: paragraph
+  content:
+  - type: text
+    text: 'Four milliseconds leaves room for the rest of the window and for a 120 Hz display, where a whole frame is 8.3 ms.
+      And the row named what would happen if GPUI couldn''t meet it:'
+- type: blockquote
+  content:
+  - type: paragraph
+    content:
+    - type: text
+      text: If a change pushes the UI-thread figure past 8 ms with no way back, gpui is the wrong toolkit for this product;
+        iced with a custom wgpu grid widget is the named alternative.
+- type: image
+  attrs:
+    src: /art/posts/gpui-after-three-apps/budget.svg
+    alt: 'A frame budget, set before the code: measured at 2.0 ms, budget at 4 ms, a different toolkit past 8 ms'
+- type: paragraph
+  content:
+  - type: text
+    text: The worst case it's measured on is a full 200 × 60 grid where every cell has unique colours, the worst styling a
+      program can produce. It measures 2.0 ms at the median. I haven't needed the alternative. But writing it down before
+      I started meant every performance decision afterwards had a number to be judged against, and a clear point at which
+      to stop arguing and change course. I wish I'd done the same for every project I've had to rescue.
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Drawing a terminal out of five primitives
+- type: paragraph
+  content:
+  - type: text
+    text: 'A terminal is the most demanding thing I''ve drawn with GPUI: thousands of cells, each with a character, colours,
+      bold and italic, underlines, and the screen can change every few milliseconds. Here''s what it took to stay inside the
+      budget.'
+- type: paragraph
+  content:
+  - type: text
+    text: No text is shaped per frame.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Letting GPUI shape every cell of a heavily styled screen measured 14 ms, several times the budget. Now glyphs
+      are resolved once into a cache, by character and style, and placed by cell position. A terminal is a grid; there''s
+      nothing to shape.'
+- type: paragraph
+  content:
+  - type: text
+    text: Rows are cached until the engine says they changed.
+    marks:
+    - type: bold
+  - type: text
+    text: ' The terminal engine marks rows dirty. A row that isn''t dirty reuses what it painted last time.'
+- type: paragraph
+  content:
+  - type: text
+    text: Panes are cached elements.
+    marks:
+    - type: bold
+  - type: text
+    text: ' What a pane drew last frame is reused until its own view says it has changed or its size has. A busy build in
+      one pane costs the panes beside it nothing. Not redrawing unchanged panes took a frame with six panes from 4.8 ms to
+      1.5 ms, and memory with seventy panes open from 365 MB to 74 MB.'
+- type: paragraph
+  content:
+  - type: text
+    text: Fewer, bigger primitives.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Adjacent cells with the same background become one rectangle. Each grid paints in two layers, because primitives
+      painted outside a layer each cost a search in GPUI''s scene.'
+- type: paragraph
+  content:
+  - type: text
+    text: Box-drawing characters are geometry.
+    marks:
+    - type: bold
+  - type: text
+    text: ' Line-drawing, block and Powerline characters are painted as rectangles and paths on exact device pixels rather
+      than taken from a font, so the lines of a '
+  - type: text
+    text: tmux
+    marks:
+    - type: code
+  - type: text
+    text: -style border or a table meet their neighbours with no gaps.
+- type: paragraph
+  content:
+  - type: text
+    text: Frames are pulled, never pushed.
+    marks:
+    - type: bold
+  - type: text
+    text: ' The terminal engine''s Rust types can''t be sent between threads, so each terminal lives on a thread of its own
+      and the interface asks it for a plain-data frame of the changed rows when it''s about to paint. During a flood of output
+      the terminal advances through many states between two paints, and the intermediate ones are never built. Output throughput
+      is set by how fast the engine parses, not by how fast GPUI draws.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: The rebuild that cascades
+- type: paragraph
+  content:
+  - type: text
+    text: 'GPUI has one behaviour that took me two attempts to work with. When a view changes, GPUI rebuilds every view '
+  - type: text
+    text: above
+    marks:
+    - type: italic
+  - type: text
+    text: ' it in the tree as well. Usually that''s cheap. In a window full of terminals, it isn''t.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'Each pane in Insensical has a small state line under its header: running, waiting, done. I wanted the "running"
+      mark to turn slowly, like a spinner. The first decision was simply no: '
+  - type: text
+    text: '"The state line under a pane''s header doesn''t animate,"'
+    marks:
+    - type: italic
+  - type: text
+    text: ' because GPUI redraws the window whole, and motion would redraw every terminal at around 2 ms each, ten times a
+      second.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'Later I found a structure that made it possible. The window is built in three layers, and the marks live where
+      their changes rebuild nothing else. Marks step ten times a second while any pane is running. There''s a test with a
+      long name, '
+  - type: text
+    text: a_step_of_the_turning_mark_builds_nothing_again
+    marks:
+    - type: code
+  - type: text
+    text: ', which checks it: ten steps used to build the window ten times; now they build it once.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'The same work turned up a subtle one at fractional scaling. GPUI snaps a view laid out on its own and the same
+      view laid out inside the window to '
+  - type: text
+    text: different
+    marks:
+    - type: italic
+  - type: text
+    text: ' pixels at a scale like 1.5. Mixing the two made anything centred shake by one pixel on each animation step. The
+      fix was to lay it out one way, always.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: 'Layer shell: GPUI off the beaten path'
+- type: paragraph
+  content:
+  - type: text
+    text: easyshot is where I went furthest from what GPUI is used for in Zed. Almost nothing in it is a normal window. The
+      area picker is a full-screen layer surface on every output; toasts and the preview deck are small surfaces anchored
+      to a corner; the recording bar sits on top of everything; pins float above other windows.
+- type: paragraph
+  content:
+  - type: text
+    text: Each kind needed a decision about keyboard focus. The capture bar takes the keyboard only when you click it, so
+      it never locks your typing. The recording bar never takes it at all, so the app you're recording keeps receiving keys
+      while you record it.
+- type: paragraph
+  content:
+  - type: text
+    text: Then came the bug that led to patch P13. A toast with an Undo button stayed open forever once you'd hovered it.
+      Toasts pause their timer while hovered, so you can read them, and they never un-paused. The toast's input region is
+      only the card, so moving the pointer off the card means leaving the surface entirely. GPUI does send a mouse-exited
+      event, but it doesn't clear its record of where the mouse is, and in the next refresh it decides the pointer is still
+      over the button. The same bug was in the pin's close button, in the Settings home screen and in sliders. One patch fixed
+      GPUI, and a single shared clock now owns every toast's time and hover state, with a build check that fails if any toast
+      is timed by its own timer.
+- type: paragraph
+  content:
+  - type: text
+    text: 'A few more lessons from the same area:'
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Pay the cold start once.
+        marks:
+        - type: bold
+      - type: text
+        text: ' The first layer surface GPUI opens is noticeably slow. The daemon opens and closes a 1 × 1 transparent surface
+          at start-up, so the first real overlay, when you press the capture key, is instant.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Change the input region, not the surface.
+        marks:
+        - type: bold
+      - type: text
+        text: ' The preview deck fans out when you hover it. Resizing the surface on hover would move it under the pointer,
+          which changes the hover, which resizes it. Now the surface keeps its fanned size and only its input region changes,
+          so the pointer''s position on the surface never moves.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Match displays by name.
+        marks:
+        - type: bold
+      - type: text
+        text: ' On fractional outputs GPUI divides display bounds by the integer scale, so matching a display to an output
+          by its rectangle fails. Match by the output''s name.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: When the primitives run out
+- type: paragraph
+  content:
+  - type: text
+    text: 'The fixed primitive set shaped some features directly:'
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Masks are rectangles only.
+        marks:
+        - type: bold
+      - type: text
+        text: ' Redaction rotated with the image can''t be a GPUI mask, so it''s a patch of pixels prepared on the CPU with
+          transparency outside the shape.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: There are no element transforms.
+        marks:
+        - type: bold
+      - type: text
+        text: ' A countdown that shrinks and fades as it ends is done with spring timing on opacity and size rather than a
+          scale transform.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: One renderer for what you see and what you save.
+        marks:
+        - type: bold
+      - type: text
+        text: ' easyshot''s editor preview and its export both draw annotations with tiny-skia on the CPU, from the same draw
+          list. What you see in the editor is exactly what lands in the file, which matters more to a screenshot tool than
+          drawing the preview on the GPU.'
+- type: paragraph
+  content:
+  - type: text
+    text: And two image lessons from Insensical. Small pictures had a dark rim because GPUI sampled them between their own
+      pixels and the transparent black beside them in its texture atlas, so images are now rasterised at exact device pixels.
+      And the component library's root element filled the window with an opaque background, which quietly defeated a transparent
+      window.
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Text, input and accessibility
+- type: paragraph
+  content:
+  - type: text
+    text: 'Input methods are the clearest gap I''ve hit. The text fields in Insensical''s window read the finished text of
+      a key press, so text from an input method arrives once it''s committed, but nothing is shown while it''s still being
+      composed. Showing that needs a field to implement GPUI''s input-handler trait, which a field of plain data can''t. Terminal
+      panes are different: with '
+  - type: text
+    text: input-method = true
+    marks:
+    - type: code
+  - type: text
+    text: ', the composition is shown at the cursor.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'Smaller ones: by default GPUI hides the pointer while you type, which in a drawing app means pressing Space or
+      a tool''s letter makes the pointer vanish until you move the mouse, so easyshot turns that off at start-up. On Linux,
+      GPUI reports Ctrl+Shift+] as '
+  - type: text
+    text: ctrl-}
+    marks:
+    - type: code
+  - type: text
+    text: ', so key bindings use the shifted character. And a variable font I bundled rendered at its lightest weight unless
+      the weight was chosen explicitly.'
+- type: paragraph
+  content:
+  - type: text
+    text: Accessibility is better than I expected for a young framework. GPUI builds an AccessKit tree from every element
+      that has both an id and a role, which reaches screen readers through AT-SPI on Linux. Every component in easyshot's
+      own UI library sets a role, a label and a value; Insensical announces state changes through live regions and uses GPUI's
+      own tab stops and focus styles. Checking it with Orca is still manual.
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Linux and macOS are different platforms
+- type: paragraph
+  content:
+  - type: text
+    text: 'Insensical also runs on macOS, and GPUI hides less of the difference than you''d hope:'
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: A point is one pixel on a Mac and one and a third on Linux, so the default text size is 13 points on one and
+          12 on the other to come out the same.
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: A Mac counts the title bar in a window's bounds.
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: An icon font has to be registered with CoreText as well as with GPUI, or icons printed by a program come from
+          the system's last-resort font.
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Notifications go through GPUI on a Mac, which requires an app bundle, and through the daemon over D-Bus on Linux.
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: GPUI's platform can only be created on the main thread on a Mac, so window tests run under nextest, one process
+          each.
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: What it costs to build
+- type: paragraph
+  content:
+  - type: text
+    text: 'GPUI is a big dependency, and it shows in the build:'
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: 'It''s too slow to use unoptimised, so every project builds dependencies at '
+      - type: text
+        text: opt-level = 2
+        marks:
+        - type: code
+      - type: text
+        text: ' even in development.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Every test binary links GPUI and wgpu. In easyshot about half of each binary was debug information, and the
+          debug target directory reached 483 GB. Relinking after a change wrote gigabytes and stalled my desktop on disk I/O.
+          Line tables only, no incremental builds for the workspace and no debug info for dependencies fixed it.
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: GPUI's off-screen test scheduler occasionally hangs at the very end of a window test, about one run in twelve
+          in Insensical. It doesn't happen in the real application, and the test runner has a time limit for it.
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Would I choose it again?
+- type: paragraph
+  content:
+  - type: text
+    text: Yes, for the same kind of software. If the job is a native app that should feel like part of a Linux desktop, draw
+      a lot of data quickly and run on a modest machine, GPUI is the best option I know of in Rust. It's fast, the programming
+      model holds up as an app grows, and having layout, text and drawing in the same language as everything else is worth
+      a great deal.
+- type: paragraph
+  content:
+  - type: text
+    text: 'What I''d tell someone starting:'
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Pin it exactly, and guard against a second copy.
+        marks:
+        - type: bold
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Set a frame budget and a named fallback before you write the first view.
+        marks:
+        - type: bold
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Learn the primitive set early.
+        marks:
+        - type: bold
+      - type: text
+        text: ' If what you need can''t be built from quads, paths, glyphs and images, find out on day one.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Patch the platform layer only when you must,
+        marks:
+        - type: bold
+      - type: text
+        text: ' as commits on a vendored copy, and work around everything else next to a test.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Cache by what changed.
+        marks:
+        - type: bold
+      - type: text
+        text: ' Glyphs, rows, panes. The rebuild cascades upward, so put things that change often where their changes rebuild
+          nothing.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Read the source.
+        marks:
+        - type: bold
+      - type: text
+        text: ' The documentation is thin, and the source is readable.'
+- type: paragraph
+  content:
+  - type: text
+    text: It's a young framework, and it shows in places. It's also the reason three very different apps of mine start instantly,
+      stay smooth with thousands of things on screen, and use little enough of a laptop that nobody uninstalls them for it.

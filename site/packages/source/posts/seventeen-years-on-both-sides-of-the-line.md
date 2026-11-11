@@ -1,6 +1,6 @@
 ---
 title: Seventeen years on both sides of the line
-published_at: 2026-10-31T09:00:00Z
+published_at: 2026-10-31T09:00:00+06:00
 topics: [engineering, operations]
 excerpt: Most organisations separate the people who build software from the people who run it. I have spent my career doing both. Here is what that taught me about designing systems that survive contact with production.
 art: /art/posts/seventeen-years.svg

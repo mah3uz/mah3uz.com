@@ -1,0 +1,780 @@
+title: Keeping a daemon alive
+published_at: '2026-11-03T03:00:00Z'
+topics:
+- topics/operations
+- topics/rust
+- topics/linux
+excerpt: Insensical's daemon owns every terminal you run, so it mustn't die and it mustn't stall. What threatened it wasn't
+  clever bugs. It was fork getting slower with every thread, a signal mask children inherit, a cgroup that gets cleaned up,
+  and a 1 KiB read on a Mac.
+art: /art/posts/daemon-alive.svg
+body:
+- type: paragraph
+  content:
+  - type: text
+    text: 'I''ve had tmux running on servers for most of my career. Its best feature is the one you never think about: you
+      disconnect, the network drops, your laptop sleeps, and when you come back everything is still running. A multiplexer''s
+      server is a promise that your work outlives your connection to it.'
+- type: paragraph
+  content:
+  - type: text
+    text: Insensical
+    marks:
+    - type: link
+      attrs:
+        href: /projects/insensical
+  - type: text
+    text: ' makes the same promise for a desktop where you might be running five coding agents at once. A background daemon
+      owns every program; the native window, the terminal interface and the browser page are all clients of it. Close the
+      window and nothing stops. Upgrade the program and nothing stops either.'
+- type: paragraph
+  content:
+  - type: text
+    text: A process that makes that promise has to be boring in a very particular way. It can't crash, it can't stall, and
+      it can't take anything down with it when it does restart. Almost none of what threatened that in practice was in my
+      code's logic. It was in the operating system underneath, in the places where a process meets the kernel, systemd and
+      the other processes on the machine. That's where my sysadmin years paid for themselves.
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Two programs, threads, and no async runtime
+- type: paragraph
+  content:
+  - type: text
+    text: 'The first decisions were structural. Insensical is two binaries: '
+  - type: text
+    text: isc
+    marks:
+    - type: code
+  - type: text
+    text: ', which is the daemon, the command line and the terminal interface, and '
+  - type: text
+    text: insensical
+    marks:
+    - type: code
+  - type: text
+    text: ', the window. The reason is in the first rows of the decisions log: '
+  - type: text
+    text: '"The daemon must run where no GPU or window-system library exists."'
+    marks:
+    - type: italic
+  - type: text
+    text: ' A daemon that links against a GPU stack can''t run on a headless server, and it carries a few hundred megabytes
+      of libraries that have nothing to do with keeping a shell alive. '
+  - type: text
+    text: isc
+    marks:
+    - type: code
+  - type: text
+    text: ' is one statically linked file.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'Inside the daemon, I chose plain threads and blocking I/O over an async runtime:'
+- type: blockquote
+  content:
+  - type: paragraph
+    content:
+    - type: text
+      text: Threads and channels, not an async runtime … blocking I/O on a few dozen threads is simpler than a second runtime
+        in the GUI.
+- type: paragraph
+  content:
+  - type: text
+    text: 'Each pane gets a thread that blocks on its pseudo-terminal. Before trusting that at scale, I measured it with a
+      thousand panes: no wake-ups while idle, 36 kB of memory touched per thread, and 0.07 ms to answer a command. I rejected
+      a single thread for quiet panes and smaller stacks. The simple design held.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'One more structural rule is worth mentioning because it''s the opposite of Rust''s default. When a thread panics
+      while holding a lock, Rust '
+  - type: text
+    text: poisons
+    marks:
+    - type: italic
+  - type: text
+    text: ' the lock and every later attempt to take it fails. In most programs that''s sensible. In Insensical the daemon
+      takes the lock anyway. The reason given in the log is the whole philosophy of the daemon: '
+  - type: text
+    text: '"Refusing would turn one failed pane into losing every program."'
+    marks:
+    - type: italic
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: fork got slower with every pane
+- type: paragraph
+  content:
+  - type: text
+    text: The first real scaling problem appeared when I restored a saved layout with a thousand panes. The daemon took 20
+      to 32 seconds before its socket answered.
+- type: image
+  attrs:
+    src: /art/posts/keeping-a-daemon-alive/spawn.svg
+    alt: 'Restoring 1,000 panes: 20 to 32 seconds with fork, about one second with posix_spawn'
+- type: paragraph
+  content:
+  - type: text
+    text: 'The cause was '
+  - type: text
+    text: fork
+    marks:
+    - type: code
+  - type: text
+    text: '. To start a pane''s shell, the daemon forked and then '
+  - type: text
+    text: exec
+    marks:
+    - type: code
+  - type: text
+    text: 'ed. '
+  - type: text
+    text: fork
+    marks:
+    - type: code
+  - type: text
+    text: ' copies the parent''s memory map, and the kernel''s cost for that grows with the parent''s size and its number
+      of threads. And the daemon has a thread per pane. In a bare test program, '
+  - type: text
+    text: fork
+    marks:
+    - type: code
+  - type: text
+    text: ' took 0.4 ms with no threads and 4.5 ms with a thousand. In the daemon it was 18 ms a pane. Each pane started made
+      the next one slower to start.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'The fix was '
+  - type: text
+    text: posix_spawn
+    marks:
+    - type: code
+  - type: text
+    text: ', which on Linux creates the child without copying the parent''s memory map. The child is spawned as the leader
+      of a new session, then opens the pane''s terminal so that it becomes the controlling terminal, which is what a shell
+      expects. Spawning dropped to 3 ms a pane, and restoring a thousand panes to about a second.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'It had one sharp edge, found the next day. '
+  - type: text
+    text: execvp
+    marks:
+    - type: code
+  - type: text
+    text: ' quietly runs a script with no '
+  - type: text
+    text: '#!'
+    marks:
+    - type: code
+  - type: text
+    text: ' line through '
+  - type: text
+    text: sh
+    marks:
+    - type: code
+  - type: text
+    text: ', as shells always have. '
+  - type: text
+    text: posix_spawn
+    marks:
+    - type: code
+  - type: text
+    text: ' refuses it. So a pane whose command was a bare script stopped starting. The daemon now does what '
+  - type: text
+    text: execvp
+    marks:
+    - type: code
+  - type: text
+    text: ' does when it sees that error.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'The same thousand-pane test found a second cost. Saving the layout serialised the daemon''s whole model under its
+      lock on every change: 800 kB a change at a thousand panes, and about two fifths of the daemon''s time. It now compares
+      what it last saved with what it has, and writes only when they differ.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: The mask children inherit
+- type: paragraph
+  content:
+  - type: text
+    text: 'The daemon handles signals the careful way: it blocks them in every thread and takes them with '
+  - type: text
+    text: sigwait
+    marks:
+    - type: code
+  - type: text
+    text: ' on one thread, so a signal never interrupts some random thread in the middle of something.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'There''s a catch that every Unix programmer meets once. A blocked signal mask is inherited by child processes,
+      and survives '
+  - type: text
+    text: exec
+    marks:
+    - type: code
+  - type: text
+    text: '. Every shell the daemon started would have had '
+  - type: text
+    text: SIGINT
+    marks:
+    - type: code
+  - type: text
+    text: ' and '
+  - type: text
+    text: SIGHUP
+    marks:
+    - type: code
+  - type: text
+    text: ' blocked. Ctrl-C would do nothing in any pane, and closing a pane would never hang up its program. So every child
+      has its mask cleared before '
+  - type: text
+    text: exec
+    marks:
+    - type: code
+  - type: text
+    text: '. With '
+  - type: text
+    text: posix_spawn
+    marks:
+    - type: code
+  - type: text
+    text: ', that''s part of the spawn attributes.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: The shutdown race
+- type: paragraph
+  content:
+  - type: text
+    text: 'At machine shutdown, every process gets '
+  - type: text
+    text: SIGTERM
+    marks:
+    - type: code
+  - type: text
+    text: ' at roughly the same time. Shells usually exit a moment '
+  - type: text
+    text: before
+    marks:
+    - type: italic
+  - type: text
+    text: ' the daemon is told. The daemon sees a pane''s program exit, removes the pane as it should, saves the layout...
+      and the next morning your projects are empty.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'The rule now is that a save that '
+  - type: text
+    text: removes
+    marks:
+    - type: italic
+  - type: text
+    text: ' panes is written two seconds late, a save that adds a pane is written at once, and changes inside one pane wait
+      a quarter of a second. When the daemon gets '
+  - type: text
+    text: SIGTERM
+    marks:
+    - type: code
+  - type: text
+    text: ', '
+  - type: text
+    text: SIGINT
+    marks:
+    - type: code
+  - type: text
+    text: ' or '
+  - type: text
+    text: SIGHUP
+    marks:
+    - type: code
+  - type: text
+    text: ', it writes any pending change that removes nothing, drops any pending change that removes panes, and freezes the
+      file. A shutdown can no longer persuade it that you closed everything.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: setsid isn't enough any more
+- type: paragraph
+  content:
+  - type: text
+    text: 'For thirty years, the way to start a background process that survives its terminal has been '
+  - type: text
+    text: setsid
+    marks:
+    - type: code
+  - type: text
+    text: ': a new session, no controlling terminal, no hang-up when the terminal goes. Insensical''s clients start the daemon
+      on demand, so this mattered.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'On a modern Linux desktop it isn''t enough. systemd puts each application you launch in its own transient '
+  - type: text
+    text: scope
+    marks:
+    - type: italic
+  - type: text
+    text: ', a cgroup, and when the application exits, its scope is cleaned up, which kills every process still inside it.
+      Sessions are irrelevant to cgroups. Start the daemon from a terminal emulator, close the terminal, and the daemon dies
+      with it, '
+  - type: text
+    text: setsid
+    marks:
+    - type: code
+  - type: text
+    text: ' or not.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'So a client starts the daemon in a scope of its own:'
+- type: codeBlock
+  attrs:
+    language: null
+  content:
+  - type: text
+    text: systemd-run --user --scope --collect --quiet --unit=insensical-daemon-<hash>
+- type: paragraph
+  content:
+  - type: text
+    text: 'If that exits within half a second (on a machine without a systemd user instance, for example), it falls back to
+      plain '
+  - type: text
+    text: setsid
+    marks:
+    - type: code
+  - type: text
+    text: . Test daemons never get a scope, so a test can't leave a unit behind on the machine it ran on. This is exactly
+      the kind of bug a developer-only background would never think to look for, and an administrator who has chased "why
+      does my process die when I log out" a dozen times looks for first.
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Upgrading in place, and the fine print
+- type: paragraph
+  content:
+  - type: text
+    text: 'The headline feature of the daemon is '
+  - type: text
+    text: isc restart-server
+    marks:
+    - type: code
+  - type: text
+    text: ': replace the running daemon with the newly installed version and keep every terminal, every program and every
+      screen.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'I considered the usual design, passing the pseudo-terminal file descriptors to a new process, and rejected it.
+      Insensical instead calls '
+  - type: text
+    text: exec
+    marks:
+    - type: code
+  - type: text
+    text: ' on the new binary '
+  - type: text
+    text: in the same process
+    marks:
+    - type: italic
+  - type: text
+    text: . It stays the parent of every pane's program, it keeps its process ID, and there's never a moment where two daemons
+      both think they're in charge.
+- type: image
+  attrs:
+    src: /art/posts/keeping-a-daemon-alive/handover.svg
+    alt: 'Upgrading in place: the same process writes its state, checks the new binary can read it, finishes in-flight work
+      and execs'
+- type: paragraph
+  content:
+  - type: text
+    text: exec
+    marks:
+    - type: code
+  - type: text
+    text: ' has no undo. Once it''s called, the old program is gone. So before the real handover, the daemon runs the new
+      binary once as '
+  - type: text
+    text: isc carried
+    marks:
+    - type: code
+  - type: text
+    text: ' and asks whether it can read the state it''s about to be handed, with ten seconds for an answer. Only then does
+      it write the state to an unnamed file and '
+  - type: text
+    text: exec
+    marks:
+    - type: code
+  - type: text
+    text: .
+- type: paragraph
+  content:
+  - type: text
+    text: 'The fine print took several rounds:'
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: The environment leaks.
+        marks:
+        - type: bold
+      - type: text
+        text: ' The new daemon finds its state through a file descriptor number in '
+      - type: text
+        text: INSENSICAL_HANDOVER
+        marks:
+        - type: code
+      - type: text
+        text: . But a daemon inherits its environment from whatever started it, so that variable could arrive from somewhere
+          else. The new daemon only accepts the number if it names a regular, unnamed file, owned by the user, above descriptor
+          2. And it removes the variable before it starts any thread, so no pane's program ever inherits it.
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Work in flight is lost at exec.
+        marks:
+        - type: bold
+      - type: text
+        text: ' A notification command, or an HTTPS post to a phone, running at the moment of the handover was simply cut
+          off, and the command left unreaped. The daemon now waits up to ten seconds for each before anything stands still.
+          Fixing that showed a second bug: a send that panicked kept its slot, and four of those would have left every later
+          notification unsent.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Listeners must survive without a gap.
+        marks:
+        - type: bold
+      - type: text
+        text: ' The optional hub that serves the browser page holds TCP listeners. Re-binding after '
+      - type: text
+        text: exec
+        marks:
+        - type: code
+      - type: text
+        text: ' would leave the port free for a moment, for any other user on the machine to take. So the hub clears '
+      - type: text
+        text: FD_CLOEXEC
+        marks:
+        - type: code
+      - type: text
+        text: ' on its listeners just before '
+      - type: text
+        text: exec
+        marks:
+        - type: code
+      - type: text
+        text: ' and sets it back before any thread starts.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: A failed exec changes signals.
+        marks:
+        - type: bold
+      - type: text
+        text: ' If '
+      - type: text
+        text: exec
+        marks:
+        - type: code
+      - type: text
+        text: ' fails, the process carries on as the old program, but starting a program had set '
+      - type: text
+        text: SIGPIPE
+        marks:
+        - type: code
+      - type: text
+        text: ' back to its default action, which is to die. The first write to an '
+      - type: text
+        text: ssh
+        marks:
+        - type: code
+      - type: text
+        text: ' connection that had gone away would have killed the hub. It sets '
+      - type: text
+        text: SIGPIPE
+        marks:
+        - type: code
+      - type: text
+        text: ' back to ignored after a failed '
+      - type: text
+        text: exec
+        marks:
+        - type: code
+      - type: text
+        text: .
+- type: paragraph
+  content:
+  - type: text
+    text: 'Screens come through the handover as engine snapshots, but only if the new daemon has exactly the same terminal
+      engine. Otherwise they''re replayed from output, which I measured as imperfect: for screens with random scrolling regions,
+      about one in ten came out with rows displaced. That''s written down too.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: A slow client must never slow the program
+- type: paragraph
+  content:
+  - type: text
+    text: 'A daemon with many clients will always have one that falls behind: a laptop on bad Wi-Fi, a window that''s busy,
+      a phone that went to sleep. The rule from the very start was:'
+- type: blockquote
+  content:
+  - type: paragraph
+    content:
+    - type: text
+      text: A client that falls behind is resynced by snapshot, not buffered.
+- type: paragraph
+  content:
+  - type: text
+    text: 'The rejected alternatives were unbounded queues, which turn one slow client into the daemon''s memory growing without
+      limit, and back-pressure on the pseudo-terminal, which means a slow '
+  - type: text
+    text: viewer
+    marks:
+    - type: italic
+  - type: text
+    text: ' throttles the '
+  - type: text
+    text: program
+    marks:
+    - type: italic
+  - type: text
+    text: . Your build shouldn't run slower because a phone is watching it.
+- type: paragraph
+  content:
+  - type: text
+    text: 'So each client has a bounded queue. When it''s full, the client is cut off: its queue is dropped and replaced with
+      a single frame that says why, '
+  - type: text
+    text: Ending{Slow}
+    marks:
+    - type: code
+  - type: text
+    text: ', and the client gets one second to read that frame before its socket is shut. The second matters. Without it the
+      client sees a broken connection and has to guess; with it, it reconnects on its own and tells you it did. On the client
+      side, the connection reader stops reading once 4 MiB of output is waiting, so the queue that fills up is the daemon''s
+      bounded one, where the limit can see it, not the window''s own memory.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: A Mac reads a kilobyte at a time
+- type: paragraph
+  content:
+  - type: text
+    text: The macOS port brought its own lesson. On a Mac, a pseudo-terminal hands over at most 1,024 bytes per read. A 200
+      MB flood of output became 200,000 separate reads, each one waking the pane's thread and sending a message to every client.
+      Throughput was 67 MB/s, a third of what a terminal on its own managed.
+- type: paragraph
+  content:
+  - type: text
+    text: 'The fix is to gather: during a flood, after each kilobyte the daemon waits up to 100 microseconds for the next
+      one before sending. It only does this in a flood. A single key''s echo still goes out immediately, because the thing
+      a person notices first is a keystroke that feels late.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'The port also taught me to write down what I hadn''t run. A lot of the Mac code was written on Linux, and the platform
+      notes say: '
+  - type: text
+    text: '"Code not built and run on a Mac is unverified."'
+    marks:
+    - type: italic
+  - type: text
+    text: ' Plenty of commit messages end with "Not built or run on a Mac". I''d rather read that than find out.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: One static binary, and the TLS that comes with it
+- type: paragraph
+  content:
+  - type: text
+    text: isc
+    marks:
+    - type: code
+  - type: text
+    text: ' is one statically linked file for x86-64 and arm64 Linux, and the arm64 build is linked where no C is compiled
+      at all. Servers are often arm64 with an unusual C library, and I wanted to copy one file onto a machine and have it
+      work.'
+- type: paragraph
+  content:
+  - type: text
+    text: 'That decision chose the TLS stack. '
+  - type: text
+    text: ring
+    marks:
+    - type: code
+  - type: text
+    text: ', '
+  - type: text
+    text: aws-lc
+    marks:
+    - type: code
+  - type: text
+    text: ' and OpenSSL all need a C compiler. Insensical uses '
+  - type: text
+    text: rustls
+    marks:
+    - type: code
+  - type: text
+    text: ' with '
+  - type: text
+    text: rustls-graviola
+    marks:
+    - type: code
+  - type: text
+    text: ', a provider written in Rust and assembly by the author of rustls. I rejected the pure RustCrypto provider because
+      it says of itself that it isn''t meant for production. graviola has its own catch: it needs AES, AVX2, ADX and BMI2
+      on x86-64, and AES, SHA-2 and PMULL on arm64. A Raspberry Pi 4 has none of the arm64 ones. So the hub checks the CPU
+      first and refuses TLS with a sentence explaining why, instead of failing with an illegal instruction.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: Idle means idle
+- type: paragraph
+  content:
+  - type: text
+    text: 'The last property is the quietest. A daemon that holds your terminals all day should cost nothing when nothing''s
+      happening. Measured with eight idle shells, the daemon had zero wake-ups in ten seconds. The architecture document states
+      the figure with its limits: '
+  - type: text
+    text: '"daemon: 0 wakeups in 10 s holding 8 idle shells, measured with no tray. GUI: not measured."'
+    marks:
+    - type: italic
+  - type: text
+    text: ' The tray''s thread on Linux checks the settings every two seconds, and it says so.'
+- type: heading
+  attrs:
+    level: 2
+  content:
+  - type: text
+    text: What carries over
+- type: bulletList
+  content:
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Measure at the scale you claim.
+        marks:
+        - type: bold
+      - type: text
+        text: ' A thousand panes found two problems that ten never would have.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: '`fork` is not free in a big, threaded process.'
+        marks:
+        - type: bold
+      - type: text
+        text: ' '
+      - type: text
+        text: posix_spawn
+        marks:
+        - type: code
+      - type: text
+        text: ' is, mostly.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: 'Children inherit more than you think:'
+        marks:
+        - type: bold
+      - type: text
+        text: ' signal masks, environment variables, descriptors without '
+      - type: text
+        text: FD_CLOEXEC
+        marks:
+        - type: code
+      - type: text
+        text: .
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Distrust a shutdown.
+        marks:
+        - type: bold
+      - type: text
+        text: ' Treat removals during one as suspect.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: '`setsid` doesn''t escape a cgroup.'
+        marks:
+        - type: bold
+      - type: text
+        text: ' On a systemd machine, start long-lived processes in a scope of their own.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: '`exec` in place is the safest upgrade there is,'
+        marks:
+        - type: bold
+      - type: text
+        text: ' once you''ve handled everything that doesn''t survive it.'
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Never let a slow reader slow the writer.
+        marks:
+        - type: bold
+  - type: listItem
+    content:
+    - type: paragraph
+      content:
+      - type: text
+        text: Write down what you didn't run.
+        marks:
+        - type: bold
+- type: paragraph
+  content:
+  - type: text
+    text: None of this is new. It's the same list of things I'd check on a server that keeps losing a process. The difference
+      is that this time I was the one writing the process.

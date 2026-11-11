@@ -1,6 +1,6 @@
 ---
 title: Release scripts that refuse to half-ship
-published_at: 2026-10-20T09:00:00Z
+published_at: 2026-10-20T09:00:00+06:00
 topics: [operations, engineering]
 excerpt: "The worst release is the one that stops halfway — a tag pushed, a package published, the documentation still describing last week. Every project I ship uses the same pattern to make that impossible: check everything, ask once, then do it all."
 art: /art/posts/release-scripts.svg

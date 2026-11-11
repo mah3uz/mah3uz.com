@@ -1,6 +1,6 @@
 ---
 title: Rewrite history only when you can prove it
-published_at: 2026-10-17T09:00:00Z
+published_at: 2026-10-17T09:00:00+06:00
 topics: [engineering, operations]
 excerpt: Nibble had thirty-six database migrations after its first week. Folding them into one per table was easy to type and hard to get right. The order of foreign keys was the whole job - and a schema diff was the only proof I trusted.
 art: /art/posts/rewrite-history.svg

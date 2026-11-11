@@ -11,9 +11,10 @@ to the rich-text JSON Nibble stores). Edit those, then:
 
 Once imported, the Control Plane owns the content; this is the seed, and the way to replace everything at once.
 Post bodies use a small Markdown subset: ## and ### headings, paragraphs, - and 1. lists, ``` code, > quotes,
-**bold**, *italic*, `code` and [links](url).
+**bold**, *italic*, `code`, [links](url), and an image on its own line as ![alt](/path).
 """
 import re
+from datetime import timezone
 from pathlib import Path
 
 import yaml
@@ -71,6 +72,8 @@ def rich(markdown):
             doc.append({'type': 'heading', 'attrs': {'level': 3}, 'content': inline(block[4:])})
         elif block.startswith('## '):
             doc.append({'type': 'heading', 'attrs': {'level': 2}, 'content': inline(block[3:])})
+        elif image := re.fullmatch(r'!\[(.*?)\]\((\S+?)\)', block.strip()):
+            doc.append({'type': 'image', 'attrs': {'src': image.group(2), 'alt': image.group(1)}})
         elif block.startswith('> '):
             text = ' '.join(line[2:] for line in block.split('\n'))
             doc.append({'type': 'blockquote', 'content': [{'type': 'paragraph', 'content': inline(text)}]})
@@ -98,6 +101,15 @@ def read(path):
     if not match:
         raise SystemExit(f'{path}: needs YAML frontmatter between --- lines')
     return yaml.safe_load(match.group(1)) or {}, match.group(2).strip()
+
+
+def utc(stamp):
+    """Frontmatter times are written in my own offset (+06:00); the package stores UTC."""
+    if not hasattr(stamp, 'strftime'):
+        return stamp
+    if stamp.tzinfo:
+        stamp = stamp.astimezone(timezone.utc)
+    return stamp.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
 def write(path, data):
@@ -175,8 +187,7 @@ for path in sorted((SOURCE / 'posts').glob('*.md')):
     front, body = read(path)
     write(f'collections/posts/en/{path.stem}.yml', {
         'title': front['title'],
-        'published_at': front['published_at'].strftime('%Y-%m-%dT%H:%M:%SZ')
-        if hasattr(front['published_at'], 'strftime') else front['published_at'],
+        'published_at': utc(front['published_at']),
         'topics': [f'topics/{topic}' for topic in front.get('topics', [])],
         'excerpt': front['excerpt'],
         'art': front.get('art'),

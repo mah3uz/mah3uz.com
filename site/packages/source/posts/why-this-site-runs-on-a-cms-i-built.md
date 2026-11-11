@@ -1,6 +1,6 @@
 ---
 title: Why this site runs on a CMS I built
-published_at: 2026-09-29T09:00:00Z
+published_at: 2026-09-29T09:00:00+06:00
 topics: [product, engineering]
 excerpt: Every developer eventually writes a content management system. I did it on purpose, after years of installing, patching and rescuing other people's. These are the decisions that made Nibble — and the one I got wrong first.
 art: /art/posts/cms-i-built.svg

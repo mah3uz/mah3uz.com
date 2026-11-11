@@ -1,6 +1,6 @@
 ---
 title: A lock screen that cannot lock you out
-published_at: 2026-10-08T09:00:00Z
+published_at: 2026-10-08T09:00:00+06:00
 topics: [linux, security]
 excerpt: Theming a login screen means writing to system directories as root; theming a lock screen means one bug can lock someone out of their own machine. How Darwan handles both — a supervised lock, and a root helper that trusts nothing it is given.
 art: /art/posts/lock-screen.svg

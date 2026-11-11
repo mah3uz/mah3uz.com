@@ -1,6 +1,6 @@
 ---
 title: Your own website is the best test suite
-published_at: 2026-09-27T09:00:00Z
+published_at: 2026-09-27T09:00:00+06:00
 topics: [engineering, product]
 excerpt: One evening of clicking around my own documentation produced seven patch releases of Nibble. Fixtures with three files never find what real content finds — and some bugs only show up when you actually run the thing.
 art: /art/posts/own-website-test-suite.svg

@@ -1,6 +1,6 @@
 ---
 title: The last reading before a crash
-published_at: 2026-10-24T09:00:00Z
+published_at: 2026-10-24T09:00:00+06:00
 topics: [operations, rust, linux]
 excerpt: A monitor is most useful at the exact moment the machine dies — which is when most of them lose their data. Designing Sysman's collector around one rule, and what it took to keep that rule.
 art: /art/posts/last-reading.svg

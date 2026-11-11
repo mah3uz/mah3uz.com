@@ -457,9 +457,223 @@ def arts(frame, window, bars):
         b.append(f'<path d="M1240 450h22M1240 474h22" stroke="{MINT}" stroke-width="8" stroke-linecap="round"/>')
         return frame(u, ''.join(b), glow=(850, 480))
 
+    def easyshot():
+        u = 'es'
+        b = []
+        # a frozen tiling desktop: a bar and three tiled windows
+        b.append(f'<rect x="170" y="170" width="1260" height="44" rx="14" fill="#071419" stroke="{MINT}" stroke-opacity="0.2" stroke-width="2"/>')
+        b.append(''.join(f'<circle cx="{200 + k * 30}" cy="192" r="8" fill="{MINT}" fill-opacity="{0.9 if k == 1 else 0.3}"/>' for k in range(4)))
+        b.append(window(170, 236, 620, 600, u) + window(810, 236, 620, 290, u) + window(810, 546, 620, 290, u))
+        b.append(bars(210, 300, [300, 220, 380, 260, 340, 200, 300, 240, 160, 280, 220, 180], gap=42, h=12, colors=[MINT, MIST, MIST, TEAL]))
+        random.seed(7)
+        pts = [(850 + i * 30, 470 - random.uniform(0.1, 0.9) * 140) for i in range(19)]
+        b.append(f'<path d="M{" L".join(f"{x:.0f} {y:.0f}" for x, y in pts)}" fill="none" stroke="{MINT}" stroke-width="4" stroke-linejoin="round"/>')
+        b.append(''.join(f'<rect x="{850 + k * 140}" y="{620 + j * 90}" width="120" height="70" rx="12" fill="#0E2B33" stroke="{MINT}" stroke-opacity="0.18"/>'
+                         for k in range(4) for j in range(2)))
+        # everything outside the selection dimmed
+        sx, sy, sw, sh = 330, 330, 576, 324
+        b.append(f'<path d="M150 150H1450V870H150ZM{sx} {sy}V{sy + sh}H{sx + sw}V{sy}Z" fill="#050F12" fill-opacity="0.62" fill-rule="evenodd"/>')
+        b.append(f'<circle cx="1400" cy="192" r="11" fill="#FF7A6B"/>')
+        b.append(f'<rect x="{sx}" y="{sy}" width="{sw}" height="{sh}" fill="none" stroke="{FOAM}" stroke-opacity="0.8" stroke-width="2"/>')
+        b.append(f'<path d="M{sx} {sy + 44}V{sy}H{sx + 44}M{sx + sw - 44} {sy}H{sx + sw}V{sy + 44}M{sx + sw} {sy + sh - 44}V{sy + sh}H{sx + sw - 44}'
+                 f'M{sx + 44} {sy + sh}H{sx}V{sy + sh - 44}" fill="none" stroke="{MINT}" stroke-width="10" stroke-linecap="round"/>')
+        b.append(f'<rect x="{sx}" y="{sy - 62}" width="176" height="44" rx="12" fill="{ABYSS}" stroke="{MINT}" stroke-opacity="0.5"/>'
+                 f'<text x="{sx + 88}" y="{sy - 32}" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="24" '
+                 f'font-weight="700" fill="{MINT}">1280 &#215; 720</text>')
+        # the secret line, pixelated, and an arrow pointing at the line that matters
+        b.append(''.join(f'<rect x="{370 + k * 26}" y="546" width="24" height="24" fill="{[MIST, TEAL, SEA][(k * 5) % 3]}" '
+                         f'fill-opacity="{0.25 + ((k * 7) % 5) / 10:.2f}"/>' for k in range(14)))
+        b.append(f'<path d="M840 620Q800 480 584 474" fill="none" stroke="{MINT}" stroke-width="9" stroke-linecap="round"/>'
+                 f'<path d="M612 450L580 474 612 498" fill="none" stroke="{MINT}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>')
+        # the last few shots, fanned in the corner
+        for k, rot in enumerate((-16, -6, 4)):
+            b.append(f'<g transform="rotate({rot} 1190 900)"><rect x="1080" y="650" width="230" height="140" rx="16" fill="#0E2B33" '
+                     f'stroke="{MINT}" stroke-opacity="0.45" stroke-width="2"/><rect x="1096" y="666" width="198" height="80" rx="8" '
+                     f'fill="url(#{u}-tile)" fill-opacity="{0.35 + k * 0.3:.2f}"/><rect x="1096" y="758" width="{90 + k * 30}" height="12" '
+                     f'rx="6" fill="{MIST}" fill-opacity="0.5"/></g>')
+        return frame(u, ''.join(b), glow=(620, 490))
+
+    def recording_window():
+        u = 'rw'
+        b = []
+        # the window being recorded, on another workspace: only its outline
+        b.append(f'<rect x="170" y="210" width="500" height="380" rx="28" fill="{MINT}" fill-opacity="0.03" stroke="{MIST}" '
+                 f'stroke-opacity="0.55" stroke-width="3" stroke-dasharray="14 12"/>')
+        b.append(f'<path d="M170 270H670" stroke="{MIST}" stroke-opacity="0.3" stroke-width="2" stroke-dasharray="14 12"/>')
+        b.append(bars(210, 310, [260, 180, 300, 210], gap=40, h=12, colors=[MIST]).replace('fill-opacity="0.9"', 'fill-opacity="0.3"')
+                 .replace('fill-opacity="0.45"', 'fill-opacity="0.2"'))
+        b.append(f'<circle cx="620" cy="240" r="13" fill="#FF7A6B"/><circle cx="620" cy="240" r="24" fill="none" stroke="#FF7A6B" stroke-opacity="0.4" stroke-width="3"/>')
+        # the window in front of it, the one you can see
+        b.append(window(290, 440, 470, 360, u))
+        b.append(bars(330, 540, [300, 220, 340, 180, 260], gap=44, h=12, colors=[MINT, MIST, MIST, TEAL]))
+        # its frames, coming out the side as a filmstrip
+        b.append(f'<rect x="680" y="300" width="470" height="150" rx="12" fill="#071419" stroke="{MINT}" stroke-opacity="0.3" stroke-width="2"/>')
+        b.append(''.join(f'<rect x="{694 + k * 32}" y="{y}" width="16" height="12" rx="3" fill="{MIST}" fill-opacity="0.35"/>'
+                         for k in range(14) for y in (312, 426)))
+        for k in range(4):
+            x = 700 + k * 112
+            b.append(f'<rect x="{x}" y="336" width="96" height="78" rx="8" fill="#0E2B33" stroke="{MINT}" stroke-opacity="{0.2 + k * 0.2:.1f}" stroke-width="2"/>'
+                     f'<rect x="{x}" y="336" width="96" height="16" rx="8" fill="{MINT}" fill-opacity="{0.15 + k * 0.2:.2f}"/>'
+                     f'<rect x="{x + 12}" y="366" width="{40 + (k * 17) % 36}" height="9" rx="4.5" fill="{MIST}" fill-opacity="{0.25 + k * 0.15:.2f}"/>'
+                     f'<rect x="{x + 12}" y="386" width="{60 - (k * 13) % 30}" height="9" rx="4.5" fill="{MIST}" fill-opacity="{0.2 + k * 0.1:.2f}"/>')
+        # into the encoder, out as a video
+        b.append(f'<path d="M1150 375H1196" stroke="url(#{u}-line)" stroke-width="6" stroke-dasharray="2 12" stroke-linecap="round"/>')
+        b.append(f'<rect x="1200" y="300" width="150" height="150" rx="24" fill="#0E2B33" stroke="{MINT}" stroke-opacity="0.45" stroke-width="2"/>'
+                 + ''.join(f'<rect x="{1222 + k * 28}" y="{y}" width="14" height="20" rx="3" fill="{MINT}" fill-opacity="0.5"/>' for k in range(4) for y in (278, 452))
+                 + f'<rect x="1235" y="335" width="80" height="80" rx="14" fill="url(#{u}-tile)"/>')
+        b.append(f'<circle cx="1275" cy="620" r="74" fill="#0E2B33" stroke="{MINT}" stroke-opacity="0.45" stroke-width="3"/>'
+                 f'<path d="M1252 580L1312 620 1252 660Z" fill="{MINT}" stroke="{MINT}" stroke-width="8" stroke-linejoin="round"/>')
+        b.append(f'<path d="M1275 476V532" stroke="{MINT}" stroke-width="6" stroke-dasharray="2 12" stroke-linecap="round"/>')
+        return frame(u, ''.join(b), glow=(900, 400))
+
+    def compositor_drawing():
+        u = 'cd'
+        b = []
+        # the frozen screen, under a viewfinder
+        b.append(window(170, 210, 760, 560, u))
+        b.append(bars(240, 600, [380, 300, 420], gap=46, h=12, colors=[MIST]))
+        b.append(f'<rect x="700" y="590" width="170" height="110" rx="16" fill="#0E2B33" stroke="{MINT}" stroke-opacity="0.15"/>')
+        # the capture bar, still on its way out
+        for k, op in enumerate((1, 0.55, 0.28, 0.1)):
+            y = 310 + k * 64
+            b.append(f'<g opacity="{op}"><rect x="350" y="{y}" width="400" height="52" rx="26" fill="#071419" stroke="{MINT}" stroke-opacity="0.6" stroke-width="2"/>'
+                     + ''.join(f'<rect x="{374 + i * 56}" y="{y + 12}" width="36" height="28" rx="8" fill="{MINT if i == 0 else MIST}" '
+                               f'fill-opacity="{0.9 if i == 0 else 0.4}"/>' for i in range(5))
+                     + f'<circle cx="716" cy="{y + 26}" r="12" fill="#FF7A6B"/></g>')
+        b.append(f'<path d="M200 340V300Q200 286 214 286H254M846 286H886Q900 286 900 300V340M900 694V734Q900 748 886 748H846'
+                 f'M254 748H214Q200 748 200 734V694" fill="none" stroke="{MINT}" stroke-width="8" stroke-linecap="round"/>')
+        # the shutter
+        cx, cy, R, r0 = 1200, 420, 170, 62
+        hexa = [(cx + r0 * math.cos(math.radians(a * 60 + 15)), cy + r0 * math.sin(math.radians(a * 60 + 15))) for a in range(6)]
+        hits = []
+        for i in range(6):
+            (x1, y1), (x2, y2) = hexa[i], hexa[(i + 1) % 6]
+            dx, dy = (x2 - x1) / math.dist(hexa[i], hexa[(i + 1) % 6]), (y2 - y1) / math.dist(hexa[i], hexa[(i + 1) % 6])
+            px, py = x2 - cx, y2 - cy
+            t = -(px * dx + py * dy) + math.sqrt((px * dx + py * dy) ** 2 - (px * px + py * py - R * R))
+            hits.append((x2 + t * dx, y2 + t * dy))
+        b.append(f'<circle cx="{cx}" cy="{cy}" r="{R + 22}" fill="#071419" stroke="{MINT}" stroke-opacity="0.4" stroke-width="3"/>')
+        for i in range(6):
+            (vx, vy), (q1x, q1y), (q2x, q2y) = hexa[(i + 1) % 6], hits[i], hits[(i + 1) % 6]
+            b.append(f'<path d="M{vx:.1f} {vy:.1f}L{q1x:.1f} {q1y:.1f}A{R} {R} 0 0 1 {q2x:.1f} {q2y:.1f}Z" fill="url(#{u}-tile)" '
+                     f'fill-opacity="{0.55 + (i % 3) * 0.2:.2f}" stroke="#071419" stroke-width="4" stroke-linejoin="round"/>')
+        # a quarter of a second
+        b.append(f'<path d="M1040 700H1380" stroke="{MIST}" stroke-opacity="0.3" stroke-width="4" stroke-linecap="round"/>'
+                 f'<path d="M1040 700H1250" stroke="{MINT}" stroke-width="10" stroke-linecap="round"/>'
+                 + ''.join(f'<path d="M{1040 + k * 42} {684 if k % 5 == 0 else 690}V710" stroke="{MIST}" stroke-opacity="0.5" stroke-width="3"/>' for k in range(9))
+                 + f'<text x="1250" y="664" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="28" font-weight="700" fill="{MINT}">250 ms</text>')
+        return frame(u, ''.join(b), glow=(560, 460))
+
+    def terminal_engine():
+        u = 'te'
+        b = []
+        # a terminal's grid of cells, one wide character cut in half at the edge
+        b.append(window(170, 220, 500, 540, u))
+        random.seed(5)
+        for row in range(10):
+            for col in range(11):
+                if row == 5 and col >= 9:
+                    continue
+                on = random.random() < (0.85 if col < 7 - row % 3 else 0.12)
+                b.append(f'<rect x="{204 + col * 40}" y="{310 + row * 44}" width="32" height="34" rx="6" fill="{MINT if row == 0 and on else MIST}" '
+                         f'fill-opacity="{(0.8 if row == 0 else 0.32) if on else 0.06}"/>')
+        b.append(f'<path d="M598 530H570Q564 530 564 536V558Q564 564 570 564H598Z" fill="#FF7A6B" fill-opacity="0.4" stroke="#FF7A6B" stroke-width="3"/>'
+                 f'<path d="M610 540H636Q642 540 642 546V568Q642 574 636 574H610Z" fill="none" stroke="#FF7A6B" stroke-width="3" stroke-dasharray="6 5"/>'
+                 f'<path d="M604 516V588" stroke="#FF7A6B" stroke-width="3" stroke-linecap="round" stroke-dasharray="8 6"/>')
+        b.append(f'<path d="M700 490H800M760 450l40 40-40 40" fill="none" stroke="{MINT}" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>')
+        # the snapshot: a stack of pages
+        for k in range(3):
+            x, y = 870 - k * 24, 220 + k * 24
+            b.append(f'<path d="M{x} {y + 24}Q{x} {y} {x + 24} {y}H{x + 230}L{x + 300} {y + 70}V{y + 456}Q{x + 300} {y + 480} {x + 276} {y + 480}'
+                     f'H{x + 24}Q{x} {y + 480} {x} {y + 456}Z" fill="{"url(#" + u + "-tile)" if k == 2 else "#0E2B33"}" '
+                     f'stroke="{MINT}" stroke-opacity="{0.25 + k * 0.2:.2f}" stroke-width="2"/>')
+        b.append(f'<path d="M1052 268V338H1122" fill="none" stroke="{ABYSS}" stroke-opacity="0.4" stroke-width="3"/>')
+        b.append(''.join(f'<rect x="{858 + (k % 3) * 22}" y="{340 + k * 34}" width="{[90, 140, 60, 170, 110, 80, 150, 100, 130, 70, 120][k]}" height="12" '
+                         f'rx="6" fill="{ABYSS}" fill-opacity="0.55"/>' for k in range(11)))
+        # read back into a fresh grid, and it matches
+        b.append(f'<path d="M1150 420C1260 420 1300 480 1300 540" fill="none" stroke="{MINT}" stroke-width="8" stroke-linecap="round" stroke-dasharray="2 16"/>'
+                 f'<path d="M1276 520l24 24 24-24" fill="none" stroke="{MINT}" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>')
+        b.append(f'<rect x="1180" y="570" width="240" height="160" rx="20" fill="#0E2B33" stroke="{MINT}" stroke-opacity="0.35" stroke-width="2"/>')
+        b.append(''.join(f'<rect x="{1202 + c * 34}" y="{592 + r * 34}" width="26" height="26" rx="5" fill="{MIST}" fill-opacity="{0.35 if c < 5 - r else 0.06}"/>'
+                         for r in range(4) for c in range(6)))
+        b.append(check(1414, 572, r=28))
+        return frame(u, ''.join(b), glow=(720, 470))
+
+    def daemon_alive():
+        u = 'da'
+        b = []
+        cx, cy = 800, 490
+        # a thousand panes, thinning out with distance
+        near = []
+        for gy in range(19):
+            for gx in range(28):
+                x, y = 170 + gx * 46, 180 + gy * 36
+                d = math.hypot((x + 17 - cx) / 1.3, y + 12 - cy)
+                if d < 190 or (x > 1300 and y > 700):
+                    continue
+                op = max(0, 0.75 - d / 560)
+                if op > 0.02:
+                    b.append(f'<rect x="{x}" y="{y}" width="34" height="24" rx="5" fill="{MIST if (gx + gy) % 5 else MINT}" fill-opacity="{op:.2f}"/>')
+                if d < 240 and (gx + gy) % 2 == 0:
+                    near.append((x + 17, y + 12))
+        b.append(''.join(f'<path d="M{cx} {cy}L{x} {y}" stroke="{MINT}" stroke-opacity="0.3" stroke-width="2"/>' for x, y in near))
+        # the heartbeat
+        beat = 'M150 480H560l20-40 30 110 34-170 30 140 22-40H1030l20-40 30 110 34-170 30 140 22-40H1450'
+        b.append(f'<path d="{beat}" fill="none" stroke="{MINT}" stroke-opacity="0.85" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>')
+        # the daemon, and exec bringing it back as itself
+        b.append(f'<rect x="{cx - 140}" y="{cy - 90}" width="280" height="180" rx="36" fill="#000" fill-opacity="0.45" filter="url(#{u}-soft)"/>'
+                 f'<rect x="{cx - 140}" y="{cy - 100}" width="280" height="180" rx="36" fill="url(#{u}-tile)"/>')
+        b.append(f'<path d="M{cx - 110} {cy - 20}H{cx - 40}l14-24 18 44 20-70 16 50 12-20H{cx + 110}" fill="none" stroke="{ABYSS}" '
+                 f'stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>')
+        b.append(f'<text x="{cx}" y="{cy + 58}" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="26" font-weight="700" '
+                 f'fill="{ABYSS}">pid 4127</text>')
+        b.append(f'<path d="M{cx + 90} {cy - 110}C{cx + 150} {cy - 290} {cx - 150} {cy - 290} {cx - 96} {cy - 118}" fill="none" stroke="{FOAM}" '
+                 f'stroke-width="9" stroke-linecap="round"/><path d="M{cx - 124} {cy - 140}L{cx - 94} {cy - 112} {cx - 70} {cy - 146}" fill="none" '
+                 f'stroke="{FOAM}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>')
+        b.append(f'<rect x="{cx - 52}" y="{cy - 290}" width="104" height="42" rx="21" fill="{ABYSS}" stroke="{FOAM}" stroke-opacity="0.5"/>'
+                 f'<text x="{cx}" y="{cy - 261}" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="24" font-weight="700" fill="{FOAM}">exec</text>')
+        return frame(u, ''.join(b), glow=(cx, cy))
+
+    def gpui_three_apps():
+        u = 'g3'
+        b = []
+        xs = (170, 600, 1030)
+        # one GPU under all three
+        b.append(f'<g transform="translate(560 660)"><rect width="480" height="170" rx="30" fill="#0E2B33" stroke="{MINT}" stroke-opacity="0.35" stroke-width="2"/>'
+                 + ''.join(f'<circle cx="{130 + i * 220}" cy="85" r="62" fill="#071419" stroke="{MINT}" stroke-opacity="0.3" stroke-width="3"/>'
+                           f'<circle cx="{130 + i * 220}" cy="85" r="20" fill="url(#{u}-tile)"/>' for i in range(2))
+                 + ''.join(f'<rect x="{36 + i * 40}" y="170" width="22" height="30" rx="4" fill="{MINT}" fill-opacity="0.5"/>' for i in range(11))
+                 + '</g>')
+        b.append(''.join(f'<path d="M{x + 200} 600L{800 + (i - 1) * 140} 656" stroke="{MINT}" stroke-opacity="0.8" stroke-width="6" stroke-dasharray="2 14" '
+                         f'stroke-linecap="round"/>' for i, x in enumerate(xs)))
+        for x in xs:
+            b.append(window(x, 180, 400, 410, u))
+        # a terminal
+        b.append(''.join(f'<rect x="{200 + c * 30}" y="{270 + r * 36}" width="24" height="26" rx="5" fill="{MINT if r == 0 and c < 2 else MIST}" '
+                         f'fill-opacity="{(0.85 if r == 0 else 0.3) if c < [3, 9, 6, 10, 4, 8, 2, 3][r] else 0.05}"/>' for r in range(8) for c in range(11)))
+        b.append(f'<rect x="290" y="522" width="24" height="26" rx="5" fill="{MINT}"/>')
+        # a screenshot being marked up
+        b.append(f'<rect x="630" y="270" width="340" height="230" rx="14" fill="url(#{u}-tile)" fill-opacity="0.3"/>'
+                 f'<rect x="660" y="300" width="150" height="90" rx="10" fill="none" stroke="{FOAM}" stroke-width="5"/>'
+                 f'<path d="M920 460Q900 380 826 360M842 336l-18 24 26 18" fill="none" stroke="{MINT}" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>')
+        b.append(''.join(f'<circle cx="{650 + i * 48}" cy="540" r="14" fill="{[MINT, TEAL, SEA, MIST, FOAM][i]}" fill-opacity="{1 if i == 0 else 0.45}"/>' for i in range(5)))
+        # a system monitor
+        random.seed(4)
+        v, pts = 0.5, []
+        for i in range(24):
+            v = max(0.15, min(0.9, v + random.uniform(-0.14, 0.14)))
+            pts.append((1060 + i * 340 / 23, 420 - v * 150))
+        d = 'M' + ' L'.join(f'{x:.1f} {y:.1f}' for x, y in pts)
+        b.append(f'<path d="{d}" fill="none" stroke="{MINT}" stroke-width="5" stroke-linejoin="round"/>'
+                 f'<path d="{d} L1400 420 L1060 420Z" fill="{MINT}" fill-opacity="0.1"/>')
+        b.append(''.join(f'<rect x="1060" y="{460 + k * 34}" width="340" height="14" rx="7" fill="{MIST}" fill-opacity="0.12"/>'
+                         f'<rect x="1060" y="{460 + k * 34}" width="{[250, 140, 200][k]}" height="14" rx="7" fill="{[MINT, TEAL, SEA][k]}"/>' for k in range(3)))
+        return frame(u, ''.join(b), glow=(800, 560))
+
     return {
         'tide': tide,
         'earport': earport,
+        'easyshot': easyshot,
         'pages/about': about,
         'pages/now': now,
         'pages/uses': uses,
@@ -475,5 +689,10 @@ def arts(frame, window, bars):
         'posts/security-in-the-browser': security_in_the_browser,
         'posts/strangers-can-upgrade': strangers_can_upgrade,
         'posts/rewrite-history': rewrite_history,
+        'posts/recording-window': recording_window,
+        'posts/compositor-drawing': compositor_drawing,
+        'posts/terminal-engine': terminal_engine,
+        'posts/daemon-alive': daemon_alive,
+        'posts/gpui-three-apps': gpui_three_apps,
         'posts/default': default_post,
     }

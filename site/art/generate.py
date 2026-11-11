@@ -401,6 +401,10 @@ import more  # noqa: E402
 
 ARTS.update(more.arts(frame, window, bars))
 
+import diagrams  # noqa: E402
+
+ARTS.update(diagrams.diagrams(frame, window, bars))
+
 import marks  # noqa: E402
 
 ARTS.update(marks.marks())
