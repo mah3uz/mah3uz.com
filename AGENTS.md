@@ -41,8 +41,9 @@ stops Claude Code editing `vendor/nibble/`.
   and `![alt](art/posts/<slug>/figure.svg)` in a post body. The import uploads a file only when the library has none at
   that path, so a redrawn image reaches the live site through **Replace** on that asset in the Control Plane.
 - **Brand mark:** the site's logo is the bracketed tile — the teal gradient tile with three corner brackets and a
-  peeled corner, holding an "m" (`assets/brand/favicon.svg`, set as the site settings' `logo`; `components/BrandMark.vue`
-  draws the same mark inline). The header shows the site settings' logo, and the site name only when no logo is set.
+  peeled corner, holding an "m" (`assets/brand/favicon.svg`, set as the site settings' `logo`; `BrandMark.vue` draws
+  the same mark inline for About). The header and footer show the site settings' logo, and the site name only when no
+  logo is set.
 - **Project logos** are each product's own logo, copied from its repository into `site/packages/default/assets/logos/`
   and named in the project's `logo:`, and kept still: strip any `<animate>`/`<animateTransform>`/`<set>` from a copied SVG,
   because an animated SVG in an `<img>` makes the browser lay out and repaint the whole page every frame, forever

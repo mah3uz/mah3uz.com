@@ -1,5 +1,8 @@
 """Technical diagrams for blog posts, drawn on the same midnight card as the covers.
 
+Name a post's figures `posts/<slug>/<figure>`: generate.py writes them to art/posts/<slug>/ in the asset library, and
+the post's Markdown shows one as ![alt](art/posts/<slug>/<figure>.svg).
+
 Posts show them at about 750 px wide, half the 1600 px card, so no text here is smaller than 30 units.
 """
 import math

@@ -1,14 +1,23 @@
-"""Generates the project cover art for the Neat theme into site/packages/default/assets/art/.
+"""Generates the site's artwork into the content package's asset folder, site/packages/default/assets/art/.
+
+    python3 site/art/generate.py            # or pass another output folder
+    python3 site/packages/build.py          # lists every file in assets.yml
 
 Every cover shares the banner's language — midnight teal canvas, a radial glow, three corner brackets and a peeled
 corner — and draws its own centrepiece.
+
+An entry in ARTS named `quarry` becomes art/quarry.svg in the asset library, and one named `posts/sqlite-is-enough`
+becomes art/posts/sqlite-is-enough.svg; content refers to it by that path (`cover: art/quarry.svg`,
+`featured_image: art/posts/sqlite-is-enough.svg`). A new project's cover goes here; a new page's or post's banner goes
+in more.py, a post's figures in diagrams.py, a timeline mark in marks.py. The import never replaces a file the library
+already has, so a redrawn image reaches the live site through Replace on that asset in the Control Plane.
 """
 import math
 import random
 import sys
 from pathlib import Path
 
-OUT = Path(sys.argv[1])
+OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parents[1] / 'packages/default/assets/art'
 OUT.mkdir(parents=True, exist_ok=True)
 W, H = 1600, 1000
 

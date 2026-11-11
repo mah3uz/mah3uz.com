@@ -3,7 +3,8 @@
 This directory is yours, and an upgrade never touches what you put in it:
 
 - `schema/` — your collections, taxonomies, blueprints, globals, navigation and forms
-- `content/` — content kept as files
+- `packages/` — the content package: pages, posts, projects, menus, settings and every image
+- `art/` — the scripts that draw the site's artwork
 - `themes/<name>/` — your own theme; one of Nibble's, such as `crumbs`, needs no copy here
 - `cp/` — your Control Plane overrides
 
@@ -22,12 +23,26 @@ handle wins, so a file here named after one of Nibble's replaces it. It uses the
 remove one of Nibble's collections instead, list it under `disable:` in `config/nibble.yml`. Run
 `bin/rails nibble:check` after editing anything here.
 
-## Content as files
+## Content and images
 
-A collection whose pages are written by hand names a folder in `site/content/` with `files: <folder>`. The folder is
-the collection: a file is a page, a folder's `index.md` is the page its files sit under, and frontmatter becomes
-fields. Every page needs an `id:` that never changes. Pages written this way are read-only in the Control Plane, and
-nothing outside `site/content/` can be named by `files:`.
+All content lives in the database and reaches it through the content package `site/packages/default/`, which
+`site/packages/build.py` writes from Markdown in `site/packages/source/` (`pages/`, `posts/`, `projects/`) and from the
+files in `site/packages/default/assets/`:
+
+```sh
+python3 site/art/generate.py                                   # draw the artwork into the package
+python3 site/packages/build.py                                 # write the package
+bin/rails nibble:content:validate site/packages/default
+bin/rails nibble:content:import site/packages/default --mode=update
+```
+
+Every image is an asset in the Control Plane's library, never a file in `public/`. Content names one by its library
+path, without a leading slash: `featured_image: art/posts/sqlite-is-enough.svg`, `logo: logos/quarry.svg`, and
+`![alt](art/posts/<slug>/figure.svg)` in a post. The import uploads a file only when the library has none at that
+path, so a redrawn image reaches the live site through **Replace** on that asset in the Control Plane.
+
+`--mode=update` replaces what has been edited in the Control Plane since the package was made. On a server, run the
+import straight after a deploy that changes the schema the package fills.
 
 ## Control Plane overrides
 

@@ -5,7 +5,6 @@ import { computed } from 'vue'
 import type { SiteGlobals } from '@site/types'
 import { socialLinks } from '../lib/links'
 import { vReveal } from '../lib/motion'
-import BrandMark from './BrandMark.vue'
 import Corners from './Corners.vue'
 import MenuLink from './MenuLink.vue'
 import ArrowIcon from './ArrowIcon.vue'
@@ -98,8 +97,8 @@ const year = new Date().getUTCFullYear()
     <div class="max-w-frame mx-auto mt-16 grid gap-10 sm:grid-cols-[1.5fr_1fr_1fr]">
       <div>
         <Link href="/" class="inline-flex items-center gap-3">
-          <BrandMark size="size-10" />
-          <span class="font-display text-xl font-extrabold tracking-tight">{{ site?.name ?? 'mah3uz' }}</span>
+          <img v-if="site?.logo" :src="site.logo.url" :alt="site.name ?? 'mah3uz'" class="size-10" />
+          <span v-else class="font-display text-xl font-extrabold tracking-tight">{{ site?.name ?? 'mah3uz' }}</span>
         </Link>
         <p class="mt-4 max-w-[36ch] leading-7 text-muted">
           {{ site?.tagline ?? 'Software engineer and Linux systems administrator since 2009.' }}
