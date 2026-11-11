@@ -32,26 +32,34 @@ stops Claude Code editing `vendor/nibble/`.
 - **Motifs:** three viewfinder corners (`Corners.vue`) and a peeled bottom-right corner (`Peel.vue`). Motion is CSS
   (`animate-rise`, `animate-drift`…) plus the `v-reveal`, `v-spotlight` and `v-tilt` directives in `lib/motion.ts`;
   all of it respects `prefers-reduced-motion`. Browser-only code goes in `onMounted` — server rendering has no window.
-- **Projects** are Markdown files in `site/content/projects/` (schema in `site/schema/`). `category: client` marks
-  client work, shown separately from my own products. `stage` is building / shipped / experiment / archived.
-  Run `bin/rails nibble:build` after editing them.
+- **Projects** are entries in the content package, written as Markdown in `site/packages/source/projects/` (schema in
+  `site/schema/`); `order` sets their position. `category: client` marks client work, shown separately from my own
+  products. `stage` is building / shipped / experiment / archived. `/projects` is the page `source/pages/projects.md`.
+- **Images are Nibble library assets, never files in `public/`.** Every image a page, post or project shows lives in the
+  package's `site/packages/default/assets/` (listed in `assets.yml`, which `build.py` writes) and is referenced by its
+  library path, without a leading slash: `featured_image: art/posts/sqlite-is-enough.svg`, `logo: logos/quarry.svg`,
+  and `![alt](art/posts/<slug>/figure.svg)` in a post body. The import uploads a file only when the library has none at
+  that path, so a redrawn image reaches the live site through **Replace** on that asset in the Control Plane.
 - **Brand mark:** the site's logo is the bracketed tile — the teal gradient tile with three corner brackets and a
-  peeled corner, holding an "m" (`components/BrandMark.vue`; favicon and social card in `site/packages/default`).
-- **Project logos** are each product's own logo, copied from its repository into `public/logos/` and named in the
-  project's `logo:` frontmatter, and kept still: strip any `<animate>`/`<animateTransform>`/`<set>` from a copied SVG,
+  peeled corner, holding an "m" (`assets/brand/favicon.svg`, set as the site settings' `logo`; `components/BrandMark.vue`
+  draws the same mark inline). The header shows the site settings' logo, and the site name only when no logo is set.
+- **Project logos** are each product's own logo, copied from its repository into `site/packages/default/assets/logos/`
+  and named in the project's `logo:`, and kept still: strip any `<animate>`/`<animateTransform>`/`<set>` from a copied SVG,
   because an animated SVG in an `<img>` makes the browser lay out and repaint the whole page every frame, forever
   (Quarry's mascot once kept the home page busy at a third of a core). Nibble CLI's is Nibble's mark with a terminal
   badge. A project without a logo falls back to the bracketed tile with its monogram (`components/ProjectTile.vue`).
-- **Cover art** is generated SVG in `public/art/`, from `site/art/generate.py`
-  (`python3 site/art/generate.py public/art`). Add a function there for a new project rather than drawing by hand.
-- **Timeline marks:** every About milestone has a `logo` — the project's own from `/logos`, or a mark from
-  `/art/marks`, drawn in `site/art/marks.py` on the brand's teal tile (`/art/marks/mah3uz.svg` is the brand mark).
+- **Cover art** is generated SVG, from `site/art/generate.py`, written into the package
+  (`python3 site/art/generate.py site/packages/default/assets/art`). Add a function there for a new project or post
+  rather than drawing by hand, then run `build.py` so `assets.yml` lists it.
+- **Timeline marks:** every About milestone has a `logo` — the project's own from `logos/`, or a mark from
+  `art/marks/`, drawn in `site/art/marks.py` on the brand's teal tile (`art/marks/mah3uz.svg` is the brand mark).
   Add a mark there for a new milestone that has no logo.
-- **Pages, posts, menus and site settings** come from the content package `site/packages/default`, which
-  `site/packages/build.py` writes from the Markdown sources in `site/packages/source/pages/` and `source/posts/`.
-  Import with `--mode=update` to replace live content with the package.
+- **Pages, posts, projects, menus, site settings and images** come from the content package `site/packages/default`,
+  which `site/packages/build.py` writes from the Markdown sources in `site/packages/source/` and the files in
+  `default/assets/`. Import with `--mode=update` to replace live content with the package.
 - **Removing a field** that holds data needs a content migration in `site/schema/migrations/` (deploys refuse otherwise).
-- **Artwork, not stock photos.** Every page, post and project has generated artwork (`ArtBanner.vue`, the `art` field).
+- **Artwork, not stock photos.** Every page, post and project has generated artwork (`ArtBanner.vue`; a page's or post's
+  `featured_image`, a project's `cover`).
   Project covers are drawn in `site/art/generate.py`; pages, posts and newer projects in `site/art/more.py`. There are no
   Unsplash or stock images anywhere.
 - **Photography** is my own, from unsplash.com/@mah3uz. The `unsplash-photos` scheduled task
