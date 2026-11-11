@@ -8,6 +8,8 @@ import Prose from '../../components/Prose.vue'
 import { isoDate, useFormatDate } from '../../lib/format'
 import { vReveal } from '../../lib/motion'
 import ArrowIcon from '../../components/ArrowIcon.vue'
+import Corners from '../../components/Corners.vue'
+import Peel, { peelCut } from '../../components/Peel.vue'
 
 const props = defineProps<ViewProps['posts/show'] & { page: PostsPost }>()
 const formatDate = useFormatDate()
@@ -76,14 +78,17 @@ onBeforeUnmount(() => window.removeEventListener('scroll', measure))
         · {{ readingTime }} min read
       </p>
     </header>
-    <div class="animate-rise mx-auto mt-12 max-w-5xl [animation-delay:260ms]">
-      <Image
-        v-if="page.featured_image"
-        :image="page.featured_image"
-        loading="eager"
-        sizes="(min-width: 64rem) 64rem, 100vw"
-        class="aspect-[2/1] w-full rounded-[1.75rem] object-cover"
-      />
+    <div v-if="page.featured_image" class="animate-rise group relative mx-auto mt-12 max-w-5xl [animation-delay:260ms]">
+      <div class="neat-peeled relative overflow-hidden rounded-[1.75rem]" :style="{ '--peel-cut': peelCut(104) }">
+        <Image
+          :image="page.featured_image"
+          loading="eager"
+          sizes="(min-width: 64rem) 64rem, 100vw"
+          class="aspect-[2/1] w-full object-cover"
+        />
+        <Corners inset="1.25rem" />
+      </div>
+      <Peel :size="104" />
     </div>
     <div id="article-body" class="mx-auto prose prose-lg mt-14 max-w-[68ch]">
       <Prose :value="page.body" />
