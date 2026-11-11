@@ -1,4 +1,4 @@
-title: The 483 GB target folder
+title: 'Cargo''s defaults ate 483 GB: a Rust build postmortem'
 published_at: '2026-11-11T06:00:00Z'
 topics:
 - topics/rust
@@ -209,7 +209,7 @@ body:
         text: ' processes on a 124 GB machine.'
 - type: image
   attrs:
-    src: /art/posts/the-483-gb-target-folder/io-pressure.svg
+    src: /art/posts/cargo-defaults-ate-483-gb/io-pressure.svg
     alt: 'It wasn''t the CPU: disk pressure at 21 to 27 percent while CPU and memory pressure sat near zero'
 - type: heading
   attrs:
@@ -262,7 +262,7 @@ body:
     text: The first, on easyshot's folder, gave the shape of the problem straight away.
 - type: image
   attrs:
-    src: /art/posts/the-483-gb-target-folder/where-it-went.svg
+    src: /art/posts/cargo-defaults-ate-483-gb/where-it-went.svg
     alt: 'Where 483 GB went: 376 GB in deps, 65 GB in examples and 43 GB of incremental state'
 - type: heading
   attrs:
@@ -358,12 +358,12 @@ body:
     text: ' from 22 GB to 3 GB. Quarry went from 3.7 GB to 1.7 GB.'
 - type: image
   attrs:
-    src: /art/posts/the-483-gb-target-folder/binary-anatomy.svg
+    src: /art/posts/cargo-defaults-ate-483-gb/binary-anatomy.svg
     alt: 'Half of every test binary was debug info: Sysman''s binary from 540 to 640 MB down to 44 MB, Darwan''s largest test
       binary from 283 to 91 MB, Quarry''s from 262 to 67 MB'
 - type: image
   attrs:
-    src: /art/posts/the-483-gb-target-folder/before-after.svg
+    src: /art/posts/cargo-defaults-ate-483-gb/before-after.svg
     alt: target/ before and after the profile change, on a log scale
 - type: paragraph
   content:
@@ -547,7 +547,7 @@ body:
     - type: italic
 - type: image
   attrs:
-    src: /art/posts/the-483-gb-target-folder/deps-opt.svg
+    src: /art/posts/cargo-defaults-ate-483-gb/deps-opt.svg
     alt: 'Optimise the dependencies, not your code: one window test took 58 seconds with dependencies unoptimised and 5 with
       opt-level 2'
 - type: paragraph
@@ -591,7 +591,7 @@ body:
       of each of 13 example programs, about 193 MB each, plus 171 old copies of one test binary and 162 of another.'
 - type: image
   attrs:
-    src: /art/posts/the-483-gb-target-folder/stale-copies.svg
+    src: /art/posts/cargo-defaults-ate-483-gb/stale-copies.svg
     alt: 'Cargo never throws anything away: 13 examples times 49 hashed copies is about 22 GB, and 171 plus 162 stale test
       binaries are about 35 GB more'
 - type: paragraph
@@ -861,7 +861,7 @@ body:
       so a test can never reach the copy in daily use.'
 - type: image
   attrs:
-    src: /art/posts/the-483-gb-target-folder/suite-time.svg
+    src: /art/posts/cargo-defaults-ate-483-gb/suite-time.svg
     alt: 'The same 1,878 tests: 254 seconds with cargo test, 161.7 with nextest in name order on 12 threads, and 134.0 with
       the slowest tests started first'
 - type: codeBlock
@@ -952,7 +952,7 @@ body:
     text: ' 134.0 seconds, 17 percent faster.'
 - type: image
   attrs:
-    src: /art/posts/the-483-gb-target-folder/slowest-first.svg
+    src: /art/posts/cargo-defaults-ate-483-gb/slowest-first.svg
     alt: 'Start the long ones first: in name order the long tests start late and stick out; started first, the short tests
       pack around them'
 - type: paragraph
@@ -1141,7 +1141,7 @@ body:
     text: ' build took 36 seconds against 126 for release on Linux, and 32 against 89 on a Mac.'
 - type: image
   attrs:
-    src: /art/posts/the-483-gb-target-folder/profiles.svg
+    src: /art/posts/cargo-defaults-ate-483-gb/profiles.svg
     alt: 'One profile per job: dev, dbg, page and release, each with its own settings'
 - type: paragraph
   content:
@@ -1288,7 +1288,7 @@ body:
       cores, and the desktop always wins:'
 - type: image
   attrs:
-    src: /art/posts/the-483-gb-target-folder/build-slice.svg
+    src: /art/posts/cargo-defaults-ate-483-gb/build-slice.svg
     alt: 'Builds below the desktop: every cargo runs in build.slice and takes its jobs from one shared pool of tokens'
 - type: bulletList
   content:

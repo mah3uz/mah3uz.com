@@ -386,7 +386,7 @@ def diagrams(frame, window, bars):
             b.append(text(rx + 24, y + 42, c, fill=MIST))
         return frame('dg-pt', ''.join(b), glow=(400, 520))
 
-    # ------------------------------------------------------------ the-483-gb-target-folder
+    # ------------------------------------------------------------ cargo-defaults-ate-483-gb
     def bar(x, y, w, h, color, op=0.85, rx=12):
         return f'<rect x="{x:.0f}" y="{y:.0f}" width="{max(w, 2):.0f}" height="{h}" rx="{min(rx, w / 2):.0f}" fill="{color}" fill-opacity="{op}"/>'
 
@@ -652,16 +652,16 @@ def diagrams(frame, window, bars):
         return frame('dg-bs', ''.join(b), glow=(1000, 460))
 
     return {
-        'posts/the-483-gb-target-folder/where-it-went': where_it_went,
-        'posts/the-483-gb-target-folder/before-after': before_after,
-        'posts/the-483-gb-target-folder/binary-anatomy': binary_anatomy,
-        'posts/the-483-gb-target-folder/stale-copies': stale_copies,
-        'posts/the-483-gb-target-folder/suite-time': suite_time,
-        'posts/the-483-gb-target-folder/slowest-first': slowest_first,
-        'posts/the-483-gb-target-folder/deps-opt': deps_opt,
-        'posts/the-483-gb-target-folder/profiles': profiles,
-        'posts/the-483-gb-target-folder/io-pressure': io_pressure,
-        'posts/the-483-gb-target-folder/build-slice': build_slice,
+        'posts/cargo-defaults-ate-483-gb/where-it-went': where_it_went,
+        'posts/cargo-defaults-ate-483-gb/before-after': before_after,
+        'posts/cargo-defaults-ate-483-gb/binary-anatomy': binary_anatomy,
+        'posts/cargo-defaults-ate-483-gb/stale-copies': stale_copies,
+        'posts/cargo-defaults-ate-483-gb/suite-time': suite_time,
+        'posts/cargo-defaults-ate-483-gb/slowest-first': slowest_first,
+        'posts/cargo-defaults-ate-483-gb/deps-opt': deps_opt,
+        'posts/cargo-defaults-ate-483-gb/profiles': profiles,
+        'posts/cargo-defaults-ate-483-gb/io-pressure': io_pressure,
+        'posts/cargo-defaults-ate-483-gb/build-slice': build_slice,
         'posts/recording-a-window-you-cannot-see/pipeline': pipeline,
         'posts/recording-a-window-you-cannot-see/supervision': supervision,
         'posts/the-compositor-is-still-drawing-it/settle': settle,
