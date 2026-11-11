@@ -3,7 +3,7 @@ import { Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import type { PagesPage, ViewProps } from '@site/types'
 import Corners from '../components/Corners.vue'
-import HeroReel from '../components/HeroReel.vue'
+import NightShift from '../components/NightShift.vue'
 import PostCard from '../components/PostCard.vue'
 import ProjectCard from '../components/ProjectCard.vue'
 import ProjectTile from '../components/ProjectTile.vue'
@@ -24,96 +24,35 @@ const featured = computed(() => {
   const picked = all.value.filter((project) => project.featured)
   return (picked.length ? picked : all.value).slice(0, 4)
 })
-// The hero's reel: featured work first, then the other products, then client work.
-const reel = computed(() => [
-  ...featured.value,
-  ...all.value.filter((project) => !featured.value.includes(project)),
-  ...clients.value,
-])
-const stack = computed(() => [...new Set(all.value.flatMap((project) => project.stack ?? []))])
 const board = computed(() =>
   (['building', 'shipped', 'experiment'] as Status[])
     .map((status) => ({ status, items: all.value.filter((project) => statusOf(project) === status) }))
     .filter((column) => column.items.length),
 )
-const stats = computed(() => [
-  { value: `${STARTED}`, label: 'Shipping software since' },
-  { value: `${years}+`, label: 'Years in the industry' },
-  { value: `${all.value.length}`, label: 'Products in the workshop' },
-  clients.value.length
-    ? { value: `${clients.value.length}`, label: 'Client platforms engineered' }
-    : { value: `${stack.value.length}`, label: 'Tools in daily rotation' },
-])
-const headline = computed(() => {
-  const words = (props.page.title ?? '').split(' ')
-  return { lead: words.slice(0, -2).join(' '), tail: words.slice(-2).join(' ') }
-})
 </script>
 
 <template>
   <div>
-    <!-- Hero -->
-    <section
-      class="relative grid items-center gap-12 pb-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-10 lg:pb-28"
-    >
-      <div
-        class="animate-drift pointer-events-none absolute -top-40 -left-40 -z-10 size-[42rem] rounded-full bg-[radial-gradient(circle,var(--neat-glow),transparent_65%)]"
-        aria-hidden="true"
-      />
-      <div class="relative">
-        <p v-if="page.eyebrow" class="neat-eyebrow animate-rise text-pretty [animation-delay:60ms]">
-          {{ page.eyebrow }}
-        </p>
-        <h1
-          class="animate-rise font-display mt-4 text-[2.9rem] leading-[1.02] font-extrabold tracking-[-0.045em] text-balance [animation-delay:120ms] sm:text-7xl lg:text-[5.2rem]"
-        >
-          {{ headline.lead }} <span class="neat-gradient-text">{{ headline.tail }}</span>
-        </h1>
-        <p
-          v-if="page.intro"
-          class="animate-rise mt-7 max-w-[52ch] text-lg leading-8 text-pretty text-muted [animation-delay:200ms] sm:text-xl sm:leading-9"
-        >
-          {{ page.intro }}
-        </p>
-        <div class="animate-rise mt-9 flex flex-wrap gap-3 [animation-delay:280ms]">
-          <Link href="/projects" class="neat-button">Explore the work <ArrowIcon /></Link>
-          <Link href="/about" class="neat-button-ghost">About me</Link>
-        </div>
-        <dl class="animate-rise mt-12 grid grid-cols-2 gap-x-6 gap-y-6 [animation-delay:360ms] sm:grid-cols-4">
-          <div v-for="stat in stats" :key="stat.label" class="border-line-strong flex flex-col-reverse border-l pl-4">
-            <dt class="text-faint mt-1 text-xs leading-5">{{ stat.label }}</dt>
-            <dd class="font-display text-3xl font-extrabold tracking-tight">{{ stat.value }}</dd>
-          </div>
-        </dl>
-      </div>
-      <div class="animate-rise relative [animation-delay:240ms] lg:pl-6">
-        <HeroReel :projects="reel" :years="years" />
-      </div>
-    </section>
+    <NightShift :page="page" :projects="projects" :posts="posts" />
 
-    <!-- Stack marquee -->
+    <!-- What I reach for -->
     <section
-      v-if="stack.length"
-      aria-label="Tools I work with"
-      class="border-line relative -mx-5 overflow-hidden border-y [mask-image:linear-gradient(90deg,transparent,black_12%,black_88%,transparent)] py-5 sm:-mx-8"
+      aria-labelledby="tools-heading"
+      class="border-line flex flex-wrap items-baseline gap-x-16 gap-y-4 border-b py-10 sm:py-12"
     >
-      <!-- Paced by its length, about four seconds a tool, so a longer list doesn't scroll faster. Each item carries its
-           own space after it, so half the row is exactly one copy and the loop has no seam. -->
-      <div
-        class="animate-marquee flex w-max hover:[animation-play-state:paused]"
-        :style="{ animationDuration: `${Math.max(40, stack.length * 4)}s` }"
+      <h2 id="tools-heading" class="neat-eyebrow shrink-0">What I reach for</h2>
+      <p
+        class="font-display min-w-0 flex-[1_1_40rem] text-xl leading-9 font-semibold tracking-[-0.015em] text-pretty text-muted sm:text-2xl sm:leading-10"
       >
-        <template v-for="copy in 2" :key="copy">
-          <span
-            v-for="item in stack"
-            :key="`${copy}-${item}`"
-            class="font-display flex items-center gap-10 pr-10 text-xl font-bold whitespace-nowrap text-muted sm:text-2xl"
-            :aria-hidden="copy === 2 ? 'true' : undefined"
-          >
-            {{ item }} <span class="text-accent" aria-hidden="true">✦</span>
-          </span>
-        </template>
-      </div>
+        <span class="text-ink">Rust</span> and <span class="text-ink">Ruby</span> for the code.
+        <span class="text-ink">Linux</span>, <span class="text-ink">systemd</span> and
+        <span class="text-ink">Kamal</span> to run it. <span class="text-ink">SQLite</span> until something proves it
+        needs <span class="text-ink">PostgreSQL</span>. Written in <span class="text-ink">Neovim</span>, on
+        <span class="text-ink">Arch</span> and <span class="text-ink">Hyprland</span>.
+        <Link href="/uses" class="neat-link font-body ml-2 text-base font-medium whitespace-nowrap text-accent"
+          >Everything I use <ArrowIcon
+        /></Link>
+      </p>
     </section>
 
     <!-- Selected work -->

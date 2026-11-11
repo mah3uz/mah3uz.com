@@ -1,0 +1,314 @@
+<script setup lang="ts">
+// The machine, from the reference's #machine: the mechanism drawn over the deck, the strip with the ribbon switch,
+// the name plate, the strike counter and New sheet, and the key bank. It sits at the bottom centre of the desk with
+// the carriage and paper rising above it.
+import { computed } from 'vue'
+import Basket from './Basket.vue'
+import Keys from './Keys.vue'
+
+const props = defineProps<{
+  pressed: string
+  jamming: string
+  char: string
+  tally: number
+  strikes: number
+  bells: number
+  jams: number
+  shift: boolean
+  lock: boolean
+}>()
+const emit = defineEmits<{ key: [key: string]; clear: [] }>()
+const red = defineModel<boolean>('red', { required: true })
+
+const digits = computed(() =>
+  String(props.tally % 100000)
+    .padStart(5, '0')
+    .split('')
+    .map(Number),
+)
+</script>
+
+<template>
+  <div class="ns-typewriter" :class="{ 'is-jam': jams % 2 === 1 }">
+    <section class="ns-mbody" aria-label="The typewriter">
+      <Basket :strikes="strikes" :char="char" :bells="bells" :spin="strikes * 5" />
+      <div class="ns-deck" />
+      <div class="ns-strip">
+        <button
+          type="button"
+          class="ns-rib"
+          role="switch"
+          :aria-checked="red"
+          aria-label="Red ribbon"
+          @click="red = !red"
+        >
+          <span class="ns-rib-txt">Ribbon</span><span class="ns-rib-dot is-k" /><span class="ns-rib-slot"
+            ><span class="ns-rib-nub" /></span
+          ><span class="ns-rib-dot is-r" />
+        </button>
+        <div class="ns-plate" aria-hidden="true">mah3uz · tty1</div>
+        <div class="ns-count" aria-hidden="true">
+          <span>Strikes</span
+          ><span class="ns-win"
+            ><span v-for="(d, i) in digits" :key="i" class="ns-dg"
+              ><span :style="{ transform: `translateY(${-d * 13}px)` }"
+                ><i v-for="n in 10" :key="n">{{ n - 1 }}</i></span
+              ></span
+            ></span
+          >
+        </div>
+        <button type="button" class="ns-newsheet" @click="emit('clear')">
+          <svg viewBox="0 0 11 13" aria-hidden="true">
+            <path d="M1 .8h6l3 3v8.4H1z" fill="var(--ns-paper)" />
+            <path d="M7 .8v3h3" fill="none" stroke="var(--ns-chrome-lo)" stroke-width=".8" />
+          </svg>
+          New sheet
+        </button>
+      </div>
+      <Keys :pressed="pressed" :jamming="jamming" :shift="shift" :lock="lock" @key="emit('key', $event)" />
+    </section>
+  </div>
+</template>
+
+<style>
+.ns-typewriter {
+  position: relative;
+  z-index: 4;
+  margin-top: calc(-1 * (var(--ns-line) + var(--ns-platen)));
+  pointer-events: none;
+}
+.ns-mbody {
+  position: relative;
+  margin-top: calc(var(--ns-line) + var(--ns-platen) - 0.75rem);
+  border-radius: 30px 30px 0 0;
+  color: var(--ns-label);
+  pointer-events: auto;
+  background:
+    radial-gradient(ellipse 60% 46% at 30% 0%, var(--ns-lit), transparent 70%),
+    radial-gradient(ellipse 60% 46% at 30% 0%, var(--ns-sheen), transparent 70%),
+    linear-gradient(
+      180deg,
+      var(--ns-enamel-hi) 0,
+      var(--ns-enamel) 12%,
+      var(--ns-enamel-mid) 48%,
+      var(--ns-enamel-lo) 100%
+    );
+  box-shadow:
+    inset 0 2px 0 var(--ns-enamel-edge),
+    inset 0 -40px 60px var(--ns-shade),
+    var(--ns-cast),
+    0 -3px 0 var(--ns-enamel-lo);
+}
+.ns-mbody > .ns-mech {
+  width: calc(100% + 0px);
+  top: calc(-1 * (var(--ns-line) + var(--ns-platen) - 0.75rem));
+}
+.ns-deck {
+  height: 8.1rem;
+}
+.ns-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 26px 9px;
+  font:
+    600 10px/1 var(--font-body),
+    sans-serif;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 var(--ns-enamel-lo);
+}
+.ns-rib {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 4px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-shadow: inherit;
+}
+.ns-rib-slot {
+  position: relative;
+  width: 44px;
+  height: 14px;
+  border-radius: 8px;
+  background: var(--ns-well);
+  box-shadow:
+    inset 0 2px 3px var(--ns-drop),
+    0 1px 0 var(--ns-enamel-edge);
+}
+.ns-rib-nub {
+  position: absolute;
+  left: 1px;
+  top: -3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 30%, var(--ns-chrome-hi), var(--ns-chrome-mid) 45%, var(--ns-chrome-lo));
+  box-shadow: 0 2px 4px var(--ns-drop);
+  transition: transform 220ms cubic-bezier(0.3, 1.7, 0.4, 1);
+}
+.ns-rib[aria-checked='true'] .ns-rib-nub {
+  transform: translateX(22px);
+}
+.ns-rib-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 1px 1px var(--ns-sheen),
+    0 0 0 1px var(--ns-shade);
+}
+.ns-rib-dot.is-k {
+  background: var(--ns-ribbon);
+}
+.ns-rib-dot.is-r {
+  background: var(--ns-red);
+}
+.ns-plate {
+  position: relative;
+  padding: 5px 22px;
+  border-radius: 3px;
+  white-space: nowrap;
+  color: var(--ns-plate-ink);
+  text-shadow: 0 1px 0 var(--ns-chrome-hi);
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  background: linear-gradient(180deg, var(--ns-chrome-hi), var(--ns-chrome-mid) 55%, var(--ns-chrome-lo));
+  box-shadow:
+    0 1px 2px var(--ns-drop),
+    inset 0 0 0 1px var(--ns-sheen);
+}
+.ns-plate::before,
+.ns-plate::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  margin-top: -2.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--ns-chrome-hi), var(--ns-chrome-lo));
+}
+.ns-plate::before {
+  left: 7px;
+}
+.ns-plate::after {
+  right: 7px;
+}
+.ns-count {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ns-win {
+  display: flex;
+  gap: 1px;
+  padding: 2px;
+  border-radius: 3px;
+  background: var(--ns-well);
+  box-shadow:
+    inset 0 1px 3px var(--ns-drop),
+    0 1px 0 var(--ns-enamel-edge);
+}
+.ns-dg {
+  width: 9px;
+  height: 13px;
+  overflow: hidden;
+  border-radius: 1px;
+  background: linear-gradient(180deg, var(--ns-drum-lo), var(--ns-drum) 45%, var(--ns-drum) 60%, var(--ns-drum-lo));
+}
+.ns-dg > span {
+  display: block;
+  transition: transform 240ms cubic-bezier(0.3, 1.3, 0.5, 1);
+  font:
+    700 10px/13px var(--font-mono),
+    monospace;
+  letter-spacing: 0;
+  color: var(--ns-plate-ink);
+  text-align: center;
+  text-shadow: none;
+}
+.ns-dg i {
+  display: block;
+  height: 13px;
+  font-style: normal;
+}
+.ns-newsheet {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 13px 6px 10px;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  color: var(--ns-label);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-shadow: inherit;
+  white-space: nowrap;
+  background:
+    linear-gradient(180deg, var(--ns-enamel-mid), var(--ns-enamel-lo)) padding-box,
+    linear-gradient(160deg, var(--ns-chrome-hi), var(--ns-chrome-lo) 40%, var(--ns-chrome-hi) 60%, var(--ns-chrome-lo))
+      border-box;
+  box-shadow:
+    0 3px 0 var(--ns-enamel-lo),
+    0 6px 8px var(--ns-drop);
+  transition:
+    transform 140ms cubic-bezier(0.2, 1.6, 0.4, 1),
+    box-shadow 140ms;
+}
+.ns-newsheet svg {
+  width: 11px;
+  height: 13px;
+}
+.ns-newsheet:active {
+  transform: translateY(3px);
+  box-shadow:
+    0 0 0 var(--ns-enamel-lo),
+    0 2px 3px var(--ns-drop);
+}
+.ns-rib:focus-visible,
+.ns-newsheet:focus-visible {
+  outline: 2px solid var(--ns-focus);
+  outline-offset: 3px;
+}
+@media (max-width: 860px) {
+  .ns-mbody {
+    border-radius: 18px 18px 0 0;
+  }
+  .ns-mbody > .ns-mech {
+    left: 50%;
+    width: 40rem;
+    translate: -50% -12%;
+  }
+  .ns-deck {
+    height: 4.6rem;
+  }
+  .ns-strip {
+    padding: 3px 9px 9px;
+    gap: 6px;
+    letter-spacing: 0.08em;
+  }
+  .ns-rib-txt,
+  .ns-count {
+    display: none;
+  }
+  .ns-plate {
+    padding: 5px 13px;
+    letter-spacing: 0.1em;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ns-dg > span,
+  .ns-rib-nub {
+    transition-duration: 1ms;
+  }
+}
+</style>

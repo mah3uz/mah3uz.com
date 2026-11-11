@@ -1,0 +1,482 @@
+/*
+ * The desk, the light on it, and the paper. Every printed line is one --ns-line tall and the green bars are drawn
+ * from the same variable, anchored to the top of the sheet, so each line sits in its band and keeps it as the paper
+ * feeds. The headline's lines are two bands tall, nudged down half a band so each one sits on a bar.
+ */
+.ns-scene {
+  --ns-line: 1.875rem;
+  --ns-platen: 2.5rem;
+  --ns-lit: color-mix(in srgb, var(--ns-glow-color) calc(var(--ns-lamp) * 70%), transparent);
+  --ns-tractor: 1.6rem;
+  --ns-margin: 2.4rem;
+  /* The desk runs up behind the sticky header, so the header floats on it instead of sitting on a band of page. */
+  --ns-header: 4rem;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin: calc(-2.5rem - var(--ns-header)) calc(50% - 50vw) 0;
+  --ns-height: clamp(54rem, 100svh - var(--ns-header) - 1rem, 64rem);
+  padding-top: var(--ns-header);
+  min-height: calc(var(--ns-height) + var(--ns-header));
+  background: var(--ns-wood-3);
+}
+@media (min-width: 640px) {
+  .ns-scene {
+    --ns-header: 4.75rem;
+  }
+}
+@media (min-width: 1024px) {
+  .ns-scene {
+    margin-top: calc(-4rem - var(--ns-header));
+  }
+}
+
+.ns-desk,
+.ns-daylight,
+.ns-pool,
+.ns-room,
+.ns-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.ns-desk {
+  background:
+    repeating-linear-gradient(
+      90.8deg,
+      transparent 0 11px,
+      var(--ns-grain-1) 11px 12px,
+      transparent 12px 29px,
+      var(--ns-grain-2) 29px 30px,
+      transparent 30px 47px,
+      var(--ns-grain-2) 47px 49px
+    ),
+    repeating-linear-gradient(
+      89.3deg,
+      transparent 0 67px,
+      var(--ns-grain-2) 67px 70px,
+      transparent 70px 113px,
+      var(--ns-grain-1) 113px 115px
+    ),
+    radial-gradient(
+      ellipse 88% 84% at 47% 34%,
+      var(--ns-wood-1) 0%,
+      var(--ns-wood-2) 34%,
+      var(--ns-wood-3) 62%,
+      var(--ns-wood-4) 100%
+    );
+}
+.ns-desk::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: var(--ns-noise);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85 .22' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .02 0 0 0 0 .19 0 0 0 0 .25 0 0 0 .9 -.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E")
+    0 0 / 240px 240px;
+}
+/* Daylight: one soft falloff from the window side, no bands. */
+.ns-daylight {
+  background: radial-gradient(ellipse 85% 110% at 100% 30%, var(--ns-day), transparent 70%);
+}
+/* The lamp's light, all pre-drawn layers that only change opacity or scale with the LAMP dial (--ns-lamp, 0 to 1):
+   a pool centred on the machine, a soft-light glow that lights the paper and enamel, the room's dimness and a
+   deeper vignette for when the lamp is off. */
+/* The pool under the lamp: centred just below and right of the shade's mouth, toward the paper and the machine,
+   soft all the way out. The dimmer fades and grows it. */
+.ns-pool {
+  inset: auto;
+  left: -14rem;
+  top: -10rem;
+  width: 82rem;
+  height: 62rem;
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, var(--ns-pool) 0%, var(--ns-pool-2) 40%, transparent 100%);
+  transform-origin: 20% 20%;
+  opacity: var(--ns-lamp);
+  transform: scale(calc(0.85 + var(--ns-lamp) * 0.25));
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+.ns-room {
+  background: var(--ns-room);
+  opacity: calc((1 - var(--ns-lamp)) * var(--ns-room-max));
+  transition: opacity 0.3s ease;
+}
+.ns-glow,
+.ns-dim,
+.ns-vignette-deep {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.ns-glow {
+  background: radial-gradient(ellipse 55% 60% at 32% 30%, var(--ns-glow-color), transparent 75%);
+  mix-blend-mode: var(--ns-glow-blend);
+  opacity: calc(var(--ns-lamp) * var(--ns-glow-max));
+}
+.ns-dim {
+  background: var(--ns-room);
+  opacity: calc((1 - var(--ns-lamp)) * var(--ns-dim-max));
+}
+.ns-vignette {
+  z-index: 3;
+  background: radial-gradient(
+    ellipse 88% 82% at 48% 52%,
+    transparent 50%,
+    color-mix(in srgb, var(--ns-vignette) 45%, transparent) 80%,
+    var(--ns-vignette) 100%
+  );
+}
+.ns-vignette-deep {
+  background: radial-gradient(ellipse 70% 70% at 50% 55%, transparent 30%, var(--ns-vignette) 100%);
+  opacity: calc(1 - var(--ns-lamp));
+}
+
+.ns-stage {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  max-width: 90rem;
+  min-height: var(--ns-height);
+  margin: 0 auto;
+}
+.ns-machine {
+  --ns-paper-w: calc(100% - 6.5rem);
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  width: min(53.75rem, 100% - 2rem);
+  min-height: var(--ns-height);
+}
+/* The machine's shadow falls away from the lamp, and only while the lamp is on. */
+.ns-machine::before {
+  content: '';
+  position: absolute;
+  inset: auto -6% 0 4%;
+  height: 42%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, var(--ns-drop), transparent 70%);
+  translate: 3rem 1.5rem;
+  opacity: var(--ns-lamp);
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.ns-run {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+/* Shift lifts the carriage, as on the reference. */
+.ns-run.is-lift {
+  transform: translateY(-4px);
+}
+.ns-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  opacity: 0.5;
+  pointer-events: none;
+  background: var(--ns-grain, none) 0 0 / 180px 180px;
+}
+.ns-paper {
+  position: relative;
+  flex: 1 1 auto;
+  width: var(--ns-paper-w);
+  min-height: 18rem;
+  margin: 0 auto;
+  overflow: hidden;
+  cursor: text;
+  box-shadow: var(--ns-cast-sm);
+}
+.ns-sheet {
+  position: absolute;
+  inset: auto 0 0;
+  padding: calc(40 * var(--ns-line)) calc(var(--ns-tractor) + var(--ns-margin)) calc(2 * var(--ns-line));
+  color: var(--ns-ink);
+}
+.ns-bands {
+  position: absolute;
+  inset: 0 var(--ns-tractor);
+  background: repeating-linear-gradient(
+    180deg,
+    var(--ns-paper) 0 var(--ns-line),
+    var(--ns-bar) var(--ns-line) calc(2 * var(--ns-line))
+  );
+}
+.ns-tractor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--ns-tractor);
+  background:
+    repeating-linear-gradient(180deg, var(--ns-perf) 0 4px, transparent 4px 7px) var(--ns-edge, 100%) 0 / 1px 100%
+      no-repeat,
+    var(--ns-paper-edge);
+  -webkit-mask: radial-gradient(circle, transparent 0 0.3rem, #000 calc(0.3rem + 0.6px)) 0 0 / 100% var(--ns-line);
+  mask: radial-gradient(circle, transparent 0 0.3rem, #000 calc(0.3rem + 0.6px)) 0 0 / 100% var(--ns-line);
+}
+.ns-tractor.is-left {
+  left: 0;
+}
+.ns-tractor.is-right {
+  right: 0;
+  --ns-edge: 0;
+}
+.ns-printed {
+  position: relative;
+  display: flow-root;
+}
+.ns-perforation {
+  position: relative;
+  height: 0;
+  margin: 0 calc(-1 * (var(--ns-tractor) + var(--ns-margin))) calc(2 * var(--ns-line));
+  border-top: 1px dashed var(--ns-perf);
+}
+.ns-eyebrow,
+.ns-headline,
+.ns-intro,
+.ns-line,
+.ns-prompt {
+  margin: 0;
+  font-family: var(--font-mono), monospace;
+  overflow-wrap: anywhere;
+}
+.ns-eyebrow {
+  margin-bottom: var(--ns-line);
+  font-size: 0.7rem;
+  font-weight: 500;
+  line-height: var(--ns-line);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ns-print-2);
+}
+.ns-headline {
+  position: relative;
+  top: calc(var(--ns-line) / 2);
+  padding-bottom: var(--ns-line);
+  font-size: 2.25rem;
+  font-weight: 500;
+  line-height: calc(2 * var(--ns-line));
+  letter-spacing: -0.02em;
+  color: var(--ns-ink);
+  text-shadow: 0 0 0.7px var(--ns-ink-bleed);
+}
+.ns-intro {
+  max-width: 68ch;
+  font-size: 1rem;
+  line-height: var(--ns-line);
+  color: var(--ns-print-2);
+  text-shadow: 0 0 0.5px var(--ns-ink-bleed);
+}
+.ns-log {
+  margin-top: var(--ns-line);
+  font-size: 1rem;
+}
+.ns-line {
+  line-height: var(--ns-line);
+  white-space: pre-wrap;
+  text-shadow: 0 0 0.5px var(--ns-ink-bleed);
+}
+.ns-line.is-cmd {
+  font-weight: 500;
+  color: var(--ns-ink);
+}
+.ns-glyph.is-red,
+.ns-line .is-red {
+  color: var(--ns-red);
+}
+.ns-line.is-out {
+  color: var(--ns-print-2);
+}
+.ns-mark {
+  display: inline-block;
+  width: 0;
+  height: 1em;
+}
+.ns-prompt {
+  position: relative;
+  display: flex;
+  height: var(--ns-line);
+  margin-inline: -0.5rem;
+  padding-inline: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: var(--ns-line);
+  color: var(--ns-ink);
+  transition: background-color 0.2s ease;
+}
+.ns-prompt > span:first-child {
+  color: var(--ns-print-2);
+}
+.ns-prompt:focus-within {
+  background: color-mix(in srgb, var(--ns-led-on) 26%, transparent);
+  box-shadow: inset 3px 0 0 var(--ns-print-2);
+}
+.ns-prompt.is-waiting {
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+.ns-dollar {
+  flex: none;
+  width: 2ch;
+}
+.ns-glyphs {
+  white-space: pre;
+}
+/* A typed glyph: its slug's quirks and density come inline; when it lands, a blurred "wet" copy settles away. */
+.ns-glyph {
+  position: relative;
+  display: inline-block;
+}
+.ns-glyph.is-red {
+  color: var(--ns-red);
+}
+.ns-glyph.is-wet::after {
+  content: attr(data-c);
+  position: absolute;
+  left: 0;
+  top: 0;
+  filter: blur(0.8px);
+  opacity: 0;
+  animation: ns-settle 460ms cubic-bezier(0.2, 0.6, 0.3, 1) forwards;
+}
+@keyframes ns-settle {
+  0% {
+    opacity: 0.8;
+    transform: scale(1.16);
+  }
+  35% {
+    opacity: 0.42;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+.ns-input {
+  position: absolute;
+  inset: 0 0.5rem 0 calc(0.5rem + 2ch);
+  height: var(--ns-line);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: transparent;
+  caret-color: transparent;
+}
+.ns-input::selection {
+  background: color-mix(in srgb, var(--ns-led-on) 45%, transparent);
+}
+.ns-ghost {
+  z-index: 1;
+  pointer-events: none;
+}
+.ns-input:focus,
+.ns-input:focus-visible {
+  outline: none;
+}
+.ns-input::placeholder {
+  color: color-mix(in srgb, var(--ns-print-2) 60%, transparent);
+}
+.ns-paper-light {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--ns-paper-angle), var(--ns-paper-lit), transparent 45%, var(--ns-paper-shade)),
+    linear-gradient(to top, var(--ns-paper-shade), transparent calc(3 * var(--ns-line)));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ns-glyph.is-wet::after {
+    display: none;
+  }
+}
+.ns-reprint .ns-print,
+.ns-reprint .ns-perforation {
+  visibility: hidden;
+}
+.ns-scene.is-paused .ns-wisp,
+.ns-scene.is-paused .ns-wisp i,
+.ns-scene.is-paused .ns-pager-led,
+.ns-scene.is-paused .ns-caret {
+  animation-play-state: paused;
+}
+
+@media (max-width: 860px) {
+  .ns-scene {
+    --ns-line: 1.625rem;
+    --ns-platen: 2rem;
+    --ns-tractor: 1.1rem;
+    --ns-margin: 0.85rem;
+    min-height: 0;
+  }
+  .ns-paper {
+    flex: none;
+    height: calc(29 * var(--ns-line));
+  }
+  .ns-machine {
+    --ns-paper-w: calc(100% - 2.9rem);
+    width: calc(100% - 1rem);
+  }
+  .ns-tractor {
+    -webkit-mask-image: radial-gradient(circle, transparent 0 0.22rem, #000 calc(0.22rem + 0.6px));
+    mask-image: radial-gradient(circle, transparent 0 0.22rem, #000 calc(0.22rem + 0.6px));
+  }
+  .ns-eyebrow {
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+  }
+  .ns-headline {
+    font-size: 1.4rem;
+  }
+  .ns-intro,
+  .ns-log {
+    font-size: 0.8125rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ns-run {
+    transition: none !important;
+  }
+}
+
+/* Phones get a still picture: the printed sheet standing in a quiet machine. Nothing to type into, nothing moves. */
+@media (max-width: 767px) {
+  .ns-prompt,
+  .ns-sound,
+  .ns-rib,
+  .ns-newsheet {
+    display: none;
+  }
+  .ns-mbody,
+  .ns-paper {
+    pointer-events: none;
+  }
+  .ns-paper {
+    height: auto;
+    margin-top: 1rem;
+    overflow: visible;
+  }
+  .ns-sheet {
+    position: relative;
+    padding-top: var(--ns-line);
+  }
+  .ns-perforation {
+    display: none;
+  }
+  .ns-caret {
+    animation: none;
+  }
+  .ns-strip {
+    justify-content: center;
+  }
+}

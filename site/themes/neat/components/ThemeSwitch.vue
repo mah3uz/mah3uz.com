@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 const dark = ref(false)
 
@@ -9,10 +9,20 @@ function remember(theme: string) {
   document.documentElement.dataset.theme = theme
 }
 
-onMounted(() => {
+let observer: MutationObserver | undefined
+
+function read() {
   const theme = document.documentElement.dataset.theme
   dark.value = theme ? theme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
+}
+
+// The home page's typewriter can set the theme too.
+onMounted(() => {
+  read()
+  observer = new MutationObserver(read)
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
 })
+onBeforeUnmount(() => observer?.disconnect())
 
 function apply() {
   dark.value = !dark.value
