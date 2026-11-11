@@ -1,0 +1,71 @@
+.ns-mech {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  top: 0;
+  width: 100%;
+  overflow: visible;
+  translate: 0 -12%;
+  pointer-events: none;
+}
+.ns-spin {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: rotate 260ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+.ns-caret {
+  animation: ns-pulse 1.9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+@keyframes ns-pulse {
+  0%,
+  100% {
+    opacity: 0.28;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.ns-ring {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.ns-ring.go {
+  animation: ns-ring 900ms cubic-bezier(0.1, 0.7, 0.2, 1);
+}
+@keyframes ns-ring {
+  0% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(3.4);
+  }
+}
+.ns-dome.go {
+  animation: ns-dome 500ms cubic-bezier(0.3, 2.2, 0.4, 1);
+}
+@keyframes ns-dome {
+  0% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(1.4px, -0.6px);
+  }
+  45% {
+    transform: translate(-1px, 0.4px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ns-spin {
+    transition: none;
+  }
+  .ns-caret {
+    animation: none;
+    opacity: 0.85;
+  }
+}

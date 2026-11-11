@@ -494,6 +494,3 @@ onBeforeUnmount(() => {
     <p class="sr-only" aria-live="polite">{{ announcement }}</p>
   </section>
 </template>
-
-<style src="./nightshift/tokens.css"></style>
-<style src="./nightshift/scene.css"></style>

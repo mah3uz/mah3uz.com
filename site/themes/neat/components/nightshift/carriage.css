@@ -1,0 +1,180 @@
+.ns-carriage {
+  position: relative;
+  z-index: 3;
+  margin-top: calc(-2 * var(--ns-line));
+}
+.ns-bail {
+  position: relative;
+  width: var(--ns-paper-w);
+  height: var(--ns-line);
+  margin: 0 auto;
+}
+.ns-bail::before {
+  content: '';
+  position: absolute;
+  inset: auto -1.9rem 0.3rem;
+  height: 13px;
+  border-radius: 2px;
+  background: linear-gradient(
+    180deg,
+    var(--ns-chrome-hi) 0,
+    var(--ns-chrome-mid) 42%,
+    var(--ns-chrome-lo) 58%,
+    var(--ns-chrome-hi) 100%
+  );
+  box-shadow: 0 2px 3px var(--ns-drop);
+}
+.ns-roller {
+  position: absolute;
+  bottom: 0.1rem;
+  width: 30px;
+  height: 20px;
+  border-radius: 5px;
+  background: linear-gradient(180deg, var(--ns-rubber-hi), var(--ns-rubber) 55%, var(--ns-well));
+}
+.ns-scale {
+  position: absolute;
+  left: calc(var(--ns-tractor) + var(--ns-margin));
+  right: calc(var(--ns-tractor) + var(--ns-margin));
+  bottom: 0.3rem;
+  height: 13px;
+  background: repeating-linear-gradient(90deg, var(--ns-scale-ink) 0 1px, transparent 1px var(--ns-cell, 9.6px)) 0 0 /
+    100% 5px no-repeat;
+  --ns-cell: 9.6px;
+}
+.ns-scale i {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 7px;
+  background: var(--ns-scale-ink);
+}
+.ns-scale b {
+  position: absolute;
+  top: 5.5px;
+  translate: -50% 0;
+  font:
+    700 6.5px/7px var(--font-body),
+    sans-serif;
+  color: var(--ns-scale-ink);
+}
+.ns-scale u {
+  position: absolute;
+  top: -1px;
+  width: 3px;
+  height: 6px;
+  margin-left: -1px;
+  border-radius: 0 0 2px 2px;
+  background: var(--ns-red);
+}
+.ns-platen {
+  position: relative;
+  width: calc(var(--ns-paper-w) + 4rem);
+  height: var(--ns-platen);
+  margin: 0 auto;
+  border-radius: 5px;
+  background: linear-gradient(
+    180deg,
+    var(--ns-well) 0,
+    var(--ns-rubber-hi) 20%,
+    var(--ns-rubber) 44%,
+    var(--ns-well) 72%,
+    var(--ns-rubber-lo) 100%
+  );
+  box-shadow: 0 6px 14px var(--ns-drop);
+}
+.ns-knob {
+  position: absolute;
+  top: -25px;
+  width: 42px;
+  height: calc(var(--ns-platen) + 34px);
+  border-radius: 7px;
+  background:
+    linear-gradient(180deg, var(--ns-sheen), transparent 26%, var(--ns-drop) 100%),
+    repeating-linear-gradient(180deg, var(--ns-rubber-hi) 0 2px, var(--ns-well) 2px 4px);
+  box-shadow: 0 6px 12px var(--ns-drop);
+}
+.ns-knob.is-left {
+  left: -44px;
+}
+.ns-knob.is-right {
+  right: -44px;
+}
+.ns-knob::after {
+  content: '';
+  position: absolute;
+  top: calc(50% - 12px);
+  height: 24px;
+  width: 10px;
+  background: linear-gradient(180deg, var(--ns-chrome-hi), var(--ns-chrome-lo) 60%, var(--ns-chrome-mid));
+}
+.ns-knob.is-left::after {
+  right: -8px;
+}
+.ns-knob.is-right::after {
+  left: -8px;
+}
+/* The lever is mounted on a block at the carriage's left end and pivots there (its pivot is at 197,68 of 204x120). */
+.ns-lever-mount {
+  position: absolute;
+  z-index: 1;
+  left: calc(50% - var(--ns-paper-w) / 2 - 2rem + 4px);
+  bottom: calc(var(--ns-platen) - 6px);
+  width: 30px;
+  height: 24px;
+  border-radius: 4px 4px 2px 2px;
+  background: linear-gradient(180deg, var(--ns-chrome-hi), var(--ns-chrome-mid) 45%, var(--ns-chrome-lo));
+  box-shadow:
+    0 3px 4px var(--ns-drop),
+    inset 0 -3px 0 var(--ns-shade);
+}
+.ns-lever {
+  position: absolute;
+  z-index: 2;
+  left: calc(50% - var(--ns-paper-w) / 2 - 2rem + 19px - 197px);
+  bottom: calc(var(--ns-platen) + 6px - 52px);
+  width: 204px;
+  height: 120px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transform-origin: 97% 56%;
+  transition: rotate 260ms cubic-bezier(0.2, 1.5, 0.4, 1);
+  filter: drop-shadow(0 7px 6px var(--ns-drop));
+}
+.ns-lever svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.ns-lever:hover {
+  rotate: -3deg;
+}
+.ns-lever:focus-visible {
+  outline: 2px solid var(--ns-focus);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+@media (max-width: 860px) {
+  .ns-platen {
+    width: calc(var(--ns-paper-w) + 1.4rem);
+  }
+  .ns-knob {
+    top: -0.6rem;
+    width: 1.1rem;
+    height: 3.2rem;
+  }
+  .ns-knob.is-left {
+    left: -1.05rem;
+  }
+  .ns-knob.is-right {
+    right: -1.05rem;
+  }
+  .ns-lever,
+  .ns-lever-mount,
+  .ns-scale {
+    display: none;
+  }
+}

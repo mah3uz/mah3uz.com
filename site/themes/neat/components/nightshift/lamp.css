@@ -1,0 +1,74 @@
+.ns-lampshade {
+  position: absolute;
+  z-index: 6;
+  left: 0;
+  top: 0;
+  width: 420px;
+  height: 340px;
+  overflow: visible;
+  pointer-events: none;
+}
+.ns-lamp-lit {
+  opacity: var(--ns-lamp);
+  transition: opacity 0.3s ease;
+}
+.ns-cord {
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  top: var(--ns-header);
+  width: 260px;
+  height: 520px;
+  overflow: visible;
+  pointer-events: none;
+}
+/* The rheostat: a small dark enamel box lying on the desk, the lamp's cord entering at the top and leaving at the
+   side, with the dial set into its lid. */
+.ns-rheostat {
+  --ns-dial: 8.75rem;
+  position: absolute;
+  z-index: 6;
+  left: 40px;
+  top: calc(var(--ns-header) + 224px);
+  display: grid;
+  place-items: center;
+  width: 176px;
+  height: 176px;
+  border-radius: 1.4rem;
+  background:
+    radial-gradient(ellipse 70% 35% at 35% 0%, var(--ns-sheen), transparent 70%),
+    linear-gradient(160deg, var(--ns-bakelite-hi), var(--ns-bakelite) 55%, var(--ns-bakelite-lo));
+  box-shadow:
+    inset 0 1px 0 var(--ns-enamel-edge),
+    inset 0 -8px 14px var(--ns-shade),
+    0.5rem 0.9rem 1.4rem var(--ns-drop);
+}
+.ns-rheostat-boss {
+  position: absolute;
+  background: linear-gradient(90deg, var(--ns-bakelite-lo), var(--ns-bakelite-hi), var(--ns-bakelite-lo));
+  box-shadow: 0 2px 3px var(--ns-drop);
+}
+.ns-rheostat-boss.is-top {
+  left: 50%;
+  top: -10px;
+  width: 16px;
+  height: 14px;
+  margin-left: -8px;
+  border-radius: 4px 4px 2px 2px;
+}
+.ns-rheostat-boss.is-left {
+  left: -10px;
+  top: 50%;
+  width: 14px;
+  height: 16px;
+  margin-top: -8px;
+  border-radius: 4px 2px 2px 4px;
+  background: linear-gradient(180deg, var(--ns-bakelite-lo), var(--ns-bakelite-hi), var(--ns-bakelite-lo));
+}
+@media (max-width: 860px) {
+  .ns-lampshade,
+  .ns-cord,
+  .ns-rheostat {
+    display: none;
+  }
+}
