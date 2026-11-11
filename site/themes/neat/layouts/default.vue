@@ -16,7 +16,7 @@ const props = defineProps<LayoutProps['default']>()
       <link
         head-key="fonts"
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@600;700;800&family=Lexend:wght@800&display=swap"
       />
       <meta head-key="theme-color-light" name="theme-color" content="#F3FCFA" media="(prefers-color-scheme: light)" />
       <meta head-key="theme-color-dark" name="theme-color" content="#0A1A20" media="(prefers-color-scheme: dark)" />

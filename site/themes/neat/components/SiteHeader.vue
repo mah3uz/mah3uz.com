@@ -80,8 +80,8 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
       "
     >
       <Link href="/" class="flex items-center gap-3 rounded-full pr-2" aria-label="Home">
-        <img v-if="site?.logo" :src="site.logo.url" :alt="site.name ?? 'mah3uz'" class="size-9" />
-        <span v-else class="font-display text-lg font-extrabold tracking-tight">{{ site?.name ?? 'mah3uz' }}</span>
+        <img v-if="site?.logo" :src="site.logo.url" alt="" class="size-9" />
+        <span class="font-brand text-lg font-extrabold tracking-tight">{{ site?.name ?? 'mah3uz' }}</span>
       </Link>
 
       <nav aria-label="Main navigation" class="max-lg:hidden">
