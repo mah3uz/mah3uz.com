@@ -290,7 +290,7 @@
   left: 50%;
   top: 2.5rem;
   width: min(34rem, 90%);
-  padding: 2.2rem 3rem 2.4rem;
+  padding: 30px 3rem 2.4rem;
   pointer-events: none;
   opacity: 0;
   transform-origin: 85% 100%;
@@ -316,6 +316,8 @@
   color: var(--ns-print-2);
 }
 .ns-reader-title {
+  position: relative;
+  top: calc(15px - 0.08em);
   font-size: 22px;
   line-height: 60px;
   font-weight: 500;

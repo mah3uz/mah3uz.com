@@ -259,7 +259,8 @@
 }
 .ns-headline {
   position: relative;
-  top: calc(var(--ns-line) / 2);
+  /* Less the optical drop: lowercase ink sits below the line box's middle and would rest on the bar's lower edge. */
+  top: calc(var(--ns-line) / 2 - 0.08em);
   padding-bottom: var(--ns-line);
   font-size: 2.25rem;
   font-weight: 500;
