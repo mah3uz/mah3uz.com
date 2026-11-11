@@ -168,8 +168,9 @@ export const S = {
   chatter(p: number) {
     if (!live()) return
     const t = A.ac!.currentTime + 0.003
-    burst(t, 0.018, 2600 * p, 6, 0.32)
-    tone(t, 0.03, 240, 120, 0.18)
+    const v = rnd(0.75, 0.95)
+    burst(t, 0.018, 2600 * p, 6, 0.22 * v)
+    tone(t, 0.03, 240, 120, 0.12 * v)
   },
   detent() {
     if (!live()) return

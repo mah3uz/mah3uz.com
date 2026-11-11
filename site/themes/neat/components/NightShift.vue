@@ -1,8 +1,9 @@
 <script setup lang="ts">
 // The home page's hero: a typewriter on a desk under a lamp. The server prints the eyebrow, headline and intro on the
-// paper as text; the first home view of a session re-prints them a character at a time. Once the visitor clicks the
-// machine or types into the prompt, printable keys go to the paper while the hero is on screen (never with Ctrl,
-// Meta or Alt, never while focus is in a field or on a control). Until then the site's own single-key shortcuts work.
+// paper as text; the first home view of a session re-prints them a character at a time. The prompt takes focus when
+// the page loads with the hero in view; from then on, or once the visitor clicks the machine, printable keys go to
+// the paper while the hero is on screen (never with Ctrl, Meta or Alt, never while focus is in a field or on a
+// control). Until then the site's own single-key shortcuts work.
 import { router } from '@inertiajs/vue3'
 import { computed, h, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { PagesPage } from '@site/types'
@@ -53,6 +54,8 @@ const paper = ref<HTMLElement | null>(null)
 const sheet = ref<HTMLElement | null>(null)
 const printed = ref<HTMLElement | null>(null)
 const glyphs = ref<HTMLElement | null>(null)
+const eyebrowLine = ref<HTMLElement | null>(null)
+const introLines = ref<HTMLElement | null>(null)
 const input = ref<HTMLInputElement | null>(null)
 
 const latest = computed(() => props.posts[0] ?? null)
@@ -121,10 +124,13 @@ watch([head, engaged], ([x]) => {
   const width = paper.value?.clientWidth ?? 0
   carriageX.value = !engaged.value || window.innerWidth <= 860 ? 0 : Math.round(width / 2 - x)
 })
+// Under 80ms the carriage is carrying a reply: it glides at the print's pace instead of springing every column.
 const carriageMove = computed(() =>
   travel.value > 80
     ? `translate ${travel.value}ms cubic-bezier(.5,0,.2,1) 60ms, transform 70ms cubic-bezier(.3,.8,.4,1.3)`
-    : 'translate 80ms cubic-bezier(.2,.7,.3,1.4), transform 70ms cubic-bezier(.3,.8,.4,1.3)',
+    : travel.value < 80
+      ? `translate ${travel.value}ms linear, transform 70ms cubic-bezier(.3,.8,.4,1.3)`
+      : 'translate 80ms cubic-bezier(.2,.7,.3,1.4), transform 70ms cubic-bezier(.3,.8,.4,1.3)',
 )
 
 function measure() {
@@ -184,6 +190,16 @@ function onPagePointer(event: PointerEvent) {
   const target = event.target as Element | null
   if (target?.closest('.ns-machine, .ns-sound, .ns-rheostat')) listening = true
   else if (!target?.closest('.ns-scene')) listening = false
+}
+// A clicked control on the desk keeps focus, which would leave the keys with it; hand them back to the prompt once the
+// click is done. Not for touch, where focusing the prompt would raise the on-screen keyboard.
+function onPagePointerUp(event: PointerEvent) {
+  const target = event.target as Element | null
+  if (still || event.pointerType === 'touch' || !target?.closest('.ns-machine, .ns-sound, .ns-rheostat')) return
+  window.setTimeout(() => {
+    if (window.getSelection()?.isCollapsed === false) return
+    input.value?.focus({ preventScroll: true })
+  })
 }
 
 // The prompt's own input: its value always mirrors the machine, so every edit becomes an action instead.
@@ -288,6 +304,7 @@ function watchVisibility() {
   document.addEventListener('keydown', onPageKey, true)
   document.addEventListener('keyup', onPageKeyUp, true)
   document.addEventListener('pointerdown', onPagePointer, true)
+  document.addEventListener('pointerup', onPagePointerUp, true)
   const resize = () => {
     measure()
     machine.follow()
@@ -299,6 +316,7 @@ function watchVisibility() {
     document.removeEventListener('keydown', onPageKey, true)
     document.removeEventListener('keyup', onPageKeyUp, true)
     document.removeEventListener('pointerdown', onPagePointer, true)
+    document.removeEventListener('pointerup', onPagePointerUp, true)
     window.removeEventListener('resize', resize)
   })
 }
@@ -323,11 +341,11 @@ function grain() {
 }
 
 const text = (glyphs: Glyph[]) => glyphs.map((glyph) => glyph.c).join('')
-// The reference's typing pace for the headline: uneven, with a breath after punctuation.
+// A steady hand with a breath after punctuation: slower than a typebar's swing, so bars never pile up in the air.
 const pace = (char: () => string) => () => {
   const c = char()
-  let d = 34 + Math.random() * 40
-  if (c === ',' || c === '.') d += 120
+  let d = 88 + Math.random() * 14
+  if (c === ',' || c === '.') d += 180
   return d
 }
 
@@ -356,14 +374,14 @@ onMounted(async () => {
     await nextTick()
     root.classList.remove('ns-reprint')
     await new Promise((done) => window.setTimeout(done, 520))
-    await machine.print(eyebrow, (g) => (shownEyebrow.value = text(g)), 12, 'eyebrow')
+    await machine.feedLines(eyebrowLine.value, () => (shownEyebrow.value = eyebrow))
     await machine.print(
       title,
       (g) => (shownTitle.value = text(g)),
       pace(() => shownTitle.value.slice(-1)),
       'title',
     )
-    await machine.print(intro, (g) => (shownIntro.value = text(g)), 9, 'intro')
+    await machine.feedLines(introLines.value, () => (shownIntro.value = intro))
     machine.resumePrinting()
     printing.value = false
   } else root.classList.remove('ns-reprint')
@@ -372,6 +390,14 @@ onMounted(async () => {
   measure()
   machine.follow()
   machine.pump()
+  // The machine is the first thing on the page, so it takes the keys if it is in view and nothing else has them yet.
+  // Not where the main pointer is a touch screen, which would raise its keyboard unasked.
+  // Measured here, not read from the observer, which may not have reported yet on a visit that skips the re-print.
+  const box = scene.value!.getBoundingClientRect()
+  const inView = Math.min(box.bottom, window.innerHeight) - Math.max(box.top, 0) >= 0.4 * box.height
+  const focused = document.activeElement
+  if (inView && (!focused || focused === document.body) && !matchMedia('(pointer: coarse)').matches)
+    input.value?.focus({ preventScroll: true })
 })
 
 onBeforeUnmount(() => {
@@ -410,13 +436,13 @@ onBeforeUnmount(() => {
               <div class="ns-tractor is-right" aria-hidden="true" />
               <div ref="printed" class="ns-printed">
                 <div class="ns-perforation" aria-hidden="true" />
-                <p v-if="eyebrow" class="ns-eyebrow ns-print">
+                <p v-if="eyebrow" ref="eyebrowLine" class="ns-eyebrow ns-print">
                   {{ shownEyebrow }}<i v-if="at === 'eyebrow'" :ref="setMark" class="ns-mark" />
                 </p>
                 <h1 class="ns-headline ns-print">
                   {{ shownTitle }}<i v-if="at === 'title'" :ref="setMark" class="ns-mark" />
                 </h1>
-                <p v-if="intro" class="ns-intro ns-print">
+                <p v-if="intro" ref="introLines" class="ns-intro ns-print">
                   {{ shownIntro }}<i v-if="at === 'intro'" :ref="setMark" class="ns-mark" />
                 </p>
                 <div class="ns-log">

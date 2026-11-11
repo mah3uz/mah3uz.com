@@ -39,7 +39,9 @@ const KEEP = 14
 const UP = 62
 const TABW = 8
 const PREFIX = 2
-const REPLY_MS = 19
+const REPLY_MS = 30
+const LINE_MS = 170
+const SWING_GAP = 100
 const rnd = (a: number, b: number) => a + Math.random() * (b - a)
 export const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 export const labelOf = (char: string) => (char === ' ' ? ' ' : char.toUpperCase())
@@ -97,6 +99,7 @@ export function useMachine(parts: Parts) {
   let timer = 0
   let release = 0
   let lastStrike = 0
+  let lastSwing = 0
   let nextId = 0
   let feeding: Animation | null = null
   let tearing = false
@@ -331,21 +334,49 @@ export function useMachine(parts: Parts) {
       const char = text[index]
       glyphs.push({ c: char, d: rnd(0.86, 1), wet: !instant && !skip })
       if (skip || instant) continue
-      show([...glyphs])
+      const gap = typeof ms === 'number' ? ms : ms()
+      // A typed letter lands when its typebar reaches the paper, as it does under the visitor's hands.
+      const strike = machine || char === ' ' ? 0 : UP - 6
       if (char !== ' ') {
         press(labelOf(char), 70)
-        struck.value = char
-        strikes.value++
+        // A reply prints faster than a typebar swings; letting every one fly fills the basket with flicker.
+        const now = performance.now()
+        if (!machine || now - lastSwing >= SWING_GAP) {
+          struck.value = char
+          strikes.value++
+          lastSwing = now
+        }
         if (machine) S.chatter(quirk(char).pitch)
-        else S.clack(quirk(char).pitch, 0.7)
+        else {
+          await wait(strike)
+          S.clack(quirk(char).pitch, rnd(0.38, 0.48))
+        }
       }
+      show([...glyphs])
       await nextTick()
       await settled()
-      follow()
-      await wait(typeof ms === 'number' ? ms : ms())
+      follow(machine ? gap : undefined)
+      await wait(Math.max(0, gap - strike))
     }
     show(glyphs)
     at.value = null
+  }
+
+  /** Rolls a paragraph in a line at a time with a feed tick per line, for text too long to type out. */
+  async function feedLines(element: HTMLElement | null, show: () => void) {
+    if (!element || skip || reducedMotion()) return show()
+    element.style.clipPath = 'inset(0 0 100% 0)'
+    show()
+    await nextTick()
+    const height = element.clientHeight
+    const line = parseFloat(getComputedStyle(element).lineHeight) || height
+    const lines = Math.max(1, Math.round(height / line))
+    for (let k = 1; k <= lines && alive && !skip; k++) {
+      element.style.clipPath = `inset(0 0 ${Math.max(0, height - k * line)}px 0)`
+      S.feed(1)
+      await wait(LINE_MS)
+    }
+    element.style.clipPath = ''
   }
 
   /** New sheet: the paper is torn off, lifted out and dropped on the pile; a fresh one feeds in. */
@@ -452,6 +483,7 @@ export function useMachine(parts: Parts) {
     input,
     pump,
     print,
+    feedLines,
     watchFeed,
     setHistory,
     stop,
