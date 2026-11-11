@@ -50,7 +50,12 @@ const mineCount = computed(() => tools.value.filter((tool) => tool.mine).length)
   <div>
     <PageHeading :title="page.title" :eyebrow="page.eyebrow" :description="page.intro" />
 
-    <ArtBanner v-if="page.featured_image" :src="page.featured_image.url" eager class="animate-rise mb-14 aspect-[21/8] [animation-delay:200ms]" />
+    <ArtBanner
+      v-if="page.featured_image"
+      :src="page.featured_image.url"
+      eager
+      class="animate-rise mb-14 aspect-[21/8] [animation-delay:200ms]"
+    />
 
     <!-- The keyboard: one keycap per group. -->
     <nav

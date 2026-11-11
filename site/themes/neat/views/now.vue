@@ -29,7 +29,12 @@ const building = computed(() => onlyProjects(props.projects).filter((project) =>
       </p>
     </PageHeading>
 
-    <ArtBanner v-if="page.featured_image" :src="page.featured_image.url" eager class="animate-rise mb-16 aspect-[21/8] [animation-delay:200ms]" />
+    <ArtBanner
+      v-if="page.featured_image"
+      :src="page.featured_image.url"
+      eager
+      class="animate-rise mb-16 aspect-[21/8] [animation-delay:200ms]"
+    />
 
     <section v-if="building.length" aria-labelledby="on-the-bench" class="mb-20">
       <h2 id="on-the-bench" class="neat-eyebrow mb-5">On the bench</h2>

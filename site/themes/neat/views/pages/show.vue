@@ -11,7 +11,12 @@ defineProps<{ page: PagesPage }>()
 <template>
   <div>
     <PageHeading :title="page.title" :eyebrow="page.eyebrow" :description="page.intro" />
-    <ArtBanner v-if="page.featured_image" :src="page.featured_image.url" eager class="animate-rise mb-16 aspect-[21/9] [animation-delay:240ms]" />
+    <ArtBanner
+      v-if="page.featured_image"
+      :src="page.featured_image.url"
+      eager
+      class="animate-rise mb-16 aspect-[21/9] [animation-delay:240ms]"
+    />
     <div class="grid gap-14 lg:grid-cols-[1fr_22rem]">
       <PageBody :content="page.content" :blocks="page.blocks" large />
       <ol v-if="page.cards?.length" role="list" class="grid content-start gap-4">

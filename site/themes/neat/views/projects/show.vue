@@ -155,7 +155,13 @@ const facts = computed(() =>
         class="group neat-card flex items-center gap-5 p-6"
         :class="{ 'sm:flex-row-reverse sm:text-right': index === 1 }"
       >
-        <ProjectTile :logo="item.logo?.url" :monogram="item.monogram" :accent="item.accent" size="size-14" text="text-xl" />
+        <ProjectTile
+          :logo="item.logo?.url"
+          :monogram="item.monogram"
+          :accent="item.accent"
+          size="size-14"
+          text="text-xl"
+        />
         <span class="min-w-0 flex-1">
           <span class="neat-eyebrow flex items-center gap-1.5" :class="{ 'sm:justify-end': index === 1 }"
             ><template v-if="index === 0"><ArrowIcon direction="left" /> Previous</template
