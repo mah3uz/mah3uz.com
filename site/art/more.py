@@ -1,6 +1,6 @@
 """Artwork for pages, posts and the newer projects, in the same language as the project covers.
 
-generate.py passes in its frame (the midnight card with glow, corners and peel), window and bars helpers; each function
+generate.py passes in its frame (the midnight card with dots and glow), window and bars helpers; each function
 here returns a complete SVG. Names with a slash are written into that folder of site/packages/default/assets/art/.
 """
 import math

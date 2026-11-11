@@ -161,9 +161,17 @@ write('globals/seo/en.yml', {
 ASSETS = ROOT / 'assets'
 
 
+# The theme draws the viewfinder corners and the peeled corner in CSS; artwork that drew them too would show them
+# twice. The mark is the one exception: they are the logo itself.
+FRAME_MOTIFS = ('-flap"', 'Q60 60 96 60')
+
+
 def asset_rows():
     rows = []
     for path in sorted(p for folder in ('art', 'logos') for p in (ASSETS / folder).rglob('*') if p.is_file()):
+        if path.suffix == '.svg' and path.parts[-3:] != ('art', 'marks', 'mah3uz.svg') and path.parts[-2] != 'logos':
+            if any(motif in path.read_text() for motif in FRAME_MOTIFS):
+                raise SystemExit(f'{path}: draws the corners or the peel, which the theme lays on in CSS')
         rows.append({'path': path.relative_to(ASSETS).as_posix(), 'title': path.stem.replace('-', ' ').replace('_', ' ')})
     return rows
 
