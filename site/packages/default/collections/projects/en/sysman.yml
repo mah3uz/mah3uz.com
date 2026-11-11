@@ -1,0 +1,86 @@
+title: Sysman
+tagline: A system monitor for Linux that remembers — a crash-proof collector daemon and a native app to explore what happened.
+description: Sysman is a Linux system monitor in Rust with three parts — a collector daemon that samples the machine every
+  two seconds and keeps history in SQLite, a native GPU-accelerated app built on GPUI to explore it, and an optional, tightly
+  confined helper for the readings that need root. Its first rule is that the last reading before a crash is already on disk.
+category: product
+stage: building
+kind: System monitor · Linux
+year: '2026'
+logo: logos/sysman.svg
+monogram: S
+accent: '#0E9AA7'
+featured: true
+stack:
+- Rust
+- GPUI
+- SQLite
+- systemd
+- eBPF
+- Linux
+highlights:
+- 14 collector modules, each on its own thread with its own deadline
+- Every reading is fsync'd before the next tick, so the moments before a crash survive it
+- About 2–3% of one CPU core on a 32-thread desktop with around 700 processes
+- 823 tests; collectors tested against fixture /proc and /sys trees
+- Packages for Arch and Debian/Ubuntu, install-tested in clean containers
+cover: art/sysman.svg
+website: https://sysman.asmechanics.com
+repository: https://github.com/mah3uz/sysman
+seo:
+  description: 'Sysman is a crash-proof Linux system monitor in Rust: a collector daemon with SQLite history and a native
+    GPUI app that explains why things happened.'
+body: "## Monitors forget\n\nEvery administrator knows the moment: a machine froze, rebooted, or crawled for twenty minutes,\
+  \ and by the time you look,\nevery monitor on it shows a calm present. `top` tells you about *now*. Proper fleet monitoring\
+  \ tells you about servers,\nand rarely about the desktop you actually work on. I wanted the history — on my own machine,\
+  \ in open formats, with no\naccount and no telemetry — and I wanted it to survive the very event I was trying to diagnose.\n\
+  \nSysman splits the job in three:\n\n- **`sysmand`**, a collector that runs as a systemd *user* service. Every two seconds\
+  \ it samples CPU, memory, pressure,\n  sensors, GPUs, disks, network, processes and more; it writes a crash log, stores\
+  \ history in SQLite, and serves live data\n  over a Unix socket.\n- **`sysman`**, a native desktop app built with GPUI,\
+  \ the GPU-accelerated toolkit behind the Zed editor, with eleven\n  views: Dashboard, Processes, GPU, Energy, Network, Disk\
+  \ with a disk map, Hardware, Explorer, Insights, Logs and Groups.\n- **`sysman-helper`**, optional, off by default, for\
+  \ the few readings that genuinely need root.\n\n## Two non-negotiables\n\nThe design document begins with two rules, and\
+  \ everything else follows from them.\n\n**\"The last reading before a crash is on disk.\"** Each sample is appended to a\
+  \ JSON Lines log and `fdatasync`'d before the\nnext tick. SQLite has its own thread and a bounded queue; if it ever falls\
+  \ behind, records are dropped and *counted*,\n*\"so the database never delays the crash log.\"* After a hard reset, the\
+  \ last lines of the log tell you which way it went:\ntemperatures climbing points at cooling, everything flat points at\
+  \ the power supply, a burst of GPU errors points at the\ndriver.\n\n**\"One failing source does not stop the others.\"**\
+  \ Every collector runs on its own worker thread. Ticks align to the wall\nclock; a module that misses its deadline — three\
+  \ quarters of the interval — is recorded as late, and its reply discarded.\nPanics are caught. A GPU driver that hangs is\
+  \ the classic case: NVML is called on an inner thread with a one-second\ndeadline, and after its first hang it is abandoned\
+  \ for `nvidia-smi`, run as a child process that is killed if it, too,\ntakes longer than a second. A GPU that has powered\
+  \ itself down is never polled awake.\n\n## Honest numbers\n\nSysman refuses to show a misleading zero: values that need\
+  \ root are shown as *not permitted*. A typo in the configuration\nstops the daemon, *\"so a typo cannot silently switch\
+  \ something off.\"* And the daemon is held to a footprint budget —\nevery collector change is measured for CPU and memory\
+  \ before and after, and judged *\"for a modest laptop rather than for\nthe machine it was measured on.\"*\n\nThat budget\
+  \ caught real costs. One family of motherboard sensor chips was being read over port I/O so expensively that\npolling it\
+  \ cost about 4.6% of a core; those chips are now read every ten seconds by default. Following the system journal\ninitially\
+  \ cost around 120 MB of memory; reopening only the files that are actually growing brought it to about 7 MB. The\nreference\
+  \ measurement is about 2.6% of one core, 85 MB of memory and 23 threads on a 32-thread desktop with around 700\nprocesses.\n\
+  \n## History that stays useful\n\nSeries are named by JSON pointer and devices keyed by stable identifiers, never by position,\
+  \ so adding a disk doesn't\nscramble a year of charts. Raw points are kept for 48 hours, one-minute roll-ups for 90 days\
+  \ and fifteen-minute roll-ups for\ntwo years; a restart rebuilds any half-finished minute from raw points, *\"so a restart\
+  \ loses nothing.\"* Process identity is\nthe PID *plus* its start time, so a reused PID is never confused with the process\
+  \ that had it before. The database grows by\nadding columns and is never rebuilt.\n\n## \"Why is this running?\"\n\nThe\
+  \ feature I am proudest of answers the question every administrator asks about an unfamiliar process. Sysman classifies\n\
+  a process from its cgroup and its parent chain — a systemd service, socket-, timer- or D-Bus-activated, a login autostart,\n\
+  an app, a terminal job, an orphan, a container (Docker, Podman, Kubernetes), Flatpak, Snap, cron or the kernel — and shows\n\
+  the evidence. It then explains what happens *if you end it*: whether systemd will restart it, based on the unit's\n`Restart=`\
+  \ policy and the difference between a clean `SIGTERM` and a `SIGKILL`. The rule is written into the design:\n*\"Facts only:\
+  \ every cause names its evidence, and what cannot be known is said.\"*\n\nThe Logs view applies the same principle to the\
+  \ journal and package-manager history together, surfacing what is worth a\nlook: crashes folded per program, OOM kills,\
+  \ failed units and restart loops, unclean shutdowns, GPU faults, disk and NVMe\nerrors, thermal throttling and repeated\
+  \ failed sign-ins.\n\n## A root helper that knows its place\n\nSome readings need privilege: SMART data, energy counters,\
+  \ other users' I/O, and per-process network traffic. The helper\nreads NVMe health through an admin ioctl and SATA drives\
+  \ through `smartctl` in a mode that won't spin up a sleeping disk,\nand counts network bytes per process with eBPF — one\
+  \ program per kernel signature, chosen at load time from the running\nkernel's BTF, so it works across kernel versions.\
+  \ It runs under systemd with an allow-list of capabilities, a read-only\nsystem, no network, and no writable-and-executable\
+  \ memory; it answers one request per second per connection, eight\nconnections at most. And it reports which processes are\
+  \ *listening* on ports, never their connections, because joining\nconnections to processes *\"would tie every user's remote\
+  \ peers to processes.\"*\n\n## Built like infrastructure\n\nSysman has 823 tests. Collectors are tested against fixture\
+  \ `/proc` and `/sys` trees, every collector's output round-trips\nthrough shared schema types, and each journal rule has\
+  \ a test built from a real entry. Release CI builds inside Ubuntu\n22.04 to hold the glibc floor, then install-tests the\
+  \ Debian package in fresh Ubuntu 22.04, Debian 12 and Ubuntu 24.04\ncontainers — checking linked libraries and clean removal\
+  \ — and only marks a release as latest once every artefact is\nuploaded. It ships for Arch (`sysman`, `sysman-bin`), Debian\
+  \ and Ubuntu, and as a checksum-verified installer that refuses\nto run over a package-manager install."
+position: 4

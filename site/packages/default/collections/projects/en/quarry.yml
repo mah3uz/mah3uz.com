@@ -1,0 +1,81 @@
+title: Quarry
+tagline: A fast SQL client and full-screen TUI for PostgreSQL, MySQL, MariaDB and SQLite — one binary, the same keys everywhere.
+description: Quarry is a native SQL client for the terminal, written in Rust. It pairs a REPL in the tradition of pgcli and
+  mycli with a full-screen interface for exploring schemas, editing tables safely and reading query plans, and it is built
+  on the assumption that one day you will be connected to production by mistake.
+category: product
+stage: shipped
+kind: Database client · TUI
+year: '2026'
+logo: logos/quarry.svg
+monogram: Q
+accent: '#1388A6'
+featured: true
+stack:
+- Rust
+- ratatui
+- tokio-postgres
+- mysql_async
+- rusqlite
+- rustls
+- reedline
+highlights:
+- PostgreSQL, MySQL, MariaDB and SQLite from one binary, with psql's \d commands translated for each
+- Streaming a million rows to TSV uses about 11 MB of memory instead of 275 MB
+- Read-only mode enforced twice — by the server and by Quarry
+- 349 tests, including drivers run against real database servers
+- Released through Homebrew and the AUR
+cover: art/quarry.svg
+website: https://quarry.asmechanics.com
+repository: https://github.com/mah3uz/quarry
+seo:
+  description: Quarry is a fast Rust SQL client and TUI for PostgreSQL, MySQL, MariaDB and SQLite, with safety rails for production
+    and an LLM that never runs SQL.
+body: "## One tool for the databases I actually use\n\nOn any given day I touch PostgreSQL, MySQL or MariaDB, and SQLite —\
+  \ sometimes all three — across laptops, staging boxes\nand production servers I reach through an SSH jump host. Each has\
+  \ its own client with its own habits, and the good\ngraphical tools are heavy, need a desktop, and don't follow you into\
+  \ an SSH session. Quarry is the tool I wanted\ninstead: *\"One tool, three databases. The same keys, commands and output\
+  \ formats everywhere.\"*\n\nIt ships as a single native binary with two faces. There is a REPL in the tradition of `pgcli`,\
+  \ `mycli` and `litecli`,\nwith psql's `\\d` family translated to each database's catalogue. And there is a full-screen TUI:\
+  \ a schema explorer,\ntabbed editors, a virtualised results grid, a table browser with staged edits, structure and DDL views,\
+  \ an explain-plan\nviewer and a command palette. `\\tui` switches from one to the other without dropping the connection.\
+  \ TLS is built in,\nSQLite is bundled, SSH tunnels use the system's own `ssh` — *\"Nothing else to install.\"*\n\n## Designed\
+  \ for the day you connect to production by mistake\n\nThe safety guide opens with the assumption that shaped the whole tool:\
+  \ *\"quarry assumes you'll one day be connected to\nproduction by mistake, and tries to make that survivable.\"* After many\
+  \ years of operating databases for other people,\nI don't think that assumption is pessimistic; I think it is the job.\n\
+  \n- **Destructive statements ask first.** `DROP`, `TRUNCATE`, `SHUTDOWN`, and `UPDATE` or `DELETE` without a `WHERE`\n \
+  \ clause require confirmation — including when they hide inside a CTE or an `EXPLAIN ANALYZE`.\n- **Read-only means read-only,\
+  \ twice.** `--readonly` is enforced by the server (a read-only session on PostgreSQL and\n  MySQL, `query_only` on SQLite)\
+  \ *and* checked by Quarry statement by statement.\n- **Cancel really cancels.** Ctrl-C stops the query on the server, not\
+  \ just the display.\n- **Secrets stay out of history.** Statements that look like they contain credentials are never recorded,\
+  \ saved\n  connections never store passwords, and every file Quarry writes is readable only by you.\n- **Edits are staged.**\
+  \ The table browser shows your changes as SQL and applies them in one transaction, or not at all.\n\n## Streaming, and the\
+  \ one place it can't\n\nMachine-readable output formats — CSV, TSV, JSON, JSON Lines and the rest of the seventeen — stream:\
+  \ rows arrive from the\nserver in batches of 256 with a time-based flush, and on PostgreSQL the query is cancelled the moment\
+  \ nobody is reading,\nso `quarry … | head` stops the query instead of finishing it. Version 0.2.0 measured the difference:\
+  \ streaming a million\nrows to TSV went from about 275 MB of memory to about 11 MB. The docs are honest about the exception:\
+  \ *\"The table formats\nneed the whole result first, to size their columns.\"* Some trade-offs you can't engineer away;\
+  \ you can only document them\nand choose well.\n\nIn the TUI the same thinking applies to the screen. The results grid is\
+  \ virtualised — it formats only the cells you can\nsee and sizes columns from a sample — and each connection keeps a second\
+  \ session for the explorer, *\"so the explorer keeps\nworking while a long query runs.\"*\n\n## An LLM feature designed\
+  \ for distrust\n\nQuarry can write SQL from a question in plain language with `\\llm`, but it was designed by someone who\
+  \ reviews other\npeople's SQL for a living. The model *\"writes SQL for your schema and leaves it for you to review. It\
+  \ never runs anything\nby itself.\"* Only the question and the schema are sent — table and column names, types, keys — capped\
+  \ in size; *\"No rows\nare ever sent.\"* It can use the Anthropic API, any OpenAI-compatible server including local models\
+  \ through Ollama or LM\nStudio, or the Claude Code and Codex command-line tools, which it runs without tools from a temporary\
+  \ folder so they\ndon't pick up a project's instruction files. API keys are stored apart from the configuration and tied\
+  \ to the server they\nbelong to, and a generic `OPENAI_API_KEY` is deliberately ignored so a key can never be sent to the\
+  \ wrong server.\n\n## The craft in the details\n\n- A context-aware completer that understands aliases, schema qualifiers,\
+  \ CTEs and derived tables, suggests joins from\n  foreign keys and expands `SELECT *`.\n- A SQL formatter that is idempotent:\
+  \ format twice, get the same result.\n- Vim editing with motions, counts, operators and text objects; rebindable keys with\
+  \ collisions resolved and reported.\n- Twenty-seven built-in colour themes, base16 and base24 import, and icons that pick\
+  \ Nerd Font, Unicode or ASCII\n  depending on what your terminal can show.\n- Configuration saved by editing the TOML in\
+  \ place, so your comments survive.\n\n## Tested against real servers\n\nQuarry has 349 tests. The driver tests run against\
+  \ real PostgreSQL and MySQL servers in throwaway databases; the SSH\ntunnel's success path is tested against a disposable\
+  \ `sshd`. Performance is tested too, in release mode: a hundred\nthousand rows rendered as a coloured table in under a second,\
+  \ a 10,000-line editor buffer drawn in under two\nmilliseconds per frame, and a catalogue of three thousand tables loaded\
+  \ in under 200 ms.\n\nReleases are cut by a single `just ship` that refuses to half-ship: it checks the version, the changelog,\
+  \ a clean and\ncurrent `main`, and access to GitHub, the AUR, the Homebrew tap and the docs host *before* doing anything\
+  \ public — then\nasks once, because *\"Everything after this is public and can't be taken back.\"* Quarry is MIT licensed\
+  \ and available\nthrough Homebrew (`mah3uz/tap/quarry`), the AUR (`quarry-sql` and `quarry-sql-bin`), and as a Linux tarball."
+position: 3

@@ -3,7 +3,7 @@ title: Native Linux apps in Rust with GPUI
 published_at: 2026-10-26T09:00:00+06:00
 topics: [rust, linux]
 excerpt: Building Sysman's desktop app on GPUI, the GPU-accelerated framework behind the Zed editor — why I chose it, the charts I had to write myself, and what it takes to ship a native Linux binary that installs cleanly everywhere.
-art: /art/posts/gpui.svg
+featured_image: art/posts/gpui.svg
 ---
 When I started Sysman, a Linux system monitor that records history, I knew the hard part of its interface would be
 scrubbing through hours of dense time series without the app stuttering. A web view would have been the quick choice and

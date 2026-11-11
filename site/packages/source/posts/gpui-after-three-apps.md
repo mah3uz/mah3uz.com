@@ -3,7 +3,7 @@ title: GPUI, after three apps
 published_at: 2026-11-08T09:00:00+06:00
 topics: [rust, linux, engineering]
 excerpt: "I've now shipped three native apps on GPUI, the UI framework behind the Zed editor: a system monitor, a terminal multiplexer and a screenshot tool. Each one pushed it somewhere different. This is what I know now about pinning it, patching it, budgeting it, and where it still runs out."
-art: /art/posts/gpui-three-apps.svg
+featured_image: art/posts/gpui-three-apps.svg
 ---
 A few weeks ago I wrote about [building Sysman's interface on GPUI](/blog/native-linux-apps-in-rust-with-gpui), and
 mostly about the charts I had to write and what it took to ship a native binary on Linux. Since then I've built two more
@@ -37,7 +37,7 @@ That sentence decided more of the design of all three apps than any other fact a
 rectangles with rounded corners and borders, vector paths, glyphs and bitmaps. There's no escape hatch to your own GPU
 code. If you need something else, you build it out of those, or you draw it on the CPU and hand GPUI an image.
 
-![What GPUI gives you, and what you build: five primitives at the bottom, and each app's own layer on top](/art/posts/gpui-after-three-apps/primitives.svg)
+![What GPUI gives you, and what you build: five primitives at the bottom, and each app's own layer on top](art/posts/gpui-after-three-apps/primitives.svg)
 
 I've come to see that limit as healthy. Every pane, overlay and card in my apps is an ordinary element, so they compose:
 a terminal can sit inside a floating window inside an overview, with a thumbnail of it somewhere else, and nothing special
@@ -69,7 +69,7 @@ appears, like the one I described for Sysman.
 
 Here the two newer apps went in opposite directions, and I think both were right.
 
-![Two ways to live with a young toolkit: easyshot carries ten patches as commits on a vendored copy, Insensical uses GPUI unpatched](/art/posts/gpui-after-three-apps/patches.svg)
+![Two ways to live with a young toolkit: easyshot carries ten patches as commits on a vendored copy, Insensical uses GPUI unpatched](art/posts/gpui-after-three-apps/patches.svg)
 
 **easyshot patches GPUI.** The vendored copy is GPUI exactly as published on crates.io, and the patches are ordinary git
 commits on top of it. The decisions log describes it: *"copied as-is from crates.io and our patches are git commits on
@@ -119,7 +119,7 @@ row named what would happen if GPUI couldn't meet it:
 > If a change pushes the UI-thread figure past 8 ms with no way back, gpui is the wrong toolkit for this product; iced with a
 > custom wgpu grid widget is the named alternative.
 
-![A frame budget, set before the code: measured at 2.0 ms, budget at 4 ms, a different toolkit past 8 ms](/art/posts/gpui-after-three-apps/budget.svg)
+![A frame budget, set before the code: measured at 2.0 ms, budget at 4 ms, a different toolkit past 8 ms](art/posts/gpui-after-three-apps/budget.svg)
 
 The worst case it's measured on is a full 200 × 60 grid where every cell has unique colours, the worst styling a program
 can produce. It measures 2.0 ms at the median. I haven't needed the alternative. But writing it down before I started meant

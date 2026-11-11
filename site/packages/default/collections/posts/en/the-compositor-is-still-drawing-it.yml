@@ -7,7 +7,7 @@ topics:
 excerpt: Building easyshot taught me that the hard part of a Wayland screenshot tool isn't the capture protocol. It's the
   state you can't see, like a bar that's closed but still fading, a cursor painted into every frame, or a service started
   just by asking it a question.
-art: /art/posts/compositor-drawing.svg
+featured_image: art/posts/compositor-drawing.svg
 body:
 - type: paragraph
   content:
@@ -167,7 +167,7 @@ body:
       is 270 ms, and I measured the surface still visible for about 250 ms after it had gone from my side.
 - type: image
   attrs:
-    src: /art/posts/the-compositor-is-still-drawing-it/settle.svg
+    asset: art/posts/the-compositor-is-still-drawing-it/settle.svg
     alt: 'Waiting for a bar that''s already gone: a fixed delay caught the fade, waiting for the fade plus 50 ms didn''t'
 - type: paragraph
   content:
@@ -418,7 +418,7 @@ body:
     text: ' wherever it''s needed. Six months later, nobody can say what the program does on any one of them.'
 - type: image
   attrs:
-    src: /art/posts/the-compositor-is-still-drawing-it/providers.svg
+    asset: art/posts/the-compositor-is-still-drawing-it/providers.svg
     alt: 'The app sees capabilities, not compositors: providers per capability, gathered into one set of Caps'
 - type: paragraph
   content:

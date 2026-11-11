@@ -6,7 +6,7 @@ topics:
 excerpt: Anything a released version reads at runtime is a contract with the future. What Nibble taught me about upgrades
   — a release that can't know its own future address, why merging git history was the wrong model, and checksums that refuse
   to destroy your edits.
-art: /art/posts/strangers-can-upgrade.svg
+featured_image: art/posts/strangers-can-upgrade.svg
 body:
 - type: paragraph
   content:

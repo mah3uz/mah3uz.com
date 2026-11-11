@@ -3,7 +3,7 @@ title: What I'm focused on now
 template: now
 eyebrow: Now
 intro: A snapshot of where my time and attention go this season — the products I'm building, the systems I'm running, and what I'm learning. Updated as things change.
-art: /art/pages/now.svg
+featured_image: art/pages/now.svg
 cards:
   - title: Building
     text: Nibble towards a stable 1.0 — fewer, firmer guarantees, and the first sites run by people other than me.

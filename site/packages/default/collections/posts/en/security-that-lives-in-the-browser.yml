@@ -5,7 +5,7 @@ topics:
 - topics/operations
 excerpt: Nibble's Control Plane locked itself after fifteen idle minutes — and a page reload walked straight back in. Two
   humbling fixes, and the sysadmin's rule behind them - enforce where the state lives.
-art: /art/posts/security-in-the-browser.svg
+featured_image: art/posts/security-in-the-browser.svg
 body:
 - type: paragraph
   content:

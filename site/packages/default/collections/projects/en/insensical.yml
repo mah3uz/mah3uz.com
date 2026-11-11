@@ -1,0 +1,115 @@
+title: Insensical
+tagline: A terminal multiplexer with a native window, for running many terminals and coding agents — and knowing which one
+  needs you.
+description: Insensical is a terminal multiplexer for Linux and macOS built around a daemon that owns every program, so closing
+  the window stops nothing and upgrading it loses nothing. It works out the state of every pane — running, waiting, done,
+  failed — so when you run several coding agents at once, you know which one is waiting on you.
+category: product
+stage: building
+kind: Terminal multiplexer
+year: '2026'
+logo: logos/insensical.svg
+monogram: i
+accent: '#17A398'
+featured: false
+stack:
+- Rust
+- gpui
+- libghostty-vt
+- Zig
+- WebAssembly
+- Noise protocol
+- rustls
+- Linux
+- macOS
+- Wayland
+- X11
+highlights:
+- A daemon owns every program; windows, the terminal UI and the browser page are only its clients
+- Upgrades the server in place with every terminal, program and scrollback intact
+- Hooks for Claude Code, Codex, Gemini CLI, opencode, Cursor CLI, Copilot CLI and more
+- 'Replicated terminals: output is parsed once on its way to the screen, never re-encoded'
+- 'Measured: 19 µs p99 added to a keystroke, and 2.9× tmux''s throughput for build output'
+- About 159,000 lines of Rust in 11 crates, with some 1,900 tests and 900 recorded design decisions
+- Eight releases in 24 days, shipped for Arch, Debian/Ubuntu and macOS; to be open-sourced under the MIT licence
+cover: art/insensical.svg
+website: https://insensical.com
+repository: https://github.com/mah3uz/insensical-release
+seo:
+  description: Insensical is a terminal multiplexer with a native window for Linux and macOS that tracks every pane's state,
+    so you know which coding agent needs you.
+body: "## Run many agents. Know which one needs you.\n\nTerminal multiplexers are one of the oldest good ideas in computing;\
+  \ tmux and screen have kept my sessions alive on\nremote servers for most of my career. But the way we use terminals has\
+  \ changed. A single afternoon can now involve four\nor five coding agents running in parallel, each one occasionally stopping\
+  \ to ask a question — and a wall of\nidentical-looking panes gives you no idea which one is waiting.\n\nInsensical is a\
+  \ multiplexer designed for that afternoon. Its core idea is stated in the manual: *\"A background server, the\ndaemon, owns\
+  \ every program. The window and the command line are its clients, so closing the window stops nothing.\"* The\nnative window\
+  \ is one client; `isc` running inside any terminal, including over SSH, is another; a local web page is a\nthird.\n\n##\
+  \ How it's built\n\nInsensical is written in **Rust** — about 159,000 lines across eleven crates — and its architecture\
+  \ starts from a\ncomplaint about every multiplexer before it. A traditional multiplexer sits *in series* between a program\
+  \ and your\nterminal: it parses the program's output into a screen of its own, works out what changed, re-encodes that as\
+  \ escape\nsequences, and your terminal parses it all again. Every byte is parsed twice, state is kept twice, and what you\
+  \ see\nmoves at the speed of the slower parser.\n\nInsensical replaces that with **replicated terminal state machines**:\n\
+  \n- **The daemon** owns every PTY and child process, and keeps an authoritative terminal for each pane, built on\n  **libghostty-vt**,\
+  \ Ghostty's terminal engine. It has no GPU or window-system dependency at all, so `isc` — the daemon,\n  the command line\
+  \ and the terminal interface in one binary — runs on a headless server.\n- **The window is a client.** For each pane it\
+  \ shows, it holds its own replica of that terminal. The daemon *tees* the\n  raw PTY bytes to it unchanged — never screen\
+  \ diffs, never re-encoded output — so on the way from program to pixels each\n  byte is parsed exactly once, by the replica\
+  \ that draws it.\n- **One writer.** Only the daemon writes to a PTY; every client, the window included, sends input events,\
+  \ and every\n  action in the interface is also an API request that `isc` can make.\n- **Native panes.** In the window each\
+  \ pane is a real **gpui** element (the UI framework behind the Zed editor), mapped\n  one to one to a PTY. Splits, tabs,\
+  \ floats and the overview are layout, not cells drawn inside another terminal.\n\n### Rendering\n\nlibghostty is a terminal\
+  \ *state* library — no renderer, no fonts — so drawing the grid is Insensical's own code, on\ngpui's primitives. Terminal\
+  \ objects never cross threads: each replica lives on a thread of its own and hands the\ninterface plain-data frames, which\
+  \ the interface **pulls** when it is ready to paint, so a flood of output never builds\nframes nobody sees. Glyphs are resolved\
+  \ once and cached, rows are cached until the engine marks them dirty, no text is\nshaped per frame, and a pane that hasn't\
+  \ changed isn't drawn again.\n\n### The protocol\n\nClients speak a length-prefixed binary protocol over a Unix socket.\
+  \ The hot path — output, snapshots, resyncs — has\nhand-encoded fixed layouts with no serialisation library in the way;\
+  \ control messages use `serde` and `postcard`. Each\npane gets its own connection, so one pane's flood can't delay another's,\
+  \ and a client that falls behind is dropped and\nresynchronised rather than allowed to grow the daemon's memory. The same\
+  \ frames reach a daemon on another machine through\nyour own `ssh` and `isc proxy`, multiplexed over one pair of streams;\
+  \ the daemon cannot tell the difference.\n\n### Remote, without opening a port\n\nThe daemon never listens on the network.\
+  \ `isc hub` is a separate process — a client of the socket like any other — that\nserves the browser page over HTTPS and\
+  \ WebSockets. The browser runs the same client core compiled to **WebAssembly**,\nwith its own replica and terminal engine.\
+  \ Sessions between devices are end to end, using the **Noise** protocol\n(`XK` handshakes over P-256 or X25519, ChaCha20-Poly1305),\
+  \ tested against an independent implementation, so a hub carries\ntraffic for joined machines that it cannot read. TLS is\
+  \ `rustls` on a pure-Rust provider, which keeps `isc` a single\nstatically linked binary for x86-64 and ARM with no C compiler\
+  \ in the build.\n\n### Measured, not claimed\n\nEvery performance figure in its architecture document sits beside the benchmark\
+  \ that produced it. On a Ryzen 9 7950X3D\nunder Linux:\n\n| Measure | Result |\n|---|---|\n| Latency added to a keystroke\
+  \ | 15 µs p50, 19 µs p99 |\n| Attaching to a 200×60 pane with 4,000 lines of history | 0.8 ms p50 |\n| Output throughput,\
+  \ build-style text | 159 MB/s — 1.08× of a terminal reading the PTY directly, 2.9× tmux, 4.4× zellij |\n| A full 200×60\
+  \ frame, worst-case styling | 2.0 ms p50 |\n| Server memory, thirty panes after 18 MB of output each | 58 MB (tmux 94 MB,\
+  \ zellij 449 MB) |\n| A daemon holding eight idle shells | zero wakeups in ten seconds |\n\nOn an Apple M1 Pro the same\
+  \ pipeline is 5.8× tmux's throughput. A dedicated section of the documentation records what has\nbeen run on which platform,\
+  \ and anything not run on a platform is described as unverified rather than working.\n\n## Knowing when you are needed\n\
+  \nThe heart of Insensical is working out what each pane is doing, from the strongest evidence available:\n\n1. **An explicit\
+  \ report** — a program can announce its state, either through the `isc` command or a small escape-sequence\n   protocol\
+  \ that agents can speak natively.\n2. **Terminal signals** — progress and notification sequences, the bell, and password\
+  \ prompts, detected when the terminal\n   stops echoing what you type.\n3. **The foreground command ending**, with a threshold\
+  \ for long-running commands.\n4. **The exit status** — where an interrupt counts as finished rather than failed.\n\nPanes\
+  \ are idle, running, waiting, done, failed or exited, and the interface draws attention to the ones that need you\nwithout\
+  \ ever reshuffling the layout: *\"Nothing is ever reordered because of a state.\"* A state never ends just because a\nprogram\
+  \ has gone quiet.\n\n## Agents, fenced honestly\n\nInsensical writes hooks for the agents people actually use — Claude Code,\
+  \ Codex, Gemini CLI, opencode, Cursor CLI, Copilot\nCLI and others — and ships a guide that agents read through `isc guide`,\
+  \ so a new version teaches every agent at once.\nAgents can start and supervise other agents, within limits of eight at\
+  \ once and two levels deep. A pane can be protected so\nagents can't drive it. The manual is candid about what that protection\
+  \ is: *\"It isn't a wall.\"* — and equally candid that\n*\"Letting an agent run `isc` lets it do anything you can.\"* I\
+  \ would rather a tool tell you the truth about its boundaries\nthan imply a guarantee it can't keep.\n\n## Upgrading without\
+  \ killing anything\n\nFor anyone who has run long jobs in a multiplexer, the most valuable property is that nothing dies.\
+  \ Insensical's daemon\nsaves the layout on every change, and `isc restart-server` replaces the running server with the newly\
+  \ installed version\n*in place*, keeping every terminal, program, screen and scrollback. Compatibility between clients and\
+  \ server is judged by\nprotocol and terminal engine rather than version numbers. After a clean stop, screens are kept as\
+  \ text and colour; after a\ncrash, the layout survives, and commands such as resuming an agent session are *offered* at\
+  \ the prompt rather than run on\nyour behalf.\n\n## Security from the socket up\n\nThe daemon listens only on a Unix socket\
+  \ in a directory that must be private to you, and refuses to start if that\ndirectory is too open, is a symlink, or contains\
+  \ something unexpected. Release notes spell out the hardening: clipboard\nwrites from windows on other workspaces are blocked,\
+  \ opening the file finder never runs a program a repository names, and\na client that stops reading can no longer exhaust\
+  \ the server's memory.\n\nThe optional hub serves a local page so you can follow your agents from a phone, without opening\
+  \ a port: devices pair by\ncode, joined machines dial out, and traffic between them is sealed so the hub *\"can't read it.\"\
+  * Guest links are\nview-only, single-use and expire within a week.\n\n## Shipping\n\nInsensical shipped eight releases in\
+  \ its first 24 days — from persistent programs and pane states to a full terminal\ninterface, a browser page, remote hosts\
+  \ over your own SSH, self-update against a signed release record, and start at\nlogin. It is available for Arch (`insensical-bin`),\
+  \ as Debian and Ubuntu packages, as a single static `isc` for x86-64 and\nARM Linux, and for macOS on Apple silicon through\
+  \ `brew install --cask mah3uz/tap/insensical`.\n\nInsensical will be open-sourced under the MIT licence; until then, releases\
+  \ are published from\n[insensical-release](https://github.com/mah3uz/insensical-release)."
+position: 6

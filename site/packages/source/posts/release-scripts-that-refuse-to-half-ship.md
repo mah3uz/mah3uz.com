@@ -3,7 +3,7 @@ title: Release scripts that refuse to half-ship
 published_at: 2026-10-20T09:00:00+06:00
 topics: [operations, engineering]
 excerpt: "The worst release is the one that stops halfway — a tag pushed, a package published, the documentation still describing last week. Every project I ship uses the same pattern to make that impossible: check everything, ask once, then do it all."
-art: /art/posts/release-scripts.svg
+featured_image: art/posts/release-scripts.svg
 ---
 I have cleaned up after a lot of half-finished releases over the years. A tag pushed but no build attached. A package
 published to one repository and not the other. A database migrated but the application not deployed. Documentation

@@ -2,7 +2,7 @@
 
 They share the site's tile — the teal gradient of the brand mark, rounded like an app icon — with a white line glyph
 for what the milestone is about, so they read in both themes and sit beside the products' own logos without looking
-borrowed. generate.py writes them to public/art/marks/.
+borrowed. generate.py writes them to site/packages/default/assets/art/marks/.
 """
 import math
 

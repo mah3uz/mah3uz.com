@@ -5,7 +5,7 @@ topics:
 - topics/operations
 excerpt: Most organisations separate the people who build software from the people who run it. I have spent my career doing
   both. Here is what that taught me about designing systems that survive contact with production.
-art: /art/posts/seventeen-years.svg
+featured_image: art/posts/seventeen-years.svg
 body:
 - type: paragraph
   content:

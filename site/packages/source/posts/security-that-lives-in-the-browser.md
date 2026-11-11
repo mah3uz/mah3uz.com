@@ -3,7 +3,7 @@ title: Security that lives in the browser is decoration
 published_at: 2026-10-03T09:00:00+06:00
 topics: [security, operations]
 excerpt: Nibble's Control Plane locked itself after fifteen idle minutes — and a page reload walked straight back in. Two humbling fixes, and the sysadmin's rule behind them - enforce where the state lives.
-art: /art/posts/security-in-the-browser.svg
+featured_image: art/posts/security-in-the-browser.svg
 ---
 This one was humbling, so I'll start with it.
 

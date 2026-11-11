@@ -1,5 +1,4 @@
 ---
-id: tourhub
 order: 8
 title: TourHub
 category: client
@@ -11,10 +10,10 @@ stage: building
 kind: Live-events marketplace · Rails
 year: "2026"
 monogram: "T"
-logo: /logos/tourhub.svg
+logo: logos/tourhub.svg
 accent: "#00743F"
 featured: false
-cover: /art/tourhub.svg
+cover: art/tourhub.svg
 website: https://tourhub.io
 stack: [Ruby on Rails, Inertia.js, Stripe, Progressive web app, Linux servers, Staging & production environments]
 highlights:

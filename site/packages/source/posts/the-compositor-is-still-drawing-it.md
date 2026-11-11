@@ -3,7 +3,7 @@ title: The compositor is still drawing it
 published_at: 2026-11-10T09:00:00+06:00
 topics: [linux, engineering, rust]
 excerpt: Building easyshot taught me that the hard part of a Wayland screenshot tool isn't the capture protocol. It's the state you can't see, like a bar that's closed but still fading, a cursor painted into every frame, or a service started just by asking it a question.
-art: /art/posts/compositor-drawing.svg
+featured_image: art/posts/compositor-drawing.svg
 ---
 Taking a screenshot on Wayland is, at the protocol level, a solved problem. You bind a global, ask the compositor to copy an
 output into a buffer you've allocated, wait for it to say it's done, and you have pixels. `grim` has done it in a few
@@ -62,7 +62,7 @@ The bar is a Wayland layer-shell surface, and I'd destroyed it before taking the
 the compositor has stopped drawing it. Hyprland animates layer surfaces out. On my configuration the fade is 270 ms, and I
 measured the surface still visible for about 250 ms after it had gone from my side.
 
-![Waiting for a bar that's already gone: a fixed delay caught the fade, waiting for the fade plus 50 ms didn't](/art/posts/the-compositor-is-still-drawing-it/settle.svg)
+![Waiting for a bar that's already gone: a fixed delay caught the fade, waiting for the fade plus 50 ms didn't](art/posts/the-compositor-is-still-drawing-it/settle.svg)
 
 The first fix was a fixed 150 ms wait before grabbing the frame. That's the kind of number that works on the developer's
 machine and on nobody else's, and it didn't even work on mine. The real fix is a single *settle* step inside the capture
@@ -161,7 +161,7 @@ easyshot supports three compositors, each with its own IPC and its own gaps in t
 situation is an `if hyprland { … }` wherever it's needed. Six months later, nobody can say what the program does on any one
 of them.
 
-![The app sees capabilities, not compositors: providers per capability, gathered into one set of Caps](/art/posts/the-compositor-is-still-drawing-it/providers.svg)
+![The app sees capabilities, not compositors: providers per capability, gathered into one set of Caps](art/posts/the-compositor-is-still-drawing-it/providers.svg)
 
 Instead, each capability (capture, the window list, pointer position, recording, clipboard, tray, notifications) has an
 ordered list of *providers*, probed at start-up. Generic Wayland providers are chosen by which protocol globals the

@@ -1,5 +1,4 @@
 ---
-id: earport
 order: 13
 title: EarPort for Hyprland
 tagline: "AirPods on a Hyprland desktop: battery, noise control and settings in the shell's bar and control centre, through EarPort's Bluetooth daemon."
@@ -8,11 +7,11 @@ category: product
 stage: building
 kind: Linux desktop · Plugin
 year: "2026"
-logo: /logos/earport.svg
+logo: logos/earport.svg
 monogram: "E"
 accent: "#9B4FB3"
 featured: false
-cover: /art/earport.svg
+cover: art/earport.svg
 repository: https://github.com/mah3uz/earport
 stack: [QML, Quickshell, Dux Shell, Hyprland, D-Bus, BlueZ, C]
 highlights:

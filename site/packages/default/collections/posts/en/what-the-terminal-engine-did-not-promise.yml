@@ -7,7 +7,7 @@ topics:
 excerpt: Insensical is built on libghostty-vt, Ghostty's terminal engine as a library. It gave me a superb parser. It didn't
   promise that every screen could be saved, that every saved screen could be read, or that it would answer questions in the
   right order. Here is what I built around it.
-art: /art/posts/terminal-engine.svg
+featured_image: art/posts/terminal-engine.svg
 body:
 - type: paragraph
   content:
@@ -174,7 +174,7 @@ body:
       didn''t change, and neither did the fix.'
 - type: image
   attrs:
-    src: /art/posts/what-the-terminal-engine-did-not-promise/readback.svg
+    asset: art/posts/what-the-terminal-engine-did-not-promise/readback.svg
     alt: 'Never send a snapshot you can''t read: encode, read it back into a throwaway terminal, and fall back to a redraw
       from the replay'
 - type: paragraph
@@ -268,7 +268,7 @@ body:
       the count.
 - type: image
   attrs:
-    src: /art/posts/what-the-terminal-engine-did-not-promise/placements.svg
+    asset: art/posts/what-the-terminal-engine-did-not-promise/placements.svg
     alt: 'Kitty image placements: from 1.1 ms for a thousand to 16.28 seconds for a hundred thousand'
 - type: paragraph
   content:
@@ -320,7 +320,7 @@ body:
       7501 answer comes before the device attributes, the terminal understands. If the device attributes come first, it doesn''t.'
 - type: image
   attrs:
-    src: /art/posts/what-the-terminal-engine-did-not-promise/osc7501.svg
+    asset: art/posts/what-the-terminal-engine-did-not-promise/osc7501.svg
     alt: 'Answer in the order you were asked: Insensical splits the output at the end of the question and answers before the
       engine sees CSI c'
 - type: paragraph

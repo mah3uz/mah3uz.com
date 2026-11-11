@@ -3,7 +3,7 @@ title: SQLite is enough (for most of us)
 published_at: 2026-09-24T09:00:00+06:00
 topics: [engineering, operations]
 excerpt: For most of my career, "which database?" meant "which database server?" Today my default is a file. Here is how to run SQLite in production properly — WAL, backups, honest limits — and when to move on.
-art: /art/posts/sqlite-is-enough.svg
+featured_image: art/posts/sqlite-is-enough.svg
 ---
 For most of my career, the question "which database?" really meant "which database *server*?" PostgreSQL or MySQL, on
 its own machine or at least its own process, with its own users, its own backups, its own upgrades, its own tuning, and its

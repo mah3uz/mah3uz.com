@@ -3,7 +3,7 @@ title: Designing software that strangers can upgrade
 published_at: 2026-10-13T09:00:00+06:00
 topics: [engineering, operations]
 excerpt: Anything a released version reads at runtime is a contract with the future. What Nibble taught me about upgrades — a release that can't know its own future address, why merging git history was the wrong model, and checksums that refuse to destroy your edits.
-art: /art/posts/strangers-can-upgrade.svg
+featured_image: art/posts/strangers-can-upgrade.svg
 ---
 For most of my career I have been on the receiving end of upgrades, as the person who applies them to servers and keeps
 the sites on them running — and anyone in that seat knows the kinds that hurt: the new version that quietly overwrites a

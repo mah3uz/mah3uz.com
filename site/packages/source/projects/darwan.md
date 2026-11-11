@@ -1,5 +1,4 @@
 ---
-id: darwan
 order: 5
 title: Darwan
 tagline: One app to choose, configure, preview and apply themes to both of your gates — the login screen and the lock screen.
@@ -8,11 +7,11 @@ category: product
 stage: shipped
 kind: Desktop app · Linux
 year: "2026"
-logo: /logos/darwan.svg
+logo: logos/darwan.svg
 monogram: "D"
 accent: "#2A8FB0"
 featured: true
-cover: /art/darwan.svg
+cover: art/darwan.svg
 website: https://darwan.dev
 repository: https://github.com/mah3uz/darwan
 stack: [Rust, Qt 6, QML, cxx-qt, Quickshell, SDDM, polkit, Arch Linux]

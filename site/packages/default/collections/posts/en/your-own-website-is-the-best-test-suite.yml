@@ -5,7 +5,7 @@ topics:
 - topics/product
 excerpt: One evening of clicking around my own documentation produced seven patch releases of Nibble. Fixtures with three
   files never find what real content finds — and some bugs only show up when you actually run the thing.
-art: /art/posts/own-website-test-suite.svg
+featured_image: art/posts/own-website-test-suite.svg
 body:
 - type: paragraph
   content:

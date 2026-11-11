@@ -3,7 +3,7 @@ title: Keeping a daemon alive
 published_at: 2026-11-03T09:00:00+06:00
 topics: [operations, rust, linux]
 excerpt: Insensical's daemon owns every terminal you run, so it mustn't die and it mustn't stall. What threatened it wasn't clever bugs. It was fork getting slower with every thread, a signal mask children inherit, a cgroup that gets cleaned up, and a 1 KiB read on a Mac.
-art: /art/posts/daemon-alive.svg
+featured_image: art/posts/daemon-alive.svg
 ---
 I've had tmux running on servers for most of my career. Its best feature is the one you never think about: you
 disconnect, the network drops, your laptop sleeps, and when you come back everything is still running. A multiplexer's
@@ -45,7 +45,7 @@ Insensical the daemon takes the lock anyway. The reason given in the log is the 
 The first real scaling problem appeared when I restored a saved layout with a thousand panes. The daemon took 20 to 32
 seconds before its socket answered.
 
-![Restoring 1,000 panes: 20 to 32 seconds with fork, about one second with posix_spawn](/art/posts/keeping-a-daemon-alive/spawn.svg)
+![Restoring 1,000 panes: 20 to 32 seconds with fork, about one second with posix_spawn](art/posts/keeping-a-daemon-alive/spawn.svg)
 
 The cause was `fork`. To start a pane's shell, the daemon forked and then `exec`ed. `fork` copies the parent's memory map,
 and the kernel's cost for that grows with the parent's size and its number of threads. And the daemon has a thread per
@@ -114,7 +114,7 @@ I considered the usual design, passing the pseudo-terminal file descriptors to a
 instead calls `exec` on the new binary *in the same process*. It stays the parent of every pane's program, it keeps its
 process ID, and there's never a moment where two daemons both think they're in charge.
 
-![Upgrading in place: the same process writes its state, checks the new binary can read it, finishes in-flight work and execs](/art/posts/keeping-a-daemon-alive/handover.svg)
+![Upgrading in place: the same process writes its state, checks the new binary can read it, finishes in-flight work and execs](art/posts/keeping-a-daemon-alive/handover.svg)
 
 `exec` has no undo. Once it's called, the old program is gone. So before the real handover, the daemon runs the new binary
 once as `isc carried` and asks whether it can read the state it's about to be handed, with ten seconds for an answer. Only

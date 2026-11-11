@@ -6,7 +6,7 @@ topics:
 excerpt: Theming a login screen means writing to system directories as root; theming a lock screen means one bug can lock
   someone out of their own machine. How Darwan handles both — a supervised lock, and a root helper that trusts nothing it
   is given.
-art: /art/posts/lock-screen.svg
+featured_image: art/posts/lock-screen.svg
 body:
 - type: paragraph
   content:

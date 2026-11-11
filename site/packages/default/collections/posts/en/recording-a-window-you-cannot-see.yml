@@ -6,7 +6,7 @@ topics:
 - topics/engineering
 excerpt: '"Record this window" sounds like the easiest feature in a screen recorder. On Wayland it took my own capture pipeline,
   a recorder I couldn''t hide from, an audio server with a long memory, and a parent-death signal the kernel quietly drops.'
-art: /art/posts/recording-window.svg
+featured_image: art/posts/recording-window.svg
 body:
 - type: paragraph
   content:
@@ -140,7 +140,7 @@ body:
     text: ). What it didn't have was a video pipeline. So I built one.
 - type: image
   attrs:
-    src: /art/posts/recording-a-window-you-cannot-see/pipeline.svg
+    asset: art/posts/recording-a-window-you-cannot-see/pipeline.svg
     alt: 'Recording one window: the capture thread, a one-slot mailbox, a pacer on the GStreamer clock and the encoder'
 - type: paragraph
   content:
@@ -486,7 +486,7 @@ body:
     text: ' the recorder, and lose it, silently.'
 - type: image
   attrs:
-    src: /art/posts/recording-a-window-you-cannot-see/supervision.svg
+    asset: art/posts/recording-a-window-you-cannot-see/supervision.svg
     alt: 'If the daemon dies, so does the recorder: a watcher reading a pipe, and the signal ladder on EOF'
 - type: paragraph
   content:

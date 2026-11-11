@@ -1,5 +1,4 @@
 ---
-id: nibble-cli
 order: 2
 title: Nibble CLI
 tagline: Start a Nibble site, run its tasks, and work on any site's content from the terminal — as you, and never as more than you.
@@ -8,11 +7,11 @@ category: product
 stage: building
 kind: Command-line tool
 year: "2026"
-logo: /logos/nibble-cli.svg
+logo: logos/nibble-cli.svg
 monogram: "›_"
 accent: "#1388A6"
 featured: false
-cover: /art/nibble-cli.svg
+cover: art/nibble-cli.svg
 website: https://nibble.ink
 repository: https://github.com/mah3uz/nibble-cli
 stack: [Rust, OAuth 2.0 with PKCE, MCP, cargo-dist, rustls]

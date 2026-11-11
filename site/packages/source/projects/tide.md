@@ -1,5 +1,4 @@
 ---
-id: tide
 order: 12
 title: tide
 tagline: "A redesign of tide, the self-hosted video meeting service: a new interface in light and dark, an installable app, a screen-share popout and safer chat — on top of a Go and LiveKit core."
@@ -8,11 +7,11 @@ category: product
 stage: building
 kind: Video meetings · Self-hosted
 year: "2026"
-logo: /logos/tide.svg
+logo: logos/tide.svg
 monogram: "t"
 accent: "#1F8F6A"
 featured: false
-cover: /art/tide.svg
+cover: art/tide.svg
 repository: https://github.com/mah3uz/tide
 stack: [Go, SvelteKit, Svelte 5, Tailwind CSS 4, LiveKit, WebRTC, SQLite, OIDC, Docker, Dokploy]
 highlights:

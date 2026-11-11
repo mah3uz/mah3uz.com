@@ -1,5 +1,4 @@
 ---
-id: tlc
 order: 9
 title: TLC
 category: client
@@ -11,10 +10,10 @@ stage: building
 kind: Lending CRM · Laravel
 year: "2020 – now"
 monogram: "TL"
-logo: /logos/tlc.svg
+logo: logos/tlc.svg
 accent: "#EF4D96"
 featured: false
-cover: /art/tlc.svg
+cover: art/tlc.svg
 website: https://tlc.com.au
 stack: [Laravel, PHP, REST API design, Linux administration, Deployment automation, Production operations]
 highlights:

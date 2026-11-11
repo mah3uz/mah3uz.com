@@ -3,7 +3,7 @@ template: uses
 eyebrow: Uses
 intro: The hardware and software behind my work — for building, for running servers, for the homelab, and for living on the
   Linux desktop. Several of these I built because I wanted them to exist.
-art: /art/pages/uses.svg
+featured_image: art/pages/uses.svg
 tools:
 - group: Hardware
   name: Workstation — Ryzen 9 7950X3D

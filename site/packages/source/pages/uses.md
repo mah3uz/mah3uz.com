@@ -3,7 +3,7 @@ title: The tools I use every day
 template: uses
 eyebrow: Uses
 intro: The hardware and software behind my work — for building, for running servers, for the homelab, and for living on the Linux desktop. Several of these I built because I wanted them to exist.
-art: /art/pages/uses.svg
+featured_image: art/pages/uses.svg
 tools:
   - { group: Hardware, name: "Workstation — Ryzen 9 7950X3D", key: "PC", note: "16 cores and 32 threads, a GeForce RTX 4090 and 128 GB of memory, running Arch Linux on 2 TB of btrfs. Big builds and virtual machines without waiting." }
   - { group: Hardware, name: "27-inch 1440p display", key: "27", note: "2560×1440 at 120 Hz — sharp enough for text all day, fast enough that scrolling feels right." }

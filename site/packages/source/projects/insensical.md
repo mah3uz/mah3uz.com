@@ -1,5 +1,4 @@
 ---
-id: insensical
 order: 6
 title: Insensical
 tagline: A terminal multiplexer with a native window, for running many terminals and coding agents — and knowing which one needs you.
@@ -8,11 +7,11 @@ category: product
 stage: building
 kind: Terminal multiplexer
 year: "2026"
-logo: /logos/insensical.svg
+logo: logos/insensical.svg
 monogram: "i"
 accent: "#17A398"
 featured: false
-cover: /art/insensical.svg
+cover: art/insensical.svg
 website: https://insensical.com
 repository: https://github.com/mah3uz/insensical-release
 stack: [Rust, gpui, libghostty-vt, Zig, WebAssembly, Noise protocol, rustls, Linux, macOS, Wayland, X11]

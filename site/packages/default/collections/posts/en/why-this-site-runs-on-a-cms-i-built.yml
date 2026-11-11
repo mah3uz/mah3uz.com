@@ -5,7 +5,7 @@ topics:
 - topics/engineering
 excerpt: Every developer eventually writes a content management system. I did it on purpose, after years of installing, patching
   and rescuing other people's. These are the decisions that made Nibble — and the one I got wrong first.
-art: /art/posts/cms-i-built.svg
+featured_image: art/posts/cms-i-built.svg
 body:
 - type: paragraph
   content:

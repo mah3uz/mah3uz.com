@@ -4,3 +4,157 @@
 - path: brand/social-card.png
   title: Social card
   alt: mah3uz — software engineer and Linux systems administrator since 2009.
+- path: art/darwan.svg
+  title: darwan
+- path: art/earport.svg
+  title: earport
+- path: art/easyshot.svg
+  title: easyshot
+- path: art/insensical.svg
+  title: insensical
+- path: art/marks/commits.svg
+  title: commits
+- path: art/marks/freelance.svg
+  title: freelance
+- path: art/marks/gear.svg
+  title: gear
+- path: art/marks/linux.svg
+  title: linux
+- path: art/marks/mah3uz.svg
+  title: mah3uz
+- path: art/marks/network.svg
+  title: network
+- path: art/marks/rack.svg
+  title: rack
+- path: art/marks/radar.svg
+  title: radar
+- path: art/marks/server-sun.svg
+  title: server sun
+- path: art/nibble-cli.svg
+  title: nibble cli
+- path: art/nibble.svg
+  title: nibble
+- path: art/pages/about.svg
+  title: about
+- path: art/pages/now.svg
+  title: now
+- path: art/pages/uses.svg
+  title: uses
+- path: art/posts/ai-agents.svg
+  title: ai agents
+- path: art/posts/cargo-defaults-ate-483-gb/before-after.svg
+  title: before after
+- path: art/posts/cargo-defaults-ate-483-gb/binary-anatomy.svg
+  title: binary anatomy
+- path: art/posts/cargo-defaults-ate-483-gb/build-slice.svg
+  title: build slice
+- path: art/posts/cargo-defaults-ate-483-gb/deps-opt.svg
+  title: deps opt
+- path: art/posts/cargo-defaults-ate-483-gb/io-pressure.svg
+  title: io pressure
+- path: art/posts/cargo-defaults-ate-483-gb/profiles.svg
+  title: profiles
+- path: art/posts/cargo-defaults-ate-483-gb/slowest-first.svg
+  title: slowest first
+- path: art/posts/cargo-defaults-ate-483-gb/stale-copies.svg
+  title: stale copies
+- path: art/posts/cargo-defaults-ate-483-gb/suite-time.svg
+  title: suite time
+- path: art/posts/cargo-defaults-ate-483-gb/where-it-went.svg
+  title: where it went
+- path: art/posts/cms-i-built.svg
+  title: cms i built
+- path: art/posts/compositor-drawing.svg
+  title: compositor drawing
+- path: art/posts/daemon-alive.svg
+  title: daemon alive
+- path: art/posts/default.svg
+  title: default
+- path: art/posts/gpui-after-three-apps/budget.svg
+  title: budget
+- path: art/posts/gpui-after-three-apps/patches.svg
+  title: patches
+- path: art/posts/gpui-after-three-apps/primitives.svg
+  title: primitives
+- path: art/posts/gpui-three-apps.svg
+  title: gpui three apps
+- path: art/posts/gpui.svg
+  title: gpui
+- path: art/posts/keeping-a-daemon-alive/handover.svg
+  title: handover
+- path: art/posts/keeping-a-daemon-alive/spawn.svg
+  title: spawn
+- path: art/posts/last-reading.svg
+  title: last reading
+- path: art/posts/lock-screen.svg
+  title: lock screen
+- path: art/posts/own-website-test-suite.svg
+  title: own website test suite
+- path: art/posts/recording-a-window-you-cannot-see/pipeline.svg
+  title: pipeline
+- path: art/posts/recording-a-window-you-cannot-see/supervision.svg
+  title: supervision
+- path: art/posts/recording-window.svg
+  title: recording window
+- path: art/posts/release-scripts.svg
+  title: release scripts
+- path: art/posts/rewrite-history.svg
+  title: rewrite history
+- path: art/posts/security-in-the-browser.svg
+  title: security in the browser
+- path: art/posts/seventeen-years.svg
+  title: seventeen years
+- path: art/posts/sqlite-is-enough.svg
+  title: sqlite is enough
+- path: art/posts/strangers-can-upgrade.svg
+  title: strangers can upgrade
+- path: art/posts/target-folder.svg
+  title: target folder
+- path: art/posts/terminal-engine.svg
+  title: terminal engine
+- path: art/posts/the-compositor-is-still-drawing-it/providers.svg
+  title: providers
+- path: art/posts/the-compositor-is-still-drawing-it/settle.svg
+  title: settle
+- path: art/posts/what-the-terminal-engine-did-not-promise/osc7501.svg
+  title: osc7501
+- path: art/posts/what-the-terminal-engine-did-not-promise/placements.svg
+  title: placements
+- path: art/posts/what-the-terminal-engine-did-not-promise/readback.svg
+  title: readback
+- path: art/quarry.svg
+  title: quarry
+- path: art/rrussat.svg
+  title: rrussat
+- path: art/sysman.svg
+  title: sysman
+- path: art/tide.svg
+  title: tide
+- path: art/tlc.svg
+  title: tlc
+- path: art/tourhub.svg
+  title: tourhub
+- path: logos/darwan.svg
+  title: darwan
+- path: logos/earport.svg
+  title: earport
+- path: logos/easyshot.svg
+  title: easyshot
+- path: logos/insensical.svg
+  title: insensical
+- path: logos/nibble-cli.svg
+  title: nibble cli
+- path: logos/nibble.svg
+  title: nibble
+- path: logos/quarry.svg
+  title: quarry
+- path: logos/rrussat.svg
+  title: rrussat
+- path: logos/sysman.svg
+  title: sysman
+- path: logos/tide.svg
+  title: tide
+- path: logos/tlc.svg
+  title: tlc
+- path: logos/tourhub.svg
+  title: tourhub

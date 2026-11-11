@@ -5,7 +5,7 @@ topics:
 - topics/linux
 excerpt: Building Sysman's desktop app on GPUI, the GPU-accelerated framework behind the Zed editor — why I chose it, the
   charts I had to write myself, and what it takes to ship a native Linux binary that installs cleanly everywhere.
-art: /art/posts/gpui.svg
+featured_image: art/posts/gpui.svg
 body:
 - type: paragraph
   content:

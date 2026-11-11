@@ -7,7 +7,7 @@ topics:
 excerpt: Insensical's daemon owns every terminal you run, so it mustn't die and it mustn't stall. What threatened it wasn't
   clever bugs. It was fork getting slower with every thread, a signal mask children inherit, a cgroup that gets cleaned up,
   and a 1 KiB read on a Mac.
-art: /art/posts/daemon-alive.svg
+featured_image: art/posts/daemon-alive.svg
 body:
 - type: paragraph
   content:
@@ -115,7 +115,7 @@ body:
       to 32 seconds before its socket answered.
 - type: image
   attrs:
-    src: /art/posts/keeping-a-daemon-alive/spawn.svg
+    asset: art/posts/keeping-a-daemon-alive/spawn.svg
     alt: 'Restoring 1,000 panes: 20 to 32 seconds with fork, about one second with posix_spawn'
 - type: paragraph
   content:
@@ -399,7 +399,7 @@ body:
       both think they're in charge.
 - type: image
   attrs:
-    src: /art/posts/keeping-a-daemon-alive/handover.svg
+    asset: art/posts/keeping-a-daemon-alive/handover.svg
     alt: 'Upgrading in place: the same process writes its state, checks the new binary can read it, finishes in-flight work
       and execs'
 - type: paragraph

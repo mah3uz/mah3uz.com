@@ -3,7 +3,7 @@ title: Seventeen years on both sides of the line
 published_at: 2026-10-31T09:00:00+06:00
 topics: [engineering, operations]
 excerpt: Most organisations separate the people who build software from the people who run it. I have spent my career doing both. Here is what that taught me about designing systems that survive contact with production.
-art: /art/posts/seventeen-years.svg
+featured_image: art/posts/seventeen-years.svg
 ---
 Most organisations draw a line between the people who *build* software and the people who *run* it. Developers write the
 application; administrators, operations, or — in more recent vocabulary — platform teams keep it alive. Tickets cross the

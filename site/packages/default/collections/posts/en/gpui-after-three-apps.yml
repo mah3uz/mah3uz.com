@@ -7,7 +7,7 @@ topics:
 excerpt: 'I''ve now shipped three native apps on GPUI, the UI framework behind the Zed editor: a system monitor, a terminal
   multiplexer and a screenshot tool. Each one pushed it somewhere different. This is what I know now about pinning it, patching
   it, budgeting it, and where it still runs out.'
-art: /art/posts/gpui-three-apps.svg
+featured_image: art/posts/gpui-three-apps.svg
 body:
 - type: paragraph
   content:
@@ -113,7 +113,7 @@ body:
       own GPU code. If you need something else, you build it out of those, or you draw it on the CPU and hand GPUI an image.
 - type: image
   attrs:
-    src: /art/posts/gpui-after-three-apps/primitives.svg
+    asset: art/posts/gpui-after-three-apps/primitives.svg
     alt: 'What GPUI gives you, and what you build: five primitives at the bottom, and each app''s own layer on top'
 - type: paragraph
   content:
@@ -208,7 +208,7 @@ body:
     text: Here the two newer apps went in opposite directions, and I think both were right.
 - type: image
   attrs:
-    src: /art/posts/gpui-after-three-apps/patches.svg
+    asset: art/posts/gpui-after-three-apps/patches.svg
     alt: 'Two ways to live with a young toolkit: easyshot carries ten patches as commits on a vendored copy, Insensical uses
       GPUI unpatched'
 - type: paragraph
@@ -425,7 +425,7 @@ body:
         iced with a custom wgpu grid widget is the named alternative.
 - type: image
   attrs:
-    src: /art/posts/gpui-after-three-apps/budget.svg
+    asset: art/posts/gpui-after-three-apps/budget.svg
     alt: 'A frame budget, set before the code: measured at 2.0 ms, budget at 4 ms, a different toolkit past 8 ms'
 - type: paragraph
   content:

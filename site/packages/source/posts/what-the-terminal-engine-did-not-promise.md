@@ -3,7 +3,7 @@ title: What the terminal engine didn't promise
 published_at: 2026-11-05T09:00:00+06:00
 topics: [rust, engineering, security]
 excerpt: Insensical is built on libghostty-vt, Ghostty's terminal engine as a library. It gave me a superb parser. It didn't promise that every screen could be saved, that every saved screen could be read, or that it would answer questions in the right order. Here is what I built around it.
-art: /art/posts/terminal-engine.svg
+featured_image: art/posts/terminal-engine.svg
 ---
 A terminal emulator is two programs pretending to be one. One half is a parser and a state machine: it reads the bytes a
 program writes, escape sequences and all, and keeps a model of the screen, the cursor, the colours, the scrollback. The
@@ -72,7 +72,7 @@ I'll be honest about the state of this one: at the engine commit Insensical move
 longer fails. Either it was fixed upstream in between, or the reproduction misses something. Either way, the lesson didn't
 change, and neither did the fix.
 
-![Never send a snapshot you can't read: encode, read it back into a throwaway terminal, and fall back to a redraw from the replay](/art/posts/what-the-terminal-engine-did-not-promise/readback.svg)
+![Never send a snapshot you can't read: encode, read it back into a throwaway terminal, and fall back to a redraw from the replay](art/posts/what-the-terminal-engine-did-not-promise/readback.svg)
 
 **The daemon now reads back every snapshot before it sends it.** It encodes the screen, decodes the first part into a
 throwaway terminal, and only sends the bytes if that works. If it doesn't, it sends a snapshot of a terminal redrawn from
@@ -120,7 +120,7 @@ The kitty graphics protocol lets a program place an image in the terminal. Each 
 exist, so the total cost grows with the square of the count. The binding limits the bytes of a picture and the size of one
 picture. Nothing limits the count.
 
-![Kitty image placements: from 1.1 ms for a thousand to 16.28 seconds for a hundred thousand](/art/posts/what-the-terminal-engine-did-not-promise/placements.svg)
+![Kitty image placements: from 1.1 ms for a thousand to 16.28 seconds for a hundred thousand](art/posts/what-the-terminal-engine-did-not-promise/placements.svg)
 
 In a debug build of the engine, a thousand placements took 1.1 ms. Sixteen thousand took 212 ms. A hundred thousand took
 16.28 seconds, during which that pane's writer is held. A 2 MB file sent to `cat` can do it.
@@ -141,7 +141,7 @@ sends the question `OSC 7501 ; ?`, then immediately sends `CSI c`, the device at
 answers. Whichever answer arrives first decides it. If the 7501 answer comes before the device attributes, the terminal
 understands. If the device attributes come first, it doesn't.
 
-![Answer in the order you were asked: Insensical splits the output at the end of the question and answers before the engine sees CSI c](/art/posts/what-the-terminal-engine-did-not-promise/osc7501.svg)
+![Answer in the order you were asked: Insensical splits the output at the end of the question and answers before the engine sees CSI c](art/posts/what-the-terminal-engine-did-not-promise/osc7501.svg)
 
 The engine answers `CSI c` itself, internally. Its C interface doesn't pass an unknown OSC sequence on and gives no
 callback for it. So if Insensical noticed the question after the engine had processed the whole chunk of output, the

@@ -5,7 +5,7 @@ topics:
 - topics/engineering
 excerpt: 'The worst release is the one that stops halfway — a tag pushed, a package published, the documentation still describing
   last week. Every project I ship uses the same pattern to make that impossible: check everything, ask once, then do it all.'
-art: /art/posts/release-scripts.svg
+featured_image: art/posts/release-scripts.svg
 body:
 - type: paragraph
   content:

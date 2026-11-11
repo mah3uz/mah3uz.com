@@ -5,7 +5,7 @@ topics:
 - topics/operations
 excerpt: Nibble had thirty-six database migrations after its first week. Folding them into one per table was easy to type
   and hard to get right. The order of foreign keys was the whole job - and a schema diff was the only proof I trusted.
-art: /art/posts/rewrite-history.svg
+featured_image: art/posts/rewrite-history.svg
 body:
 - type: paragraph
   content:

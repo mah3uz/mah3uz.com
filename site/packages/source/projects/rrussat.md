@@ -1,5 +1,4 @@
 ---
-id: rrussat
 order: 7
 title: rrussat
 tagline: A peer-to-peer, end-to-end encrypted messenger with a terminal client and an app for Linux, macOS, Android and iOS — and no application server in the middle.
@@ -8,11 +7,11 @@ category: product
 stage: experiment
 kind: Messenger · Terminal, desktop & mobile
 year: "2026"
-logo: /logos/rrussat.svg
+logo: logos/rrussat.svg
 monogram: "R"
 accent: "#167A8E"
 featured: false
-cover: /art/rrussat.svg
+cover: art/rrussat.svg
 repository: https://github.com/mah3uz/rrussat
 stack: [Rust, iroh, QUIC, X3DH, Double Ratchet, SQLite, ratatui, Flutter]
 highlights:

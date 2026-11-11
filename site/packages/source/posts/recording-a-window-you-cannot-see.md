@@ -3,7 +3,7 @@ title: Recording a window you can't see
 published_at: 2026-11-11T09:00:00+06:00
 topics: [linux, rust, engineering]
 excerpt: "\"Record this window\" sounds like the easiest feature in a screen recorder. On Wayland it took my own capture pipeline, a recorder I couldn't hide from, an audio server with a long memory, and a parent-death signal the kernel quietly drops."
-art: /art/posts/recording-window.svg
+featured_image: art/posts/recording-window.svg
 ---
 "Record this window" is the feature everyone assumes is easy. You point at a window, you press a key, you get a video of
 that window. On X11 it more or less was: every client could see every other client's windows, so a recorder just asked the
@@ -53,7 +53,7 @@ looking at. Hyprland supports both.
 easyshot already spoke this protocol for screenshots, through its own small Wayland client crate (the only crate in the
 project allowed to contain `unsafe`). What it didn't have was a video pipeline. So I built one.
 
-![Recording one window: the capture thread, a one-slot mailbox, a pacer on the GStreamer clock and the encoder](/art/posts/recording-a-window-you-cannot-see/pipeline.svg)
+![Recording one window: the capture thread, a one-slot mailbox, a pacer on the GStreamer clock and the encoder](art/posts/recording-a-window-you-cannot-see/pipeline.svg)
 
 A window recording runs three threads:
 
@@ -181,7 +181,7 @@ rather than from programming. The kernel clears the parent-death signal when a p
 setgid or has file capabilities. gpu-screen-recorder's capture helper is very often installed with capabilities, since
 that's how it reads the framebuffer. The child would set the signal, `exec` the recorder, and lose it, silently.
 
-![If the daemon dies, so does the recorder: a watcher reading a pipe, and the signal ladder on EOF](/art/posts/recording-a-window-you-cannot-see/supervision.svg)
+![If the daemon dies, so does the recorder: a watcher reading a pipe, and the signal ladder on EOF](art/posts/recording-a-window-you-cannot-see/supervision.svg)
 
 So every recorder runs in its own process group beside a tiny `/bin/sh` watcher. The watcher reads from a pipe whose write
 end only the daemon holds. Nothing is ever written to it. When the daemon exits for any reason, including `SIGKILL` and the

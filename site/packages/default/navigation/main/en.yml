@@ -1,5 +1,5 @@
 tree:
-- url: /projects
+- entry: pages/projects
   title: Work
 - entry: pages/now
   title: Now

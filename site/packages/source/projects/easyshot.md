@@ -1,5 +1,4 @@
 ---
-id: easyshot
 order: 6
 title: easyshot
 tagline: Screenshots, markup and screen recording for Linux on Wayland, run from your own compositor's key binds.
@@ -8,11 +7,11 @@ category: product
 stage: shipped
 kind: Screenshots & recording · Wayland
 year: "2026"
-logo: /logos/easyshot.svg
+logo: logos/easyshot.svg
 monogram: "e"
 accent: "#21BDB0"
 featured: false
-cover: /art/easyshot.svg
+cover: art/easyshot.svg
 website: https://easyshot.site
 repository: https://github.com/mah3uz/easyshot
 stack: [Rust, GPUI, Wayland, layer-shell, ext-image-copy-capture, GStreamer, gpu-screen-recorder, wf-recorder, tiny-skia, cosmic-text, Tesseract, D-Bus, systemd]

@@ -1,5 +1,4 @@
 ---
-id: nibble
 order: 1
 title: Nibble
 tagline: A schema-driven CMS you install as your own Rails application — your theme, your content, your server.
@@ -8,11 +7,11 @@ category: product
 stage: building
 kind: Content management system
 year: "2026"
-logo: /logos/nibble.svg
+logo: logos/nibble.svg
 monogram: "n"
 accent: "#21BDB0"
 featured: true
-cover: /art/nibble.svg
+cover: art/nibble.svg
 website: https://nibble.ink
 repository: https://github.com/mah3uz/nibble
 stack: [Ruby on Rails 8, Inertia, Vue 3, TypeScript, SQLite, Tailwind CSS, Kamal, MCP]

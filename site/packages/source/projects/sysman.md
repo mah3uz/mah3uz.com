@@ -1,5 +1,4 @@
 ---
-id: sysman
 order: 4
 title: Sysman
 tagline: A system monitor for Linux that remembers — a crash-proof collector daemon and a native app to explore what happened.
@@ -8,11 +7,11 @@ category: product
 stage: building
 kind: System monitor · Linux
 year: "2026"
-logo: /logos/sysman.svg
+logo: logos/sysman.svg
 monogram: "S"
 accent: "#0E9AA7"
 featured: true
-cover: /art/sysman.svg
+cover: art/sysman.svg
 website: https://sysman.asmechanics.com
 repository: https://github.com/mah3uz/sysman
 stack: [Rust, GPUI, SQLite, systemd, eBPF, Linux]

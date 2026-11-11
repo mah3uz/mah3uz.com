@@ -3,7 +3,7 @@ title: A lock screen that cannot lock you out
 published_at: 2026-10-08T09:00:00+06:00
 topics: [linux, security]
 excerpt: Theming a login screen means writing to system directories as root; theming a lock screen means one bug can lock someone out of their own machine. How Darwan handles both — a supervised lock, and a root helper that trusts nothing it is given.
-art: /art/posts/lock-screen.svg
+featured_image: art/posts/lock-screen.svg
 ---
 Darwan is a theme manager for the two "gates" of a Linux desktop: the SDDM login screen and a Quickshell lock screen. Its
 40 themes were designed by Darkkal44 for the qylock project; my work was the application around them. On paper that sounds

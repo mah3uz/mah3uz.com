@@ -3,7 +3,7 @@ title: Letting AI agents near production, carefully
 published_at: 2026-10-27T09:00:00+06:00
 topics: [security, engineering]
 excerpt: AI agents are becoming colleagues with keyboards. After years of managing who can do what on servers, I've applied the same principles to them — least privilege, explicit actors, approvals and honest boundaries — across four tools I build.
-art: /art/posts/ai-agents.svg
+featured_image: art/posts/ai-agents.svg
 ---
 For most of my career, access control was about people and services: which user can log in to which server, which service
 account can read which database, which deploy key can push to which repository. The principles are old and well tested —

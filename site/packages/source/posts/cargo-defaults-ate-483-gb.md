@@ -3,7 +3,7 @@ title: "Cargo's defaults ate 483 GB: a Rust build postmortem"
 published_at: 2026-11-11T12:00:00+06:00
 topics: [rust, operations, engineering]
 excerpt: "A postmortem of build storage and test time across seven Rust workspaces: a 483 GB target folder that stalled a 32-core desktop on disk I/O, a release that ran another checkout's tests, a /tmp full of test leftovers, and the changes that fixed each one, with the numbers."
-art: /art/posts/target-folder.svg
+featured_image: art/posts/target-folder.svg
 ---
 ## Summary
 
@@ -39,7 +39,7 @@ parts of this report.
 - **Slow feedback.** Insensical's Rust suite took 254 seconds; one window test alone took 58.
 - **Memory risk.** Five parallel builds on 32 threads could start around 128 `rustc` processes on a 124 GB machine.
 
-![It wasn't the CPU: disk pressure at 21 to 27 percent while CPU and memory pressure sat near zero](/art/posts/cargo-defaults-ate-483-gb/io-pressure.svg)
+![It wasn't the CPU: disk pressure at 21 to 27 percent while CPU and memory pressure sat near zero](art/posts/cargo-defaults-ate-483-gb/io-pressure.svg)
 
 ## Environment
 
@@ -67,7 +67,7 @@ cargo tree -i <crate> -e normal                           # who pulls in this de
 
 The first, on easyshot's folder, gave the shape of the problem straight away.
 
-![Where 483 GB went: 376 GB in deps, 65 GB in examples and 43 GB of incremental state](/art/posts/cargo-defaults-ate-483-gb/where-it-went.svg)
+![Where 483 GB went: 376 GB in deps, 65 GB in examples and 43 GB of incremental state](art/posts/cargo-defaults-ate-483-gb/where-it-went.svg)
 
 ## Findings
 
@@ -96,9 +96,9 @@ debug = false
 about 1.2 GB to 0.3 GB. Sysman's application binary went from 540–640 MB to 44 MB, and its `target/debug` from 22 GB to
 3 GB. Quarry went from 3.7 GB to 1.7 GB.
 
-![Half of every test binary was debug info: Sysman's binary from 540 to 640 MB down to 44 MB, Darwan's largest test binary from 283 to 91 MB, Quarry's from 262 to 67 MB](/art/posts/cargo-defaults-ate-483-gb/binary-anatomy.svg)
+![Half of every test binary was debug info: Sysman's binary from 540 to 640 MB down to 44 MB, Darwan's largest test binary from 283 to 91 MB, Quarry's from 262 to 67 MB](art/posts/cargo-defaults-ate-483-gb/binary-anatomy.svg)
 
-![target/ before and after the profile change, on a log scale](/art/posts/cargo-defaults-ate-483-gb/before-after.svg)
+![target/ before and after the profile change, on a log scale](art/posts/cargo-defaults-ate-483-gb/before-after.svg)
 
 **Trade-off.** Variables can't be inspected in a debugger. easyshot and Sysman keep a profile that restores everything
 for the occasion, and `CARGO_PROFILE_DEV_DEBUG=full` does the same for a single command:
@@ -150,7 +150,7 @@ debug = false
 **Result.** The same test takes 5 seconds. Dependencies compile once, optimised, and are reused. easyshot and Sysman carry
 the same setting, commented *"gpui is too slow to use unoptimised."*
 
-![Optimise the dependencies, not your code: one window test took 58 seconds with dependencies unoptimised and 5 with opt-level 2](/art/posts/cargo-defaults-ate-483-gb/deps-opt.svg)
+![Optimise the dependencies, not your code: one window test took 58 seconds with dependencies unoptimised and 5 with opt-level 2](art/posts/cargo-defaults-ate-483-gb/deps-opt.svg)
 
 **Applies when** tests spend their time inside a heavy dependency: a renderer, a codec, a parser, a database engine.
 
@@ -164,7 +164,7 @@ feature sets, so many test binaries exist three times over before any code chang
 hashed copies of each of 13 example programs, about 193 MB each, plus 171 old copies of one test binary and 162 of
 another.
 
-![Cargo never throws anything away: 13 examples times 49 hashed copies is about 22 GB, and 171 plus 162 stale test binaries are about 35 GB more](/art/posts/cargo-defaults-ate-483-gb/stale-copies.svg)
+![Cargo never throws anything away: 13 examples times 49 hashed copies is about 22 GB, and 171 plus 162 stale test binaries are about 35 GB more](art/posts/cargo-defaults-ate-483-gb/stale-copies.svg)
 
 **Fix.** A size-capped clean. easyshot's `just sweep` runs `cargo clean --profile dev` when `target/debug` exceeds a
 limit, 80 GB by default. The next build is a full one. Tools such as `cargo-sweep`, which remove only old files, are an
@@ -236,7 +236,7 @@ cores the same suite takes about a minute and a half. Process-per-test also brin
 own, and global state, environment and ports belong to one test. Every test that starts a daemon gives it its own socket,
 state directory and config directory, so a test can never reach the copy in daily use.
 
-![The same 1,878 tests: 254 seconds with cargo test, 161.7 with nextest in name order on 12 threads, and 134.0 with the slowest tests started first](/art/posts/cargo-defaults-ate-483-gb/suite-time.svg)
+![The same 1,878 tests: 254 seconds with cargo test, 161.7 with nextest in name order on 12 threads, and 134.0 with the slowest tests started first](art/posts/cargo-defaults-ate-483-gb/suite-time.svg)
 
 ```toml
 # .config/nextest.toml
@@ -272,7 +272,7 @@ the run waited on them: 161.7 seconds for 1,584 seconds of tests on 12 threads.
 
 **Result.** 134.0 seconds, 17 percent faster.
 
-![Start the long ones first: in name order the long tests start late and stick out; started first, the short tests pack around them](/art/posts/cargo-defaults-ate-483-gb/slowest-first.svg)
+![Start the long ones first: in name order the long tests start late and stick out; started first, the short tests pack around them](art/posts/cargo-defaults-ate-483-gb/slowest-first.svg)
 
 **Caveat.** One test that takes 13 seconds alone took 165 seconds on a Mac when it started together with the other heavy
 tests, all competing for the same resources. It was removed from the list. Priority reorders work; it doesn't add
@@ -326,7 +326,7 @@ codegen-units = 16
 **Result.** After a change to the protocol crate, a `page` build took 36 seconds against 126 for release on Linux, and 32
 against 89 on a Mac.
 
-![One profile per job: dev, dbg, page and release, each with its own settings](/art/posts/cargo-defaults-ate-483-gb/profiles.svg)
+![One profile per job: dev, dbg, page and release, each with its own settings](art/posts/cargo-defaults-ate-483-gb/profiles.svg)
 
 **Caveat.** easyshot's equivalent, `fast`, made its image benchmarks three to seven times slower than a shipped build,
 because its SIMD wrappers were no longer inlined across 16 codegen units. Those few crates are overridden back to one
@@ -358,7 +358,7 @@ it idle whenever a single build was running.
 **Fix.** Three small pieces of machine configuration, so that a single build uses every core, parallel builds share the
 cores, and the desktop always wins:
 
-![Builds below the desktop: every cargo runs in build.slice and takes its jobs from one shared pool of tokens](/art/posts/cargo-defaults-ate-483-gb/build-slice.svg)
+![Builds below the desktop: every cargo runs in build.slice and takes its jobs from one shared pool of tokens](art/posts/cargo-defaults-ate-483-gb/build-slice.svg)
 
 - **A systemd slice for builds.** `CPUWeight=10`, against the default of 100, gives the desktop ten times the share when
   both want the CPU; when the desktop is idle the build gets everything, because a weight isn't a limit. `MemoryHigh` is a

@@ -3,7 +3,7 @@ title: Your own website is the best test suite
 published_at: 2026-09-27T09:00:00+06:00
 topics: [engineering, product]
 excerpt: One evening of clicking around my own documentation produced seven patch releases of Nibble. Fixtures with three files never find what real content finds — and some bugs only show up when you actually run the thing.
-art: /art/posts/own-website-test-suite.svg
+featured_image: art/posts/own-website-test-suite.svg
 ---
 There is a stretch in Nibble's changelog where the version goes 0.14.1, 0.14.2, 0.14.3 and on to 0.14.7, all in one
 night. I didn't plan it. It is what happened when Nibble's own documentation moved into a folder of Markdown files and I

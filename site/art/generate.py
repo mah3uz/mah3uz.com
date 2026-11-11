@@ -1,4 +1,4 @@
-"""Generates the project cover art for the Neat theme into public/art/.
+"""Generates the project cover art for the Neat theme into site/packages/default/assets/art/.
 
 Every cover shares the banner's language — midnight teal canvas, a radial glow, three corner brackets and a peeled
 corner — and draws its own centrepiece.

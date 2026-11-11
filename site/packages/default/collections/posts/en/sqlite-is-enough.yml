@@ -5,7 +5,7 @@ topics:
 - topics/operations
 excerpt: For most of my career, "which database?" meant "which database server?" Today my default is a file. Here is how to
   run SQLite in production properly — WAL, backups, honest limits — and when to move on.
-art: /art/posts/sqlite-is-enough.svg
+featured_image: art/posts/sqlite-is-enough.svg
 body:
 - type: paragraph
   content:

@@ -1,5 +1,4 @@
 ---
-id: quarry
 order: 3
 title: Quarry
 tagline: A fast SQL client and full-screen TUI for PostgreSQL, MySQL, MariaDB and SQLite — one binary, the same keys everywhere.
@@ -8,11 +7,11 @@ category: product
 stage: shipped
 kind: Database client · TUI
 year: "2026"
-logo: /logos/quarry.svg
+logo: logos/quarry.svg
 monogram: "Q"
 accent: "#1388A6"
 featured: true
-cover: /art/quarry.svg
+cover: art/quarry.svg
 website: https://quarry.asmechanics.com
 repository: https://github.com/mah3uz/quarry
 stack: [Rust, ratatui, tokio-postgres, mysql_async, rusqlite, rustls, reedline]
