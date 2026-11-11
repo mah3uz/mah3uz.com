@@ -10,6 +10,7 @@
   border-radius: 0.6rem;
   cursor: pointer;
   touch-action: none;
+  user-select: none;
   background:
     repeating-linear-gradient(90deg, var(--ns-knurl-hi) 0 1px, transparent 1px 3px),
     linear-gradient(160deg, var(--ns-chrome-hi), var(--ns-chrome-mid) 45%, var(--ns-chrome-lo));

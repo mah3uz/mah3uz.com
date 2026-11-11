@@ -5,6 +5,7 @@
   aspect-ratio: 1;
   padding: 3px;
   border-radius: 50%;
+  user-select: none;
   background: conic-gradient(
     from 30deg,
     var(--ns-chrome-hi),
