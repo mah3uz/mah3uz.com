@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, useTemplateRef, watch } from 'vue'
-import type { ProjectsProject, ViewProps } from '@site/types'
+import type { PagesPage, ViewProps } from '@site/types'
 import PageHeading from '../../components/PageHeading.vue'
 import ProjectCard from '../../components/ProjectCard.vue'
 import { isClient, onlyProjects, statusOf, STATUS_COPY, type Status } from '../../lib/projects'
 import { vReveal } from '../../lib/motion'
 
-const props = defineProps<ViewProps['projects/index'] & { page: ProjectsProject }>()
+const props = defineProps<ViewProps['projects/index'] & { page: PagesPage }>()
 
 const status = ref<Status | 'all'>('all')
 const tech = ref<string | null>(null)
@@ -86,7 +86,7 @@ function pin(el: Element) {
 
 <template>
   <div>
-    <PageHeading :title="page.title" :eyebrow="page.tagline ?? 'Work'" :description="page.description" />
+    <PageHeading :title="page.title" :eyebrow="page.eyebrow ?? 'Work'" :description="page.intro" />
 
     <div
       v-if="clientCount"

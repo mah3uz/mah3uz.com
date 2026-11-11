@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useGlobals } from '@nibble'
 import { computed } from 'vue'
-import type { PagesPage, SiteGlobals, ViewProps } from '@site/types'
+import type { AssetValue, PagesPage, SiteGlobals, ViewProps } from '@site/types'
 import BrandMark from '../components/BrandMark.vue'
 import ContactForm from '../components/ContactForm.vue'
 import Corners from '../components/Corners.vue'
@@ -28,7 +28,7 @@ const milestones = computed(() =>
     title: String(row.title ?? ''),
     text: String(row.text ?? ''),
     url: row.url ? String(row.url) : '',
-    logo: row.logo ? String(row.logo) : '',
+    logo: (row.logo as AssetValue | null)?.url ?? '',
   })),
 )
 </script>
@@ -89,9 +89,9 @@ const milestones = computed(() =>
     <div class="mt-24 grid gap-14 lg:grid-cols-[1fr_22rem]">
       <PageBody :content="page.content" :blocks="page.blocks" large />
       <ArtBanner
-        v-if="page.art"
+        v-if="page.featured_image"
         v-reveal
-        :src="page.art"
+        :src="page.featured_image.url"
         class="aspect-[4/5] self-start lg:sticky lg:top-28 [&_img]:object-[30%_50%]"
       />
     </div>

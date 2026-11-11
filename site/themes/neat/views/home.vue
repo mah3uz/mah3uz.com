@@ -104,7 +104,7 @@ const board = computed(() =>
               class="group neat-card grid items-center gap-5 p-5 transition-transform duration-500 hover:-translate-y-1 sm:grid-cols-[auto_1fr_auto] sm:p-6"
             >
               <ProjectTile
-                :logo="client.logo"
+                :logo="client.logo?.url"
                 :monogram="client.monogram"
                 :accent="client.accent"
                 size="size-16"
@@ -159,7 +159,7 @@ const board = computed(() =>
                 class="group/row flex items-center gap-4 rounded-2xl p-3 transition-colors hover:bg-accent/8"
               >
                 <ProjectTile
-                  :logo="project.logo"
+                  :logo="project.logo?.url"
                   :monogram="project.monogram"
                   :accent="project.accent"
                   size="size-11"

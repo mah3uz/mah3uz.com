@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
+import type { AssetValue } from '@site/types'
 import ProjectTile from './ProjectTile.vue'
 
 interface PaletteProject {
@@ -9,7 +10,7 @@ interface PaletteProject {
   uri: string | null
   tagline?: string | null
   monogram?: string | null
-  logo?: string | null
+  logo?: AssetValue | null
   accent?: string | null
 }
 
@@ -244,7 +245,7 @@ defineExpose({ show })
             >
               <ProjectTile
                 v-if="item.project"
-                :logo="item.project.logo"
+                :logo="item.project.logo?.url"
                 :monogram="item.project.monogram"
                 :accent="item.project.accent"
                 size="size-8"

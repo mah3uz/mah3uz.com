@@ -1,3 +1,5 @@
+import type { AssetValue } from '@site/types'
+
 export type Status = 'building' | 'shipped' | 'experiment' | 'archived'
 
 export interface ProjectLike {
@@ -14,11 +16,11 @@ export interface ProjectLike {
   kind?: string | null
   year?: string | null
   monogram?: string | null
-  logo?: string | null
+  logo?: AssetValue | null
   accent?: string | null
   featured?: boolean | null
   stack?: string[] | null
-  cover?: string | null
+  cover?: AssetValue | null
   website?: string | null
   repository?: string | null
 }

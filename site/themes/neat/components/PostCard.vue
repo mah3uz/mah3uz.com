@@ -4,7 +4,6 @@ import { Image } from '@nibble'
 import type { AssetValue } from '@site/types'
 import { isoDate, useFormatDate } from '../lib/format'
 import { vSpotlight } from '../lib/motion'
-import ArtBanner from './ArtBanner.vue'
 import ArrowIcon from './ArrowIcon.vue'
 
 defineProps<{
@@ -14,7 +13,6 @@ defineProps<{
     uri: string | null
     excerpt?: string | null
     published_at?: string | null
-    art?: string | null
     featured_image?: AssetValue | null
     topics?: { id: number | string; title: string | null }[] | null
   }
@@ -34,11 +32,6 @@ const formatDate = useFormatDate()
         :image="post.featured_image"
         sizes="(min-width: 768px) 24rem, 100vw"
         class="size-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform group-hover:scale-105"
-      />
-      <ArtBanner
-        v-else
-        :src="post.art ?? '/art/posts/default.svg'"
-        class="size-full !rounded-none !border-0 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform group-hover:scale-105"
       />
     </div>
     <div class="flex flex-1 flex-col gap-3 p-5">

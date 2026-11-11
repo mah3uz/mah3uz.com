@@ -3,7 +3,6 @@ import { Link } from '@inertiajs/vue3'
 import { Image } from '@nibble'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import type { PostsPost, ViewProps } from '@site/types'
-import ArtBanner from '../../components/ArtBanner.vue'
 import PostCard from '../../components/PostCard.vue'
 import Prose from '../../components/Prose.vue'
 import { isoDate, useFormatDate } from '../../lib/format'
@@ -85,7 +84,6 @@ onBeforeUnmount(() => window.removeEventListener('scroll', measure))
         sizes="(min-width: 64rem) 64rem, 100vw"
         class="aspect-[2/1] w-full rounded-[1.75rem] object-cover"
       />
-      <ArtBanner v-else :src="page.art ?? '/art/posts/default.svg'" eager class="aspect-[2/1]" />
     </div>
     <div id="article-body" class="mx-auto prose prose-lg mt-14 max-w-[68ch]">
       <Prose :value="page.body" />

@@ -35,7 +35,7 @@ const suggestions = computed(() => onlyProjects(props.projects).slice(0, 3))
             class="group flex items-center gap-4 rounded-2xl p-2 transition-colors hover:bg-accent/8"
           >
             <ProjectTile
-              :logo="project.logo"
+              :logo="project.logo?.url"
               :monogram="project.monogram"
               :accent="project.accent"
               size="size-10"

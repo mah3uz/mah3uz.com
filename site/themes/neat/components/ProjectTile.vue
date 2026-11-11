@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// A project's logo. Products use their own logo, from /logos; where there isn't one (client work, for now), the
+// A project's logo. Products use their own logo, from the asset library; where there isn't one (client work, for now), the
 // site's tile stands in: the accent gradient, three corner brackets and the peel, holding the project's monogram.
 import { computed } from 'vue'
 

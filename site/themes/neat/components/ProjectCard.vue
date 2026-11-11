@@ -25,7 +25,7 @@ const status = computed(() => statusOf(props.project))
     >
       <div v-if="project.cover" class="relative m-2 mb-0 overflow-hidden rounded-[1.4rem]">
         <img
-          :src="project.cover"
+          :src="project.cover.url"
           :alt="`Illustration for ${project.title}`"
           :loading="eager ? 'eager' : 'lazy'"
           width="1600"
@@ -44,7 +44,7 @@ const status = computed(() => statusOf(props.project))
       <div class="flex flex-1 flex-col gap-4 p-6 pr-16 sm:p-7 sm:pr-20" :class="{ 'lg:p-9': large }">
         <div class="flex items-center gap-4">
           <ProjectTile
-            :logo="project.logo"
+            :logo="project.logo?.url"
             :monogram="project.monogram"
             :accent="project.accent"
             size="size-11"

@@ -42,7 +42,7 @@ const facts = computed(() =>
       <div>
         <div class="animate-rise flex items-center gap-5">
           <ProjectTile
-            :logo="page.logo"
+            :logo="page.logo?.url"
             :monogram="page.monogram"
             :accent="page.accent"
             size="size-20 sm:size-24"
@@ -87,7 +87,7 @@ const facts = computed(() =>
       <div v-tilt="3" class="group relative">
         <figure class="neat-peeled relative overflow-hidden rounded-[2rem]" :style="{ '--peel-cut': peelCut(120) }">
           <img
-            :src="page.cover"
+            :src="page.cover.url"
             :alt="`Illustration for ${page.title}`"
             width="1600"
             height="1000"
@@ -155,7 +155,7 @@ const facts = computed(() =>
         class="group neat-card flex items-center gap-5 p-6"
         :class="{ 'sm:flex-row-reverse sm:text-right': index === 1 }"
       >
-        <ProjectTile :logo="item.logo" :monogram="item.monogram" :accent="item.accent" size="size-14" text="text-xl" />
+        <ProjectTile :logo="item.logo?.url" :monogram="item.monogram" :accent="item.accent" size="size-14" text="text-xl" />
         <span class="min-w-0 flex-1">
           <span class="neat-eyebrow flex items-center gap-1.5" :class="{ 'sm:justify-end': index === 1 }"
             ><template v-if="index === 0"><ArrowIcon direction="left" /> Previous</template
